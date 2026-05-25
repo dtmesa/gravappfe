@@ -3,7 +3,6 @@ import { api } from "./client";
 
 export const register = async (username: string, password: string): Promise<User> => {
 	const res = await api.post("/auth/register", { username, password });
-
 	return res.data;
 };
 
@@ -12,13 +11,11 @@ export const login = async (
 	password: string,
 ): Promise<{ token: string; user: User }> => {
 	const res = await api.post("/auth/login", { username, password });
-
 	return res.data;
 };
 
 export const updateUsername = async (newUsername: string, password: string): Promise<User> => {
 	const res = await api.put("/auth/username", { newUsername, password });
-
 	return res.data;
 };
 
@@ -27,6 +24,5 @@ export const updatePassword = async (
 	newPassword: string,
 ): Promise<void> => {
 	const res = await api.put("/auth/password", { currentPassword, newPassword });
-
 	return res.data;
 };

@@ -63,7 +63,6 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 			const timeout = setTimeout(async () => {
 				try {
 					await deleteExercise(workoutId, id);
-
 					setPendingDelete(null);
 				} catch {
 					fetchExercises();
@@ -117,7 +116,6 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 			<View style={styles.container}>
 				<View style={styles.inner}>
 					<StarBackground />
-					<Text style={styles.title}>404</Text>
 				</View>
 			</View>
 		);

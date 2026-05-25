@@ -71,9 +71,17 @@ export default function ActiveWorkoutScreen({ navigation, route }: Props) {
 		if (!exerciseSession) {
 			const newSession = await createExerciseSession(sessionId, exerciseId, workoutId);
 			setExerciseSessions((prev) => [...prev, newSession]);
-			navigation.navigate("ActiveExercise", { workoutId, sessionId, exerciseSessionId: newSession.id });
+			navigation.navigate("ActiveExercise", {
+				workoutId,
+				sessionId,
+				exerciseSessionId: newSession.id,
+			});
 		} else {
-			navigation.navigate("ActiveExercise", { workoutId, sessionId, exerciseSessionId: exerciseSession.id });
+			navigation.navigate("ActiveExercise", {
+				workoutId,
+				sessionId,
+				exerciseSessionId: exerciseSession.id,
+			});
 		}
 	};
 

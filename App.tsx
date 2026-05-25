@@ -2,6 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { colors } from "./src/css/color";
 import { useAppFonts } from "./src/css/fonts";
 import ActiveExerciseScreen from "./src/screens/ActiveExercise/ActiveExerciseScreen";
 import ActiveWorkoutScreen from "./src/screens/ActiveWorkout/ActiveWorkoutScreen";
@@ -25,16 +26,12 @@ export default function App() {
 		checkAuth();
 	}, [checkAuth]);
 
-	if (!fontsLoaded || loading) {
-		return null;
-	}
+	if (!fontsLoaded || loading) return null;
 
 	return (
-		<GestureHandlerRootView>
+		<GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg.loading }}>
 			<NavigationContainer>
-				<Stack.Navigator
-					screenOptions={{ statusBarStyle: "light", headerShown: false, animation: "none" }}
-				>
+				<Stack.Navigator screenOptions={{ headerShown: false }}>
 					{isLoggedIn ? (
 						<>
 							<Stack.Screen name="Home" component={HomeScreen} />

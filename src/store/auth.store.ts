@@ -42,7 +42,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 			const token = await getToken();
 
 			if (token) {
-				set({ token,isLoggedIn: true });
+				set({ token, isLoggedIn: true });
 			} else {
 				set({ token: null, isLoggedIn: false });
 			}

@@ -5,7 +5,6 @@ import { colors } from "../../css/color";
 type Props = {
 	onSave: () => void;
 	color?: string;
-	size?: number;
 };
 
 export default function SaveButton({ onSave }: Props) {

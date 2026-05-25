@@ -16,9 +16,11 @@ export const useWorkoutTimerStore = create<TimerStore>((set, get) => ({
 
 	start: () => {
 		if (get().running) return;
+
 		const interval = setInterval(() => {
 			set((state) => ({ elapsed: state.elapsed + 1 }));
 		}, 1000);
+
 		set({ running: true, intervalRef: interval });
 	},
 

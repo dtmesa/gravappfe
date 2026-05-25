@@ -5,6 +5,7 @@ export const colors = {
 		input: "#202020",
 		inputHighlight: "#2b2238",
 		darken: "rgba(0,0,0,0.7)",
+		loading: "#000000",
 	},
 
 	button: {

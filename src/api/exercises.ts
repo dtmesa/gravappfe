@@ -33,12 +33,22 @@ export async function updateExercise(
 	return res.data;
 }
 
-export async function getWeeklyAverages(workoutId: number, exerciseId: number): Promise<Averages | null> {
-    const res = await api.get<Averages | null>(`/workouts/${workoutId}/exercises/${exerciseId}/averages`);
-    return res.data;
+export async function getWeeklyAverages(
+	workoutId: number,
+	exerciseId: number,
+): Promise<Averages | null> {
+	const res = await api.get<Averages | null>(
+		`/workouts/${workoutId}/exercises/${exerciseId}/averages`,
+	);
+	return res.data;
 }
 
-export async function getAllAverages(workoutId: number, exerciseId: number): Promise<Averages | null> {
-    const res = await api.get<Averages | null>(`/workouts/${workoutId}/exercises/${exerciseId}/averages/all`);
-    return res.data;
+export async function getAllAverages(
+	workoutId: number,
+	exerciseId: number,
+): Promise<Averages | null> {
+	const res = await api.get<Averages | null>(
+		`/workouts/${workoutId}/exercises/${exerciseId}/averages/all`,
+	);
+	return res.data;
 }

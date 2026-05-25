@@ -2,23 +2,24 @@ import { useEffect, useRef } from "react";
 import { Animated, Dimensions, StyleSheet, View } from "react-native";
 import { colors } from "../../css/color";
 
+const NUM_STARS = 90;
+const DUR_MULTIPLIER = 3000;
+const DUR_BASE = 2500;
+const DELAY_MULTIPLER = 5000;
+const SIZE_BASE = 0;
+const SIZE_MULTIPLIER = 3;
+
 const { width, height } = Dimensions.get("window");
 
-const NUM_STARS = 90;
-
-function Star({
-	x,
-	y,
-	size,
-	delay,
-	duration,
-}: {
+type props = {
 	x: number;
 	y: number;
 	size: number;
 	delay: number;
 	duration: number;
-}) {
+};
+
+function Star({ x, y, size, delay, duration }: props) {
 	const opacity = useRef(new Animated.Value(0)).current;
 
 	useEffect(() => {
@@ -61,9 +62,9 @@ const stars = Array.from({ length: NUM_STARS }, (_, i) => ({
 	id: i,
 	x: Math.random() * width,
 	y: Math.random() * height,
-	size: Math.random() * 3 + 0,
-	delay: Math.random() * 5000,
-	duration: Math.random() * 3000 + 2500,
+	size: Math.random() * SIZE_MULTIPLIER + SIZE_BASE,
+	delay: Math.random() * DELAY_MULTIPLER,
+	duration: Math.random() * DUR_MULTIPLIER + DUR_BASE,
 }));
 
 export function StarBackground() {

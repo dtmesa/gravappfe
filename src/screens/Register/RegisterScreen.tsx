@@ -30,12 +30,9 @@ export default function RegisterScreen({ navigation }: Props) {
 			setError(isInvalidInputs);
 			return;
 		}
-
 		try {
 			setError("");
-
 			await register(username, password);
-
 			navigation.replace("Home");
 		} catch (err: unknown) {
 			const code = getApiError(err);

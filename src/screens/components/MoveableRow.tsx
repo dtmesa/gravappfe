@@ -71,7 +71,7 @@ export default function MoveableRow({
 								<Pressable onPress={onGear} hitSlop={12}>
 									{({ pressed }) => (
 										<Settings
-											size={25}
+											size={26}
 											color={pressed ? colors.button.accentLight : colors.button.muted}
 											strokeWidth={1.75}
 										/>
@@ -91,8 +91,8 @@ const styles = StyleSheet.create({
 		width: "100%",
 	},
 	row: {
-		paddingHorizontal: "7.5%",
-		paddingVertical: "7.5%",
+		paddingHorizontal: "7%",
+		paddingVertical: "7%",
 		backgroundColor: colors.bg.secondary,
 		borderBottomWidth: 1,
 		borderBottomColor: colors.border.secondary,

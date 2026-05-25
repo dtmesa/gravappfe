@@ -54,15 +54,8 @@ export default function HomeScreen({ navigation }: Props) {
 	};
 
 	const handleStartWorkout = async (workoutId: number) => {
-		try {
-			const session = await createWorkoutSession(workoutId);
-			navigation.navigate("ActiveWorkout", {
-				workoutId,
-				sessionId: session.id,
-			});
-		} catch (err) {
-			console.error("Failed to create session:", err);
-		}
+		const session = await createWorkoutSession(workoutId);
+		navigation.navigate("ActiveWorkout", { workoutId, sessionId: session.id });
 	};
 
 	const handleDelete = async (id: number) => {
