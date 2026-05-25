@@ -6,7 +6,6 @@ export function useAppFonts() {
 	return useFonts({
 		Play_400Regular,
 		Play_700Bold,
-
 		Syncopate_400Regular,
 		Syncopate_700Bold,
 	});

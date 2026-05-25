@@ -113,7 +113,7 @@ export const styles = StyleSheet.create({
 		color: colors.text.warning,
 	},
 	success: {
-		color: colors.text.accent,
+		color: colors.text.accentLight,
 	},
 	placeholder: {
 		fontFamily: "Play_400Regular",

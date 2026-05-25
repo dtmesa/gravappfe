@@ -1,18 +1,21 @@
+import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Animated, FlatList, ScrollView, Text, View } from "react-native";
+import { Animated, BackHandler, FlatList, ScrollView, Text, View } from "react-native";
 import { createExerciseSession } from "../../api/exerciseSession";
 import { getExercises } from "../../api/exercises";
-import { getWorkoutSession } from "../../api/workoutSession";
+import { deleteWorkoutSession, getWorkoutSession } from "../../api/workoutSession";
 import { getWorkout } from "../../api/workouts";
 import { colors } from "../../css/color";
 import { useWorkoutTimerStore } from "../../store/activeWorkout.store";
 import type { Exercise } from "../../types/exercise";
+import type { ExerciseSession } from "../../types/exerciseSession";
 import type { RootStackParamList } from "../../types/navigation";
 import type { Workout } from "../../types/workout";
 import type { WorkoutSession } from "../../types/workoutSession";
+import BackButton from "../components/BackButton";
 import ClickableRow from "../components/ClickableRow";
-import HomeButton from "../components/HomeButton";
+import SaveButton from "../components/SaveButton";
 import { StarBackground } from "../components/StarBackground";
 import TimerRow from "../components/TimerRow";
 import { LeaveAlert } from "./LeaveAlert";
@@ -27,16 +30,17 @@ export default function ActiveWorkoutScreen({ navigation, route }: Props) {
 	const [workout, setWorkout] = useState<Workout | null>(null);
 	const [exercises, setExercises] = useState<Exercise[]>([]);
 	const [workoutSession, setWorkoutSession] = useState<WorkoutSession | null>(null);
-	const [exerciseSessions, setExerciseSessions] = useState<Record<number, number>>({});
+	const [exerciseSessions, setExerciseSessions] = useState<ExerciseSession[]>([]);
 	const [alertVisible, setAlertVisible] = useState(false);
 
+	const hasStartedExercises = exerciseSessions.length > 0;
 	const glowAnim = useRef(new Animated.Value(0)).current;
 
 	useEffect(() => {
 		Animated.loop(
 			Animated.sequence([
-				Animated.timing(glowAnim, { toValue: 1, duration: 2000, useNativeDriver: false }),
-				Animated.timing(glowAnim, { toValue: 0, duration: 2000, useNativeDriver: false }),
+				Animated.timing(glowAnim, { toValue: 1, duration: 2500, useNativeDriver: false }),
+				Animated.timing(glowAnim, { toValue: 0, duration: 2500, useNativeDriver: false }),
 			]),
 		).start();
 	}, [glowAnim]);
@@ -57,27 +61,34 @@ export default function ActiveWorkoutScreen({ navigation, route }: Props) {
 	}, [workoutId]);
 
 	const fetchWorkoutSession = useCallback(async () => {
-		const data = await getWorkoutSession(workoutId, sessionId);
+		const data = await getWorkoutSession(sessionId, workoutId);
 		setWorkoutSession(data);
 	}, [workoutId, sessionId]);
 
 	const handleExercisePress = async (exerciseId: number) => {
-		if (exerciseSessions[exerciseId]) {
-			navigation.navigate("ActiveExercise", {
-				workoutId,
-				sessionId,
-				exerciseSessionId: exerciseSessions[exerciseId],
-			});
-			return;
+		const exerciseSession = exerciseSessions.find((s) => s.exerciseId === exerciseId);
+
+		if (!exerciseSession) {
+			const newSession = await createExerciseSession(sessionId, exerciseId, workoutId);
+			setExerciseSessions((prev) => [...prev, newSession]);
+			navigation.navigate("ActiveExercise", { workoutId, sessionId, exerciseSessionId: newSession.id });
 		} else {
-			const session = await createExerciseSession(sessionId, exerciseId, workoutId);
-			setExerciseSessions((prev) => ({ ...prev, [exerciseId]: session.id }));
-			navigation.navigate("ActiveExercise", {
-				workoutId,
-				sessionId,
-				exerciseSessionId: session.id,
-			});
+			navigation.navigate("ActiveExercise", { workoutId, sessionId, exerciseSessionId: exerciseSession.id });
 		}
+	};
+
+	const handleBack = useCallback(async () => {
+		setAlertVisible(false);
+		await deleteWorkoutSession(sessionId, workoutId);
+		stop();
+		reset();
+		navigation.goBack();
+	}, [sessionId, workoutId, stop, reset, navigation]);
+
+	const handleSave = () => {
+		stop();
+		reset();
+		navigation.goBack();
 	};
 
 	useEffect(() => {
@@ -86,16 +97,25 @@ export default function ActiveWorkoutScreen({ navigation, route }: Props) {
 		fetchExercises();
 	}, [fetchWorkout, fetchWorkoutSession, fetchExercises]);
 
-	useEffect(() => {
-		return () => reset();
-	}, [reset]);
+	useFocusEffect(
+		useCallback(() => {
+			const handler = BackHandler.addEventListener("hardwareBackPress", () => {
+				if (hasStartedExercises) {
+					setAlertVisible(true);
+				} else {
+					handleBack();
+				}
+				return true;
+			});
+			return () => handler.remove();
+		}, [handleBack, hasStartedExercises]),
+	);
 
 	if (!workoutSession || !workout) {
 		return (
 			<View style={styles.container}>
 				<View style={styles.inner}>
 					<StarBackground />
-					<Text style={styles.title}>404</Text>
 				</View>
 			</View>
 		);
@@ -105,6 +125,7 @@ export default function ActiveWorkoutScreen({ navigation, route }: Props) {
 		<View style={styles.container}>
 			<View style={styles.inner}>
 				<View style={styles.titleRow}>
+					<SaveButton onSave={() => handleSave()} />
 					<Animated.Text
 						style={[
 							styles.title,
@@ -120,17 +141,13 @@ export default function ActiveWorkoutScreen({ navigation, route }: Props) {
 					<LeaveAlert
 						visible={alertVisible}
 						onConfirm={() => {
-							setAlertVisible(false);
-							reset();
-							navigation.navigate("Home");
+							handleBack();
 						}}
 						onCancel={() => setAlertVisible(false)}
 					/>
-					<HomeButton navHome={() => 
-						Object.keys(exerciseSessions).length > 0 
-							? setAlertVisible(true) 
-							: navigation.navigate("Home")
-					} />
+					<BackButton
+						onBack={() => (hasStartedExercises ? setAlertVisible(true) : navigation.goBack())}
+					/>
 				</View>
 				{workout.description && (
 					<View style={styles.descrWrapper}>
@@ -162,7 +179,7 @@ export default function ActiveWorkoutScreen({ navigation, route }: Props) {
 								val={item}
 								isLast={index === exercises.length - 1}
 								onPress={() => handleExercisePress(item.id)}
-								isVisited={!!exerciseSessions[item.id]}
+								isVisited={exerciseSessions.some((s) => s.exerciseId === item.id)}
 							/>
 						)}
 					/>

@@ -4,7 +4,7 @@ export const colors = {
 		secondary: "#181818",
 		input: "#202020",
 		inputHighlight: "#2b2238",
-		darken: "rgba(0,0,0,0.65)",
+		darken: "rgba(0,0,0,0.7)",
 	},
 
 	button: {
@@ -14,7 +14,6 @@ export const colors = {
 		accent: "#7c3aed",
 		accentLight: "#8b5cf6",
 		accentHighlight: "#9a6bff",
-		warning: "#facc15",
 	},
 
 	border: {
@@ -22,7 +21,6 @@ export const colors = {
 		secondary: "#333333",
 		secondaryActive: "#242424",
 		accent: "#7c3aed",
-		glass: "rgba(255, 255, 255, 0.08)",
 	},
 
 	star: {

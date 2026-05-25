@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 	},
 	rowActive: {
-		elevation: 8,
+		elevation: 10,
 		shadowColor: colors.button.accentHighlight,
 		backgroundColor: colors.bg.inputHighlight,
 	},
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 	rowPressed: {
-		elevation: 16,
+		elevation: 20,
 		shadowColor: colors.button.accentHighlight,
 		backgroundColor: colors.bg.inputHighlight,
 	},

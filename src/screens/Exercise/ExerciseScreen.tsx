@@ -6,7 +6,7 @@ import { getExercise, updateExercise } from "../../api/exercises";
 import { colors } from "../../css/color";
 import type { Exercise } from "../../types/exercise";
 import type { RootStackParamList } from "../../types/navigation";
-import HomeButton from "../components/HomeButton";
+import BackButton from "../components/BackButton";
 import { StarBackground } from "../components/StarBackground";
 import { styles } from "./styles";
 
@@ -83,7 +83,7 @@ export default function ExerciseScreen({ navigation, route }: Props) {
 				<View style={styles.inner}>
 					<View style={styles.titleRow}>
 						<Text style={styles.title}>{exercise.name}</Text>
-						<HomeButton navHome={() => navigation.navigate("Home")} />
+						<BackButton onBack={() => navigation.goBack()} />
 					</View>
 
 					<View

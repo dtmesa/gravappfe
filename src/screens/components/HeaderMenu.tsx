@@ -1,4 +1,3 @@
-
 import { Menu } from "lucide-react-native";
 import { useRef, useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
@@ -114,7 +113,7 @@ const styles = StyleSheet.create({
 	itemPressed: {
 		backgroundColor: colors.bg.inputHighlight,
 		elevation: 4,
-		shadowColor: colors.bg.inputHighlight
+		shadowColor: colors.bg.inputHighlight,
 	},
 	text: {
 		fontFamily: "Play_400Regular",

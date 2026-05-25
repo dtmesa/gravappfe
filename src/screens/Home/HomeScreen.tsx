@@ -1,5 +1,5 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
 import { createWorkoutSession } from "../../api/workoutSession";
@@ -25,6 +25,7 @@ export default function HomeScreen({ navigation }: Props) {
 	const [focusedField, setFocusedField] = useState<string | null>(null);
 	const [pendingDelete, setPendingDelete] = useState<Workout | null>(null);
 	const [undoTimeout, setUndoTimeout] = useState<number | null>(null);
+	const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	const fetchWorkouts = useCallback(async () => {
 		const data = await getWorkouts();
@@ -34,6 +35,12 @@ export default function HomeScreen({ navigation }: Props) {
 	useEffect(() => {
 		fetchWorkouts();
 	}, [fetchWorkouts]);
+
+	useEffect(() => {
+		return () => {
+			if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
+		};
+	}, []);
 
 	const handleCreateWorkout = async () => {
 		if (!name.trim()) return;
@@ -62,16 +69,29 @@ export default function HomeScreen({ navigation }: Props) {
 		const workout = workouts.find((w) => w.id === id);
 		if (!workout) return;
 
+		if (pendingDelete && undoTimeout) {
+			clearTimeout(undoTimeout);
+			setUndoTimeout(null);
+			setPendingDelete(null);
+
+			try {
+				await deleteWorkout(pendingDelete.id);
+			} catch {
+				fetchWorkouts();
+			}
+		}
+
 		setWorkouts((prev) => prev.filter((w) => w.id !== id));
 		setPendingDelete(workout);
 
 		const timeout = setTimeout(async () => {
 			try {
 				await deleteWorkout(id);
-
-				setPendingDelete(null);
 			} catch {
+				setUndoTimeout(null);
 				fetchWorkouts();
+			} finally {
+				setPendingDelete(null);
 			}
 		}, 3000);
 
@@ -86,7 +106,10 @@ export default function HomeScreen({ navigation }: Props) {
 			return restored.sort((a, b) => a.order - b.order);
 		});
 
-		if (undoTimeout) clearTimeout(undoTimeout);
+		if (undoTimeout) {
+			clearTimeout(undoTimeout);
+			setUndoTimeout(null);
+		}
 
 		setPendingDelete(null);
 	};

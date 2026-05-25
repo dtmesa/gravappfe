@@ -4,9 +4,10 @@ import { LayoutAnimation, Pressable, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { getApiError } from "../../api/apiError";
 import { updatePassword, updateUsername } from "../../api/auth";
+import { useAuthStore } from "../../store/auth.store";
 import type { RootStackParamList } from "../../types/navigation";
 import { validatePassword, validateUsername } from "../../util/inputValidation";
-import HomeButton from "../components/HomeButton";
+import BackButton from "../components/BackButton";
 import { StarBackground } from "../components/StarBackground";
 import SettingsCard from "./SettingsCard";
 import SettingsInput from "./SettingsInput";
@@ -15,6 +16,8 @@ import { styles } from "./styles";
 type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
 
 export default function SettingsScreen({ navigation }: Props) {
+	const username = useAuthStore((t) => t.username);
+
 	const [expandedCard, setExpandedCard] = useState<"username" | "password" | null>(null);
 
 	const [newUsername, setNewUsername] = useState("");
@@ -47,7 +50,10 @@ export default function SettingsScreen({ navigation }: Props) {
 	const handleUsernameChange = async () => {
 		const isInvalidUsername = validateUsername(newUsername);
 
-		if (newUsername === "" || authPassForName === "") {
+		if (newUsername === username) {
+			setNameError("New username must be different from your current password");
+			return;
+		} else if (newUsername === "" || authPassForName === "") {
 			setNameError("One or more required fields are missing");
 			return;
 		} else if (isInvalidUsername) {
@@ -58,6 +64,7 @@ export default function SettingsScreen({ navigation }: Props) {
 		try {
 			setNameError("");
 			await updateUsername(newUsername, authPassForName);
+			useAuthStore.setState({ username: newUsername });
 			setNameError("Username updated");
 			setNewUsername("");
 			setAuthPassForName("");
@@ -72,7 +79,10 @@ export default function SettingsScreen({ navigation }: Props) {
 	const handlePasswordChange = async () => {
 		const isInvalidPassword = validatePassword(newPassword);
 
-		if (newPassword === "" || confirmPassword === "" || authPassForPass === "") {
+		if (newPassword === authPassForPass) {
+			setPasswordError("New password must be different from your current password");
+			return;
+		} else if (newPassword === "" || confirmPassword === "" || authPassForPass === "") {
 			setPasswordError("One or more required fields are missing");
 			return;
 		} else if (isInvalidPassword) {
@@ -107,7 +117,7 @@ export default function SettingsScreen({ navigation }: Props) {
 			<View style={styles.inner}>
 				<View style={styles.titleRow}>
 					<Text style={styles.title}>Settings</Text>
-					<HomeButton navHome={() => navigation.navigate("Home")} />
+					<BackButton onBack={() => navigation.goBack()} />
 				</View>
 			</View>
 			<View>

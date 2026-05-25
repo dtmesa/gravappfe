@@ -1,42 +1,48 @@
-import type { ExerciseSession } from "../types/exerciseSession";
+import type { ExerciseSession, ExerciseSessionDTO } from "../types/exerciseSession";
 import { api } from "./client";
 
-export async function getExerciseSession(id: number, sessionId: number, workoutId: number) {
-	const res = await api.get<ExerciseSession>(
+const mapExerciseSession = (dto: ExerciseSessionDTO): ExerciseSession => ({
+	...dto,
+	createdAt: new Date(dto.createdAt),
+});
+
+export async function getExerciseSessions(
+	sessionId: number,
+	workoutId: number,
+): Promise<ExerciseSession[]> {
+	const res = await api.get<ExerciseSessionDTO[]>(
+		`/workouts/${workoutId}/sessions/${sessionId}/exerciseSessions`,
+	);
+	return res.data.map(mapExerciseSession);
+}
+
+export async function getExerciseSession(
+	id: number,
+	sessionId: number,
+	workoutId: number,
+): Promise<ExerciseSession> {
+	const res = await api.get<ExerciseSessionDTO>(
 		`/workouts/${workoutId}/sessions/${sessionId}/exerciseSessions/${id}`,
 	);
-	return res.data;
+	return mapExerciseSession(res.data);
 }
 
 export async function createExerciseSession(
-    sessionId: number,
-    exerciseId: number,
+	sessionId: number,
+	exerciseId: number,
 	workoutId: number,
-) {
-	const res = await api.post<ExerciseSession>(
+): Promise<ExerciseSession> {
+	const res = await api.post<ExerciseSessionDTO>(
 		`/workouts/${workoutId}/sessions/${sessionId}/exerciseSessions`,
 		{ exerciseId },
 	);
-	return res.data;
+	return mapExerciseSession(res.data);
 }
 
-export async function deleteExerciseSession(id: number, sessionId: number, workoutId: number) {
-	const res = await api.delete(
-		`/workouts/${workoutId}/sessions/${sessionId}/exerciseSessions/${id}`,
-	);
-	return res.data;
-}
-
-export async function updateExerciseSession(
+export async function deleteExerciseSession(
 	id: number,
 	sessionId: number,
-    workoutId: number,
-	field: string,
-	value: unknown,
-) {
-	const res = await api.patch(
-		`/workouts/${workoutId}/sessions/${sessionId}/exerciseSessions/${id}/${field}`,
-		{ [field]: value },
-	);
-	return res.data;
+	workoutId: number,
+): Promise<void> {
+	await api.delete(`/workouts/${workoutId}/sessions/${sessionId}/exerciseSessions/${id}`);
 }

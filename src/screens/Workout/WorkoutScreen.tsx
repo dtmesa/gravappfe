@@ -9,7 +9,7 @@ import type { Exercise } from "../../types/exercise";
 import type { RootStackParamList } from "../../types/navigation";
 import type { Workout } from "../../types/workout";
 import AddButton from "../components/AddButton";
-import HomeButton from "../components/HomeButton";
+import BackButton from "../components/BackButton";
 import MoveableRow from "../components/MoveableRow";
 import { StarBackground } from "../components/StarBackground";
 import UndoButton from "../components/UndoButton";
@@ -129,7 +129,7 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 				<View style={styles.inner}>
 					<View style={styles.titleRow}>
 						<Text style={styles.title}>{workout.name}</Text>
-						<HomeButton navHome={() => navigation.navigate("Home")} />
+						<BackButton onBack={() => navigation.goBack()} />
 					</View>
 
 					<View

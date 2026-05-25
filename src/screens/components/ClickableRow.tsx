@@ -13,14 +13,24 @@ export default function MoveableRow({ val, isLast, onPress, isVisited }: Props) 
 		<View style={styles.container}>
 			<Pressable onPress={onPress}>
 				{({ pressed }) => (
-					<View style={[styles.row, 
-					isLast && styles.rowLast, 
-					isVisited && styles.rowVisited, 
-					pressed && styles.rowPressed]}>
-						<Text style={[styles.text, 
-							isVisited && styles.textVisited, 
-							pressed && styles.textPressed,
-							isVisited && pressed && styles.textPressedVisited, ]}>{val.name}</Text>
+					<View
+						style={[
+							styles.row,
+							isLast && styles.rowLast,
+							isVisited && styles.rowVisited,
+							pressed && styles.rowPressed,
+						]}
+					>
+						<Text
+							style={[
+								styles.text,
+								isVisited && styles.textVisited,
+								pressed && styles.textPressed,
+								isVisited && pressed && styles.textPressedVisited,
+							]}
+						>
+							{val.name}
+						</Text>
 					</View>
 				)}
 			</Pressable>
