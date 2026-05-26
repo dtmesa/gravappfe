@@ -107,9 +107,7 @@ export default function HomeScreen({ navigation }: Props) {
 		setPendingDelete(null);
 	};
 
-	const handleLogout = async () => {
-		await logout();
-	};
+	const handleLogout = async () => await logout();
 
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>

@@ -1,5 +1,4 @@
 import { create } from "zustand";
-
 import { login as apiLogin, register as apiRegister } from "../api/auth";
 import { deleteToken, getToken, saveToken } from "../api/token";
 

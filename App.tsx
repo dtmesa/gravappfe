@@ -1,5 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { colors } from "./src/css/color";
@@ -17,16 +18,19 @@ import type { RootStackParamList } from "./src/types/navigation";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+SplashScreen.preventAutoHideAsync();
+
 export default function App() {
 	const { isLoggedIn, checkAuth, loading } = useAuthStore();
-
 	const fontsLoaded = useAppFonts();
 
 	useEffect(() => {
 		checkAuth();
 	}, [checkAuth]);
 
-	if (!fontsLoaded || loading) return null;
+	useEffect(() => {
+		if (fontsLoaded && !loading) SplashScreen.hideAsync();
+	}, [fontsLoaded, loading]);
 
 	return (
 		<GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg.loading }}>
