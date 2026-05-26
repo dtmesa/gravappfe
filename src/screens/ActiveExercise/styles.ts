@@ -7,6 +7,10 @@ export const styles = StyleSheet.create({
 		flex: 1,
 	},
 
+	scrollContainer: {
+		paddingBottom: 40,
+	},
+
 	inner: {
 		backgroundColor: colors.bg.primary,
 		marginTop: 50,

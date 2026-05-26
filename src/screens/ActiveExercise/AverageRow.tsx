@@ -12,11 +12,21 @@ export type Averages = {
 
 export function AverageRow({ title, weight, reps, duration, distance }: Props) {
 	const rows = [
-		{ label: "Weight", value: weight, unit: "lbs" },
-		{ label: "Reps", value: reps, unit: "reps" },
-		{ label: "Duration", value: duration, unit: "min" },
-		{ label: "Distance", value: distance, unit: "mi" },
-	].filter((row): row is { label: string; value: number; unit: string } => row.value !== null);
+		{ label: "Weight", value: weight, isInteger: true, unit: "lbs", showUnit: true },
+		{ label: "Reps", value: reps, isInteger: true, unit: "reps", showUnit: false },
+		{ label: "Duration", value: duration, isInteger: false, unit: "min", showUnit: true },
+		{ label: "Distance", value: distance, isInteger: false, unit: "mi", showUnit: true },
+	].filter(
+		(
+			row,
+		): row is {
+			label: string;
+			value: number;
+			unit: string;
+			isInteger: boolean;
+			showUnit: boolean;
+		} => row.value !== null,
+	);
 
 	if (rows.length === 0) return null;
 
@@ -25,11 +35,14 @@ export function AverageRow({ title, weight, reps, duration, distance }: Props) {
 			<View style={styles.row}>
 				<Text style={styles.label}>{title}</Text>
 				<View style={styles.metrics}>
-					{rows.map(({ label, value, unit }) => (
+					{rows.map(({ isInteger, label, value, unit, showUnit }) => (
 						<View key={label} style={styles.metric}>
-							<Text style={styles.metricLabel}>{label}</Text>
+							<Text style={styles.metricLabel}>
+								{label}
+								{showUnit ? ` (${unit})` : ""}
+							</Text>
 							<Text style={styles.metricValue}>
-								{value.toFixed(1)} {unit}
+								{isInteger ? Math.round(value).toString() : value.toFixed(1)}
 							</Text>
 						</View>
 					))}
@@ -55,7 +68,7 @@ const styles = StyleSheet.create({
 	label: {
 		fontFamily: "Play_700Bold",
 		color: colors.text.muted,
-		fontSize: 13,
+		fontSize: 14,
 		marginRight: 16,
 	},
 	metrics: {
@@ -70,7 +83,7 @@ const styles = StyleSheet.create({
 	metricLabel: {
 		fontFamily: "Play_700Bold",
 		color: colors.text.muted,
-		fontSize: 11,
+		fontSize: 12,
 	},
 	metricValue: {
 		fontFamily: "Play_700Bold",

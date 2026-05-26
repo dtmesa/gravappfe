@@ -14,7 +14,7 @@ export function LeaveAlert({ visible, onConfirm, onCancel }: Props) {
 				<View style={styles.alertModal}>
 					<Text style={styles.alertTitle}>End Workout?</Text>
 					<Text style={styles.alertText}>
-						You have a workout in progress. All data will be lost if you leave without submitting.
+						You have started a workout. All data will be lost if you leave without saving.
 					</Text>
 					<View style={styles.alertButtons}>
 						<Pressable

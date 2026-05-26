@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
 		width: "100%",
 	},
 	row: {
-		paddingHorizontal: "5%",
+		paddingHorizontal: "7.5%",
 		paddingVertical: "5%",
 		backgroundColor: colors.bg.secondary,
 		borderBottomWidth: 1,
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 	},
 	rowActive: {
-		elevation: 10,
+		elevation: 8,
 		shadowColor: colors.button.accentHighlight,
 		backgroundColor: colors.bg.inputHighlight,
 	},

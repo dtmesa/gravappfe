@@ -1,17 +1,28 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Animated, ScrollView, Text, View } from "react-native";
-import { getExerciseSession } from "../../api/exerciseSession";
+import { Animated, Keyboard, ScrollView, Text, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { getExerciseSession, getPreviousSetCount } from "../../api/exerciseSession";
 import { getAllAverages, getExercise, getWeeklyAverages } from "../../api/exercises";
+import {
+	createSetSession,
+	deleteSetSession,
+	getSetSessions,
+	updateSetSession,
+} from "../../api/setSession";
 import { colors } from "../../css/color";
 import type { Exercise } from "../../types/exercise";
 import type { ExerciseSession } from "../../types/exerciseSession";
 import type { RootStackParamList } from "../../types/navigation";
+import type { SetSession } from "../../types/setSession";
 import BackButton from "../components/BackButton";
 import { StarBackground } from "../components/StarBackground";
 import TimerRow from "../components/TimerRow";
 import type { Averages } from "./AverageRow";
 import { AverageRow } from "./AverageRow";
+import PlusRow from "./PlusRow";
+import { SetRow } from "./SetRow";
+import SwipeableSetRow from "./SwipeableSetRow";
 import { styles } from "./styles";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ActiveExercise">;
@@ -21,6 +32,7 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 
 	const [exerciseSession, setExerciseSession] = useState<ExerciseSession | null>(null);
 	const [exercise, setExercise] = useState<Exercise | null>(null);
+	const [sets, setSets] = useState<SetSession[] | null>(null);
 	const [weeklyAverages, setWeeklyAverages] = useState<Averages | null>(null);
 	const [allAverages, setAllAverages] = useState<Averages | null>(null);
 	const [running, setRunning] = useState<boolean>(false);
@@ -64,6 +76,29 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 		setRunning(false);
 	};
 
+	const fetchSets = useCallback(async () => {
+		const data = await getSetSessions(exerciseSessionId, sessionId, workoutId);
+		setSets(data);
+	}, [exerciseSessionId, sessionId, workoutId]);
+
+	const handleCreateSet = async () => {
+		await createSetSession(exerciseSessionId, sessionId, workoutId);
+		await fetchSets();
+	};
+
+	const handleDeleteSet = async (id: number) => {
+		await deleteSetSession(id, exerciseSessionId, sessionId, workoutId);
+		await fetchSets();
+	};
+
+	const handleUpdateSet = async (id: number, field: string, val: string) => {
+		const parsed = parseFloat(val);
+		if (Number.isNaN(parsed)) return;
+
+		await updateSetSession(id, exerciseSessionId, sessionId, workoutId, field, parsed);
+		await fetchSets();
+	};
+
 	const fetchExercise = useCallback(
 		async (exerciseId: number) => {
 			const data = await getExercise(workoutId, exerciseId);
@@ -83,13 +118,28 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 		const load = async () => {
 			const session = await fetchExerciseSession();
 			const exercise = await fetchExercise(session.exerciseId);
-			const weekAverage = await getWeeklyAverages(workoutId, exercise.id);
-			const allAverage = await getAllAverages(workoutId, exercise.id);
+			const [weekAverage, allAverage, previousSetCount] = await Promise.all([
+				getWeeklyAverages(workoutId, exercise.id),
+				getAllAverages(workoutId, exercise.id),
+				getPreviousSetCount(exerciseSessionId, sessionId, workoutId),
+			]);
 			setWeeklyAverages(weekAverage);
 			setAllAverages(allAverage);
+
+			const existingSets = await getSetSessions(exerciseSessionId, sessionId, workoutId);
+			if (existingSets.length === 0) {
+				await Promise.all(
+					Array.from({ length: previousSetCount }, () =>
+						createSetSession(exerciseSessionId, sessionId, workoutId),
+					),
+				);
+				await fetchSets();
+			} else {
+				setSets(existingSets);
+			}
 		};
 		load();
-	}, [fetchExerciseSession, fetchExercise, workoutId]);
+	}, [fetchExerciseSession, fetchExercise, fetchSets, workoutId, sessionId, exerciseSessionId]);
 
 	useEffect(() => {
 		return () => {
@@ -97,7 +147,7 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 		};
 	}, []);
 
-	if (!exerciseSession || !exercise) {
+	if (!exerciseSession || !exercise || !sets) {
 		return (
 			<View style={styles.container}>
 				<View style={styles.inner}>
@@ -133,7 +183,15 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 					</View>
 				)}
 			</View>
-			<View style={styles.container}>
+			<KeyboardAwareScrollView
+				contentContainerStyle={styles.scrollContainer}
+				keyboardShouldPersistTaps="handled"
+				enableOnAndroid={true}
+				enableAutomaticScroll={true}
+				extraScrollHeight={60}
+				extraHeight={60}
+				onScrollBeginDrag={Keyboard.dismiss}
+			>
 				<TimerRow
 					running={running}
 					elapsed={elapsed}
@@ -142,7 +200,30 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 				/>
 				{weeklyAverages && <AverageRow title={"Weekly Avg"} {...weeklyAverages} />}
 				{allAverages && <AverageRow title={"Historical Avg"} {...allAverages} />}
-			</View>
+				{sets[0] && (
+					<SetRow
+						title="Set 1"
+						{...sets[0]}
+						onChangeWeight={(val) => handleUpdateSet(sets[0].id, "weight", val)}
+						onChangeReps={(val) => handleUpdateSet(sets[0].id, "reps", val)}
+						onChangeDuration={(val) => handleUpdateSet(sets[0].id, "duration", val)}
+						onChangeDistance={(val) => handleUpdateSet(sets[0].id, "distance", val)}
+					/>
+				)}
+				{sets.slice(1).map((set, i) => (
+					<SwipeableSetRow
+						key={set.id}
+						index={i + 2}
+						onDelete={() => handleDeleteSet(set.id)}
+						onChangeWeight={(val) => handleUpdateSet(set.id, "weight", val)}
+						onChangeReps={(val) => handleUpdateSet(set.id, "reps", val)}
+						onChangeDuration={(val) => handleUpdateSet(set.id, "duration", val)}
+						onChangeDistance={(val) => handleUpdateSet(set.id, "distance", val)}
+						{...set}
+					/>
+				))}
+				<PlusRow onPress={handleCreateSet} />
+			</KeyboardAwareScrollView>
 		</View>
 	);
 }

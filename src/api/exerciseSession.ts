@@ -46,3 +46,14 @@ export async function deleteExerciseSession(
 ): Promise<void> {
 	await api.delete(`/workouts/${workoutId}/sessions/${sessionId}/exerciseSessions/${id}`);
 }
+
+export async function getPreviousSetCount(
+	id: number,
+	sessionId: number,
+	workoutId: number,
+): Promise<number> {
+	const res = await api.get<{ count: number }>(
+		`/workouts/${workoutId}/sessions/${sessionId}/exerciseSessions/${id}/previous-set-count`,
+	);
+	return res.data.count;
+}
