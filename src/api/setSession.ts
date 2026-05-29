@@ -3,6 +3,10 @@ import { api } from "./client";
 
 const mapSetSession = (dto: SetSessionDTO): SetSession => ({
 	...dto,
+	weight: dto.weight?.toString() ?? null,
+	reps: dto.reps?.toString() ?? null,
+	duration: dto.duration?.toString() ?? null,
+	distance: dto.distance?.toString() ?? null,
 	createdAt: new Date(dto.createdAt),
 });
 
@@ -57,7 +61,7 @@ export async function updateSetSession(
 	sessionId: number,
 	workoutId: number,
 	field: string,
-	value: number,
+	value: number | null,
 ): Promise<SetSession> {
 	const res = await api.patch<SetSessionDTO>(
 		`/workouts/${workoutId}/sessions/${sessionId}/exerciseSessions/${exerciseSessionId}/setSessions/${id}/${field}`,

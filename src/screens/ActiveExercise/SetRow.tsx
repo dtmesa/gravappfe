@@ -2,19 +2,24 @@ import { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { colors } from "../../css/color";
 
-type Props = SetVars & {
+type Props = {
 	title: string;
+	weight: string | null;
+	reps: string | null;
+	duration: string | null;
+	distance: string | null;
 	onChangeWeight?: (val: string) => void;
 	onChangeReps?: (val: string) => void;
 	onChangeDuration?: (val: string) => void;
 	onChangeDistance?: (val: string) => void;
 };
 
-export type SetVars = {
-	weight: number | null;
-	reps: number | null;
-	duration: number | null;
-	distance: number | null;
+type MetricRow = {
+	metric: string;
+	value: string;
+	unit: string;
+	onChange: (val: string) => void;
+	showUnit: boolean;
 };
 
 export function SetRow({
@@ -28,53 +33,55 @@ export function SetRow({
 	onChangeDuration,
 	onChangeDistance,
 }: Props) {
-	const [focusedLabel, setFocusedLabel] = useState<string | null>(null);
+	const [focusedMetric, setFocusedMetric] = useState<string | null>(null);
 
-	const rows = [
-		{ label: "Weight", value: weight, unit: "lbs", onChange: onChangeWeight, showUnit: true },
-		{ label: "Reps", value: reps, unit: "reps", onChange: onChangeReps, showUnit: false },
-		{ label: "Duration", value: duration, unit: "min", onChange: onChangeDuration, showUnit: true },
-		{ label: "Distance", value: distance, unit: "mi", onChange: onChangeDistance, showUnit: true },
-	].filter(
-		(
-			row,
-		): row is {
-			label: string;
-			value: number;
-			unit: string;
-			onChange: (val: string) => void;
-			showUnit: boolean;
-		} => row.value !== null,
-	);
+	const metrics = [
+		{ metric: "Weight", value: weight, unit: "lbs", onChange: onChangeWeight, showUnit: true },
+		{ metric: "Reps", value: reps, unit: "reps", onChange: onChangeReps, showUnit: false },
+		{
+			metric: "Duration",
+			value: duration,
+			unit: "min",
+			onChange: onChangeDuration,
+			showUnit: true,
+		},
+		{ metric: "Distance", value: distance, unit: "mi", onChange: onChangeDistance, showUnit: true },
+	].filter((row): row is MetricRow => row.value !== null && row.onChange !== undefined);
 
-	if (rows.length === 0) return null;
+	if (metrics.length === 0) return null;
 
 	return (
 		<View style={styles.rowContainer}>
 			<View style={styles.row}>
-				<Text style={styles.label}>{title}</Text>
+				<Text style={styles.title}>{title}</Text>
+
 				<View style={styles.metrics}>
-					{rows.map(({ label, value, unit, onChange, showUnit }) => (
+					{metrics.map(({ metric, value, unit, onChange, showUnit }) => (
 						<View
-							key={label}
-							style={[styles.metric, focusedLabel === label && styles.metricFocused]}
+							key={metric}
+							style={[styles.metricContainer, focusedMetric === metric && styles.metricFocused]}
 						>
 							<Text
-								style={[styles.metricLabel, focusedLabel === label && styles.metricLabelFocused]}
+								style={[styles.metricLabel, focusedMetric === metric && styles.metricLabelFocused]}
 							>
-								{label}
+								{metric}
 								{showUnit ? ` (${unit})` : ""}
 							</Text>
-							<View style={styles.inputRow}>
-								<TextInput
-									style={styles.metricValue}
-									value={value.toString()}
-									onChangeText={onChange}
-									keyboardType="decimal-pad"
-									onFocus={() => setFocusedLabel(label)}
-									onBlur={() => setFocusedLabel(null)}
-								/>
-							</View>
+
+							<TextInput
+								style={styles.metricValue}
+								value={value}
+								onChangeText={onChange}
+								keyboardType="decimal-pad"
+								onFocus={() => {
+									setFocusedMetric(metric);
+									if (value === "0") onChange("");
+								}}
+								onBlur={() => {
+									setFocusedMetric(null);
+									if (value === "") onChange("0");
+								}}
+							/>
 						</View>
 					))}
 				</View>
@@ -84,6 +91,12 @@ export function SetRow({
 }
 
 const styles = StyleSheet.create({
+	title: {
+		fontFamily: "Play_700Bold",
+		color: colors.text.muted,
+		fontSize: 14,
+		marginRight: 16,
+	},
 	rowContainer: {
 		width: "100%",
 	},
@@ -96,24 +109,13 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 	},
-	inputRow: {
-		flexDirection: "row",
-		alignItems: "baseline",
-		gap: 4,
-	},
-	label: {
-		fontFamily: "Play_700Bold",
-		color: colors.text.muted,
-		fontSize: 14,
-		marginRight: 16,
-	},
 	metrics: {
 		flex: 1,
 		flexDirection: "row",
 		flexWrap: "wrap",
 		gap: 12,
 	},
-	metric: {
+	metricContainer: {
 		alignItems: "center",
 	},
 	metricLabel: {
@@ -125,11 +127,6 @@ const styles = StyleSheet.create({
 		fontFamily: "Play_700Bold",
 		color: colors.text.static,
 		fontSize: 20,
-	},
-	unit: {
-		fontFamily: "Play_700Bold",
-		color: colors.text.muted,
-		fontSize: 12,
 	},
 	metricLabelFocused: {
 		color: colors.text.accentLight,

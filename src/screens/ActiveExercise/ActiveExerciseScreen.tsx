@@ -91,12 +91,23 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 		await fetchSets();
 	};
 
-	const handleUpdateSet = async (id: number, field: string, val: string) => {
-		const parsed = parseFloat(val);
-		if (Number.isNaN(parsed)) return;
+	const handleUpdateSet = async (
+		id: number,
+		field: "weight" | "reps" | "duration" | "distance",
+		val: string,
+	) => {
+		setSets((prev) => prev?.map((s) => (s.id === id ? { ...s, [field]: val } : s)) ?? null);
 
-		await updateSetSession(id, exerciseSessionId, sessionId, workoutId, field, parsed);
-		await fetchSets();
+		const parsed = val === "" || val === "0" ? null : parseFloat(val);
+
+		updateSetSession(
+			id,
+			exerciseSessionId,
+			sessionId,
+			workoutId,
+			field,
+			Number.isNaN(parsed) ? null : parsed,
+		);
 	};
 
 	const fetchExercise = useCallback(
@@ -119,8 +130,8 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 			const session = await fetchExerciseSession();
 			const exercise = await fetchExercise(session.exerciseId);
 			const [weekAverage, allAverage, previousSetCount] = await Promise.all([
-				getWeeklyAverages(workoutId, exercise.id),
-				getAllAverages(workoutId, exercise.id),
+				getWeeklyAverages(workoutId, exercise.id, sessionId),
+				getAllAverages(workoutId, exercise.id, sessionId),
 				getPreviousSetCount(exerciseSessionId, sessionId, workoutId),
 			]);
 			setWeeklyAverages(weekAverage);
@@ -188,40 +199,43 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 				keyboardShouldPersistTaps="handled"
 				enableOnAndroid={true}
 				enableAutomaticScroll={true}
-				extraScrollHeight={60}
-				extraHeight={60}
+				extraScrollHeight={90}
+				extraHeight={90}
 				onScrollBeginDrag={Keyboard.dismiss}
 			>
 				<TimerRow
 					running={running}
 					elapsed={elapsed}
-					onPress={() => (running ? onStop() : onStart())}
-					onReset={() => onReset()}
+					onPress={running ? onStop : onStart}
+					onReset={onReset}
 				/>
 				{weeklyAverages && <AverageRow title={"Weekly Avg"} {...weeklyAverages} />}
 				{allAverages && <AverageRow title={"Historical Avg"} {...allAverages} />}
-				{sets[0] && (
-					<SetRow
-						title="Set 1"
-						{...sets[0]}
-						onChangeWeight={(val) => handleUpdateSet(sets[0].id, "weight", val)}
-						onChangeReps={(val) => handleUpdateSet(sets[0].id, "reps", val)}
-						onChangeDuration={(val) => handleUpdateSet(sets[0].id, "duration", val)}
-						onChangeDistance={(val) => handleUpdateSet(sets[0].id, "distance", val)}
-					/>
-				)}
-				{sets.slice(1).map((set, i) => (
-					<SwipeableSetRow
-						key={set.id}
-						index={i + 2}
-						onDelete={() => handleDeleteSet(set.id)}
-						onChangeWeight={(val) => handleUpdateSet(set.id, "weight", val)}
-						onChangeReps={(val) => handleUpdateSet(set.id, "reps", val)}
-						onChangeDuration={(val) => handleUpdateSet(set.id, "duration", val)}
-						onChangeDistance={(val) => handleUpdateSet(set.id, "distance", val)}
-						{...set}
-					/>
-				))}
+				{sets.map((set, index) => {
+					const sharedProps = {
+						weight: set.weight,
+						reps: set.reps,
+						duration: set.duration,
+						distance: set.distance,
+						onChangeWeight: (val: string) => handleUpdateSet(set.id, "weight", val),
+						onChangeReps: (val: string) => handleUpdateSet(set.id, "reps", val),
+						onChangeDuration: (val: string) => handleUpdateSet(set.id, "duration", val),
+						onChangeDistance: (val: string) => handleUpdateSet(set.id, "distance", val),
+					};
+
+					if (index === 0) {
+						return <SetRow key={set.id} {...sharedProps} title="Set 1" />;
+					}
+
+					return (
+						<SwipeableSetRow
+							key={set.id}
+							index={index + 1}
+							{...sharedProps}
+							onDelete={() => handleDeleteSet(set.id)}
+						/>
+					);
+				})}
 				<PlusRow onPress={handleCreateSet} />
 			</KeyboardAwareScrollView>
 		</View>

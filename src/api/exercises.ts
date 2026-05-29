@@ -36,9 +36,11 @@ export async function updateExercise(
 export async function getWeeklyAverages(
 	workoutId: number,
 	exerciseId: number,
+	sessionId: number,
 ): Promise<Averages | null> {
 	const res = await api.get<Averages | null>(
 		`/workouts/${workoutId}/exercises/${exerciseId}/averages`,
+		{ params: { excludeSessionId: sessionId } },
 	);
 	return res.data;
 }
@@ -46,9 +48,11 @@ export async function getWeeklyAverages(
 export async function getAllAverages(
 	workoutId: number,
 	exerciseId: number,
+	sessionId: number,
 ): Promise<Averages | null> {
 	const res = await api.get<Averages | null>(
 		`/workouts/${workoutId}/exercises/${exerciseId}/averages/all`,
+		{ params: { excludeSessionId: sessionId } },
 	);
 	return res.data;
 }

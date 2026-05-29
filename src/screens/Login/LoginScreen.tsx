@@ -75,7 +75,7 @@ export default function LoginScreen({ navigation }: Props) {
 				<UsernameInput
 					value={username}
 					onChangeText={setUsername}
-					placeholder="Username"
+					placeholder="Username "
 					keyboardType="visible-password"
 					autoCapitalize="none"
 					focused={focusedField === "username"}
@@ -87,7 +87,7 @@ export default function LoginScreen({ navigation }: Props) {
 					value={password}
 					visible={showPassword}
 					focused={focusedField === "password"}
-					placeholder="Password"
+					placeholder="Password "
 					onChangeText={setPassword}
 					onFocus={() => setFocusedField("password")}
 					onBlur={() => setFocusedField(null)}
