@@ -9,7 +9,9 @@ type Props = {
 export default function UndoButton({ name, onUndo }: Props) {
 	return (
 		<View style={styles.bar}>
-			<Text style={styles.text}>{name} deleted</Text>
+			<Text numberOfLines={1} style={styles.text}>
+				{name} deleted
+			</Text>
 
 			<Pressable onPress={onUndo}>
 				{({ pressed }) => (
@@ -28,11 +30,11 @@ const styles = StyleSheet.create({
 		right: "10%",
 		backgroundColor: colors.bg.inputHighlight,
 		padding: 16,
-		borderRadius: 10,
+		borderRadius: 18,
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",
-		borderWidth: 1,
+		borderWidth: 2,
 		borderColor: colors.border.accent,
 	},
 
@@ -40,6 +42,8 @@ const styles = StyleSheet.create({
 		fontFamily: "Play_400Regular",
 		color: colors.text.static,
 		fontSize: 16,
+		flex: 1,
+		paddingRight: 16,
 	},
 
 	buttonText: {

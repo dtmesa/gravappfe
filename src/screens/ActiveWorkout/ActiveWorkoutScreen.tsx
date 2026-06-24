@@ -15,7 +15,6 @@ import type { Workout } from "../../types/workout";
 import type { WorkoutSession } from "../../types/workoutSession";
 import BackButton from "../components/BackButton";
 import ClickableRow from "../components/ClickableRow";
-import SaveButton from "../components/SaveButton";
 import { StarBackground } from "../components/StarBackground";
 import TimerRow from "../components/TimerRow";
 import { LeaveAlert } from "./LeaveAlert";
@@ -122,45 +121,51 @@ export default function ActiveWorkoutScreen({ navigation, route }: Props) {
 	if (!workoutSession || !workout) {
 		return (
 			<View style={styles.container}>
-				<View style={styles.inner}>
-					<StarBackground />
-				</View>
+				<StarBackground />
 			</View>
 		);
 	}
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.inner}>
+			<View style={styles.headerContainer}>
 				<View style={styles.titleRow}>
-					<SaveButton onSave={() => handleSave()} />
-					<Animated.Text
-						style={[
-							styles.title,
-							{
-								textShadowColor: colors.button.accent,
-								textShadowOffset: { width: 0, height: 0 },
-								textShadowRadius,
-							},
-						]}
-					>
-						{workout.name}
-					</Animated.Text>
-					<LeaveAlert
-						visible={alertVisible}
-						onConfirm={() => {
-							handleBack();
-						}}
-						onCancel={() => setAlertVisible(false)}
-					/>
-					<BackButton
-						onBack={() => (hasStartedExercises ? setAlertVisible(true) : navigation.goBack())}
-					/>
+					<View style={styles.titleRowLeft}>
+						<BackButton
+							onBack={() => (hasStartedExercises ? setAlertVisible(true) : navigation.goBack())}
+						/>
+					</View>
+					<View style={styles.titleContainer}>
+						<Animated.Text
+							numberOfLines={1}
+							style={[
+								styles.title,
+								{
+									textShadowColor: colors.button.accent,
+									textShadowOffset: { width: 0, height: 0 },
+									textShadowRadius,
+								},
+							]}
+						>
+							{workout.name}
+						</Animated.Text>
+					</View>
+					<View style={styles.titleRowRight} />
 				</View>
+			</View>
+
+			<LeaveAlert
+				visible={alertVisible}
+				onDiscard={() => handleBack()}
+				onSave={() => handleSave()}
+				onCancel={() => setAlertVisible(false)}
+			/>
+
+			<View style={styles.innerContainer}>
 				{workout.description && (
-					<View style={styles.descrWrapper}>
+					<View style={styles.descriptionWrapper}>
 						<ScrollView nestedScrollEnabled>
-							<Text style={styles.descrText}>{workout.description}</Text>
+							<Text style={styles.descriptionText}>{workout.description}</Text>
 						</ScrollView>
 					</View>
 				)}
@@ -172,26 +177,24 @@ export default function ActiveWorkoutScreen({ navigation, route }: Props) {
 					onPress={() => (running ? stop() : start())}
 					onReset={reset}
 				/>
-
-				{exercises.length === 0 ? (
-					<>
+				<View style={styles.container}>
+					{exercises.length === 0 ? (
 						<StarBackground />
-						<Text style={styles.info}>Empty</Text>
-					</>
-				) : (
-					<FlatList
-						data={exercises}
-						keyExtractor={(item) => item.id.toString()}
-						renderItem={({ item, index }) => (
-							<ClickableRow
-								val={item}
-								isLast={index === exercises.length - 1}
-								onPress={() => handleExercisePress(item.id)}
-								isVisited={exerciseSessions.some((s) => s.exerciseId === item.id)}
-							/>
-						)}
-					/>
-				)}
+					) : (
+						<FlatList
+							data={exercises}
+							keyExtractor={(item) => item.id.toString()}
+							renderItem={({ item, index }) => (
+								<ClickableRow
+									val={item}
+									isLast={index === exercises.length - 1}
+									onPress={() => handleExercisePress(item.id)}
+									isVisited={exerciseSessions.some((s) => s.exerciseId === item.id)}
+								/>
+							)}
+						/>
+					)}
+				</View>
 			</View>
 		</View>
 	);

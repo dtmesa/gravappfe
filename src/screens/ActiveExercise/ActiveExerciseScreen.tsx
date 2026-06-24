@@ -161,35 +161,41 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 	if (!exerciseSession || !exercise || !sets) {
 		return (
 			<View style={styles.container}>
-				<View style={styles.inner}>
-					<StarBackground />
-				</View>
+				<StarBackground />
 			</View>
 		);
 	}
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.inner}>
+			<View style={styles.headerContainer}>
 				<View style={styles.titleRow}>
-					<Animated.Text
-						style={[
-							styles.title,
-							{
-								textShadowColor: colors.button.accent,
-								textShadowOffset: { width: 0, height: 0 },
-								textShadowRadius,
-							},
-						]}
-					>
-						{exercise.name}
-					</Animated.Text>
-					<BackButton onBack={() => navigation.goBack()} />
+					<View style={styles.titleRowLeft}>
+						<BackButton onBack={() => navigation.goBack()} />
+					</View>
+					<View style={styles.titleContainer}>
+						<Animated.Text
+							numberOfLines={1}
+							style={[
+								styles.title,
+								{
+									textShadowColor: colors.button.accent,
+									textShadowOffset: { width: 0, height: 0 },
+									textShadowRadius,
+								},
+							]}
+						>
+							{exercise.name}
+						</Animated.Text>
+					</View>
+					<View style={styles.titleRowRight} />
 				</View>
+			</View>
+			<View style={styles.innerContainer}>
 				{exercise.description && (
-					<View style={styles.descrWrapper}>
+					<View style={styles.descriptionWrapper}>
 						<ScrollView nestedScrollEnabled>
-							<Text style={styles.descrText}>{exercise.description}</Text>
+							<Text style={styles.descriptionText}>{exercise.description}</Text>
 						</ScrollView>
 					</View>
 				)}
@@ -210,7 +216,7 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 					onReset={onReset}
 				/>
 				{weeklyAverages && <AverageRow title={"Weekly Avg"} {...weeklyAverages} />}
-				{allAverages && <AverageRow title={"Historical Avg"} {...allAverages} />}
+				{allAverages && <AverageRow title={"Total Avg     "} {...allAverages} />}
 				{sets.map((set, index) => {
 					const sharedProps = {
 						weight: set.weight,

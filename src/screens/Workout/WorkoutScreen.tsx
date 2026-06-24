@@ -77,7 +77,7 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 	const handleCreateExercise = async () => {
 		if (!name.trim()) return;
 
-		const newExercise = await createExercise(workoutId, name);
+		const newExercise = await createExercise(workoutId, name.trim());
 		setExercises((prev) => [...prev, newExercise]);
 
 		setName("");
@@ -114,9 +114,7 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 	if (!workout) {
 		return (
 			<View style={styles.container}>
-				<View style={styles.inner}>
-					<StarBackground />
-				</View>
+				<StarBackground />
 			</View>
 		);
 	}
@@ -124,19 +122,30 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 			<View style={styles.container}>
-				<View style={styles.inner}>
+				<View style={styles.headerContainer}>
 					<View style={styles.titleRow}>
-						<Text style={styles.title}>{workout.name}</Text>
-						<BackButton onBack={() => navigation.goBack()} />
+						<View style={styles.titleRowLeft}>
+							<BackButton onBack={() => navigation.goBack()} />
+						</View>
+						<View style={styles.titleContainer}>
+							<Text numberOfLines={1} style={styles.title}>
+								{workout.name}
+							</Text>
+						</View>
+						<View style={styles.titleRowRight} />
 					</View>
-
+				</View>
+				<View style={styles.innerContainer}>
 					<View
-						style={[styles.descrWrapper, focusedField === "description" && styles.inputFocused]}
+						style={[
+							styles.descriptionWrapper,
+							focusedField === "description" && styles.inputFocused,
+						]}
 					>
 						<TextInput
 							value={description}
 							style={[
-								styles.descrInput,
+								styles.descriptionInput,
 								{ color: focusedField === "description" ? colors.text.input : colors.text.static },
 							]}
 							onChangeText={setDescription}
@@ -145,7 +154,7 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 							multiline
 						/>
 						{description.length === 0 && focusedField !== "description" && (
-							<Text style={styles.descrPlaceholder}>Add a description...</Text>
+							<Text style={styles.descriptionPlaceholder}>Add a description...</Text>
 						)}
 					</View>
 
@@ -153,7 +162,7 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 						<TextInput
 							value={name}
 							onChangeText={setName}
-							style={styles.input}
+							style={styles.inputText}
 							keyboardType="visible-password"
 							onSubmitEditing={handleCreateExercise}
 							onFocus={() => setFocusedField("name")}
@@ -165,7 +174,7 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 
 						<AddButton
 							onAdd={handleCreateExercise}
-							color={focusedField === "name" ? colors.button.accent : colors.button.primary}
+							color={focusedField === "name" ? colors.button.accent : colors.button.muted}
 						/>
 
 						{name.length === 0 && focusedField !== "name" && (
@@ -175,10 +184,7 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 				</View>
 				<View style={styles.container}>
 					{exercises.length === 0 ? (
-						<>
-							<StarBackground />
-							<Text style={styles.info}>Empty</Text>
-						</>
+						<StarBackground />
 					) : (
 						<DraggableFlatList
 							data={exercises}
@@ -197,12 +203,11 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 									),
 								);
 							}}
-							renderItem={({ item, drag, isActive, getIndex }) => (
+							renderItem={({ item, drag, isActive }) => (
 								<MoveableRow
 									val={item}
 									drag={drag}
 									isActive={isActive}
-									isLast={getIndex() === exercises.length - 1}
 									onDelete={() => handleDelete(item.id)}
 									onPress={() =>
 										navigation.navigate("Exercise", { workoutId, exerciseId: item.id })

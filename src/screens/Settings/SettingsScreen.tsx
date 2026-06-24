@@ -114,94 +114,94 @@ export default function SettingsScreen({ navigation }: Props) {
 			extraHeight={140}
 		>
 			<StarBackground />
-			<View style={styles.inner}>
+			<View style={styles.headerContainer}>
 				<View style={styles.titleRow}>
+					<View style={styles.titleRowLeft}>
+						<BackButton onBack={() => navigation.goBack()} />
+					</View>
 					<Text style={styles.title}>Settings</Text>
-					<BackButton onBack={() => navigation.goBack()} />
+					<View style={styles.titleRowRight} />
 				</View>
 			</View>
 			<View>
-				<View>
-					<SettingsCard
-						title="Change Username"
-						expanded={expandedCard === "username"}
-						onToggle={() => toggle("username")}
-					>
-						<SettingsInput
-							placeholder="New username"
-							value={newUsername}
-							onChangeText={setNewUsername}
-						/>
-						<SettingsInput
-							placeholder="Current password"
-							value={authPassForName}
-							onChangeText={setAuthPassForName}
-							secureTextEntry
-							showToggle={true}
-						/>
-						{nameError ? (
-							<Text
-								style={[
-									styles.statusText,
-									nameError === "Username updated" ? styles.success : styles.error,
-								]}
-							>
-								{nameError}
-							</Text>
-						) : null}
-						<Pressable
-							style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-							onPress={handleUsernameChange}
+				<SettingsCard
+					title="Change Username"
+					expanded={expandedCard === "username"}
+					onToggle={() => toggle("username")}
+				>
+					<SettingsInput
+						placeholder="New username"
+						value={newUsername}
+						onChangeText={setNewUsername}
+					/>
+					<SettingsInput
+						placeholder="Current password"
+						value={authPassForName}
+						onChangeText={setAuthPassForName}
+						secureTextEntry
+						showToggle={true}
+					/>
+					{nameError ? (
+						<Text
+							style={[
+								styles.statusText,
+								nameError === "Username updated" ? styles.success : styles.error,
+							]}
 						>
-							<Text style={styles.buttonText}>Update</Text>
-						</Pressable>
-					</SettingsCard>
+							{nameError}
+						</Text>
+					) : null}
+					<Pressable
+						style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+						onPress={handleUsernameChange}
+					>
+						<Text style={styles.buttonText}>Update</Text>
+					</Pressable>
+				</SettingsCard>
 
-					<SettingsCard
-						title="Change Password"
-						expanded={expandedCard === "password"}
-						onToggle={() => toggle("password")}
-						isLast={true}
-					>
-						<SettingsInput
-							placeholder="Current password"
-							value={authPassForPass}
-							onChangeText={setAuthPassForPass}
-							secureTextEntry
-							showToggle={true}
-						/>
-						<SettingsInput
-							placeholder="New password"
-							value={newPassword}
-							onChangeText={setNewPassword}
-							secureTextEntry
-							showToggle={true}
-						/>
-						<SettingsInput
-							placeholder="Confirm new password"
-							value={confirmPassword}
-							onChangeText={setConfirmPassword}
-							secureTextEntry
-							showToggle={true}
-						/>
-						{passwordError ? (
-							<Text
-								style={[
-									styles.statusText,
-									passwordError === "Password updated" ? styles.success : styles.error,
-								]}
-							>
-								{passwordError}
-							</Text>
-						) : null}
-						<Pressable
-							style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-							onPress={handlePasswordChange}
+				<SettingsCard
+					title="Change Password"
+					expanded={expandedCard === "password"}
+					onToggle={() => toggle("password")}
+				>
+					<SettingsInput
+						placeholder="Current password"
+						value={authPassForPass}
+						onChangeText={setAuthPassForPass}
+						secureTextEntry
+						showToggle={true}
+					/>
+					<SettingsInput
+						placeholder="New password"
+						value={newPassword}
+						onChangeText={setNewPassword}
+						secureTextEntry
+						showToggle={true}
+					/>
+					<SettingsInput
+						placeholder="Confirm new password"
+						value={confirmPassword}
+						onChangeText={setConfirmPassword}
+						secureTextEntry
+						showToggle={true}
+					/>
+					{passwordError ? (
+						<Text
+							style={[
+								styles.statusText,
+								passwordError === "Password updated" ? styles.success : styles.error,
+							]}
 						>
-							<Text style={styles.buttonText}>Update</Text>
-						</Pressable>
-					</SettingsCard>
-				</View>
+							{passwordError}
+						</Text>
+					) : null}
+					<Pressable
+						style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+						onPress={handlePasswordChange}
+					>
+						<Text style={styles.buttonText}>Update</Text>
+					</Pressable>
+				</SettingsCard>
 			</View>
 		</KeyboardAwareScrollView>
 	);

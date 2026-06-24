@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
-import { colors } from "../../css/color";
+import { Text, TextInput, View } from "react-native";
+import { styles } from "./styles";
 
 type Props = {
 	title: string;
@@ -51,25 +51,31 @@ export function SetRow({
 	if (metrics.length === 0) return null;
 
 	return (
-		<View style={styles.rowContainer}>
-			<View style={styles.row}>
-				<Text style={styles.title}>{title}</Text>
+		<View style={styles.setRowContainer}>
+			<View style={styles.setRow}>
+				<Text style={styles.setTitle}>{title}</Text>
 
-				<View style={styles.metrics}>
+				<View style={styles.setMetrics}>
 					{metrics.map(({ metric, value, unit, onChange, showUnit }) => (
 						<View
 							key={metric}
-							style={[styles.metricContainer, focusedMetric === metric && styles.metricFocused]}
+							style={[
+								styles.setMetricContainer,
+								focusedMetric === metric && styles.setMetricFocused,
+							]}
 						>
 							<Text
-								style={[styles.metricLabel, focusedMetric === metric && styles.metricLabelFocused]}
+								style={[
+									styles.setMetricLabel,
+									focusedMetric === metric && styles.setMetricLabelFocused,
+								]}
 							>
 								{metric}
 								{showUnit ? ` (${unit})` : ""}
 							</Text>
 
 							<TextInput
-								style={styles.metricValue}
+								style={styles.setMetricValue}
 								value={value}
 								onChangeText={onChange}
 								keyboardType="decimal-pad"
@@ -79,7 +85,18 @@ export function SetRow({
 								}}
 								onBlur={() => {
 									setFocusedMetric(null);
-									if (value === "") onChange("0");
+
+									let cleaned = value;
+
+									if (metric === "Reps") {
+										cleaned = cleaned.replace(/[^0-9]/g, "");
+									} else {
+										cleaned = cleaned.replace(/[^0-9.]/g, "").replace(/(\..*)\./g, "$1");
+									}
+
+									if (cleaned === "") cleaned = "0";
+
+									onChange(cleaned);
 								}}
 							/>
 						</View>
@@ -89,51 +106,3 @@ export function SetRow({
 		</View>
 	);
 }
-
-const styles = StyleSheet.create({
-	title: {
-		fontFamily: "Play_700Bold",
-		color: colors.text.muted,
-		fontSize: 14,
-		marginRight: 16,
-	},
-	rowContainer: {
-		width: "100%",
-	},
-	row: {
-		paddingHorizontal: "5%",
-		paddingVertical: "3%",
-		backgroundColor: colors.bg.secondary,
-		borderBottomWidth: 1,
-		borderBottomColor: colors.border.secondary,
-		flexDirection: "row",
-		alignItems: "center",
-	},
-	metrics: {
-		flex: 1,
-		flexDirection: "row",
-		flexWrap: "wrap",
-		gap: 12,
-	},
-	metricContainer: {
-		alignItems: "center",
-	},
-	metricLabel: {
-		fontFamily: "Play_700Bold",
-		color: colors.text.muted,
-		fontSize: 12,
-	},
-	metricValue: {
-		fontFamily: "Play_700Bold",
-		color: colors.text.static,
-		fontSize: 20,
-	},
-	metricLabelFocused: {
-		color: colors.text.accentLight,
-	},
-	metricFocused: {
-		backgroundColor: colors.bg.inputHighlight,
-		borderRadius: 6,
-		paddingHorizontal: 6,
-	},
-});

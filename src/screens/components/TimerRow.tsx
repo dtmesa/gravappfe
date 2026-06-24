@@ -41,13 +41,11 @@ export default function TimerRow({ running, elapsed, onPress, onReset }: Props) 
 								<RotateCcw
 									size={32}
 									color={
-										pressed
-											? colors.button.accentLight
-											: resetPressed
-												? colors.button.accentHighlight
-												: running
-													? colors.button.accent
-													: colors.button.muted
+										resetPressed
+											? colors.button.accentHighlight
+											: running
+												? colors.button.accent
+												: colors.button.muted
 									}
 									strokeWidth={1.75}
 								/>
@@ -63,19 +61,24 @@ export default function TimerRow({ running, elapsed, onPress, onReset }: Props) 
 const styles = StyleSheet.create({
 	rowContainer: {
 		width: "100%",
+		paddingHorizontal: "4%",
+		marginBottom: 10,
 	},
 	row: {
 		paddingHorizontal: "7.5%",
-		paddingVertical: "5%",
-		backgroundColor: colors.bg.secondary,
-		borderBottomWidth: 1,
-		borderBottomColor: colors.border.secondary,
+		paddingVertical: "4.5%",
+		backgroundColor: colors.bg.input,
+		borderBottomColor: colors.border.transparent,
 		alignItems: "center",
 		flexDirection: "row",
+		borderRadius: 18,
 	},
 	rowActive: {
+		backgroundColor: colors.bg.inputHighlight,
+	},
+	rowPressed: {
 		elevation: 8,
-		shadowColor: colors.button.accentHighlight,
+		shadowColor: colors.shadow.primary,
 		backgroundColor: colors.bg.inputHighlight,
 	},
 	text: {
@@ -89,11 +92,6 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
-	},
-	rowPressed: {
-		elevation: 20,
-		shadowColor: colors.button.accentHighlight,
-		backgroundColor: colors.bg.inputHighlight,
 	},
 	textPressed: {
 		color: colors.text.accentHighlight,

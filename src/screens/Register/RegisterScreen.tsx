@@ -55,7 +55,7 @@ export default function RegisterScreen({ navigation }: Props) {
 			extraHeight={20}
 		>
 			<StarBackground />
-			<View style={styles.inner}>
+			<View style={styles.innerContainer}>
 				<Text style={styles.title}>Register</Text>
 				<UsernameInput
 					value={username}

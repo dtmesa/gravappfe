@@ -70,7 +70,7 @@ export default function LoginScreen({ navigation }: Props) {
 			extraHeight={20}
 		>
 			<StarBackground />
-			<View style={styles.inner}>
+			<View style={styles.innerContainer}>
 				<Animated.Text style={[styles.title, { letterSpacing }]}>Gravity</Animated.Text>
 				<UsernameInput
 					value={username}

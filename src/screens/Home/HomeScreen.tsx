@@ -1,24 +1,22 @@
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
 import { createWorkoutSession } from "../../api/workoutSession";
 import { createWorkout, deleteWorkout, getWorkouts, updateWorkout } from "../../api/workouts";
 import { colors } from "../../css/color";
-import { useAuthStore } from "../../store/auth.store";
 import type { RootStackParamList } from "../../types/navigation";
 import type { Workout } from "../../types/workout";
 import AddButton from "../components/AddButton";
-import { HeaderMenu } from "../components/HeaderMenu";
 import MoveableRow from "../components/MoveableRow";
 import { StarBackground } from "../components/StarBackground";
 import UndoButton from "../components/UndoButton";
+import { HeaderMenu } from "./HeaderMenu";
 import { styles } from "./styles";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Home">;
-
-export default function HomeScreen({ navigation }: Props) {
-	const logout = useAuthStore((state) => state.logout);
+export default function HomeScreen() {
+	const rootNav = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
 	const [workouts, setWorkouts] = useState<Workout[]>([]);
 	const [name, setName] = useState("");
@@ -45,7 +43,7 @@ export default function HomeScreen({ navigation }: Props) {
 	const handleCreateWorkout = async () => {
 		if (!name.trim()) return;
 
-		const newWorkout = await createWorkout(name);
+		const newWorkout = await createWorkout(name.trim());
 		setWorkouts((prev) => [newWorkout, ...prev]);
 
 		setName("");
@@ -55,7 +53,7 @@ export default function HomeScreen({ navigation }: Props) {
 
 	const handleStartWorkout = async (workoutId: number) => {
 		const session = await createWorkoutSession(workoutId);
-		navigation.navigate("ActiveWorkout", { workoutId, sessionId: session.id });
+		rootNav.navigate("ActiveWorkout", { workoutId, sessionId: session.id });
 	};
 
 	const handleDelete = async (id: number) => {
@@ -107,16 +105,19 @@ export default function HomeScreen({ navigation }: Props) {
 		setPendingDelete(null);
 	};
 
-	const handleLogout = async () => await logout();
-
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 			<View style={styles.container}>
-				<View style={styles.inner}>
+				<View style={styles.headerContainer}>
 					<View style={styles.titleRow}>
+						<View style={styles.titleRowLeft} />
 						<Text style={styles.title}>Workouts</Text>
-						<HeaderMenu onSettings={() => navigation.navigate("Settings")} logout={handleLogout} />
+						<View style={styles.titleRowRight}>
+							<HeaderMenu />
+						</View>
 					</View>
+				</View>
+				<View style={styles.inputContainer}>
 					<View style={[styles.inputWrapper, focusedField === "name" && styles.inputFocused]}>
 						<TextInput
 							value={name}
@@ -133,22 +134,20 @@ export default function HomeScreen({ navigation }: Props) {
 
 						<AddButton
 							onAdd={handleCreateWorkout}
-							color={focusedField === "name" ? colors.button.accent : colors.button.primary}
+							color={focusedField === "name" ? colors.button.accent : colors.button.muted}
 						/>
 
 						{name.length === 0 && focusedField !== "name" && (
-							<Text style={styles.fakePlaceholder}>Create a workout...</Text>
+							<Text style={styles.placeholderText}>Create a workout...</Text>
 						)}
 					</View>
 				</View>
 				<View style={styles.container}>
 					{workouts.length === 0 ? (
-						<>
-							<StarBackground />
-							<Text style={styles.info}>Empty</Text>
-						</>
+						<StarBackground />
 					) : (
 						<DraggableFlatList
+							contentContainerStyle={styles.flatListBuffer}
 							data={workouts}
 							keyExtractor={(item) => item.id.toString()}
 							onDragEnd={async ({ data }) => {
@@ -163,14 +162,13 @@ export default function HomeScreen({ navigation }: Props) {
 									updatedOrder.map((item) => updateWorkout(item.id, "order", item.order)),
 								);
 							}}
-							renderItem={({ item, drag, isActive, getIndex }) => (
+							renderItem={({ item, drag, isActive }) => (
 								<MoveableRow
 									val={item}
 									drag={drag}
 									isActive={isActive}
-									isLast={getIndex() === workouts.length - 1}
 									onDelete={() => handleDelete(item.id)}
-									onGear={() => navigation.navigate("Workout", { workoutId: item.id })}
+									onEdit={() => rootNav.navigate("Workout", { workoutId: item.id })}
 									onPress={() => handleStartWorkout(item.id)}
 								/>
 							)}

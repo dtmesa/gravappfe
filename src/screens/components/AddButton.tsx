@@ -7,12 +7,12 @@ type Props = {
 	color?: string;
 };
 
-export default function AddButton({ onAdd, color = colors.button.primary }: Props) {
+export default function AddButton({ onAdd, color = colors.button.muted }: Props) {
 	return (
 		<Pressable onPress={onAdd} hitSlop={12}>
 			{({ pressed }) => (
 				<Plus
-					size={26}
+					size={27}
 					color={pressed ? colors.button.accentHighlight : color}
 					strokeWidth={1.75}
 				/>

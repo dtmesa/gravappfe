@@ -1,4 +1,4 @@
-import { Settings } from "lucide-react-native";
+import { EllipsisVertical } from "lucide-react-native";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
@@ -8,24 +8,15 @@ type Props = {
 	val: { id: number; name: string };
 	drag: () => void;
 	isActive: boolean;
-	isLast: boolean;
 	onDelete: () => void;
 	onPress: () => void;
-	onGear?: () => void;
+	onEdit?: () => void;
 };
 
 const OPACITY_ACTIVE = 0.9;
 const OPACITY = 1;
 
-export default function MoveableRow({
-	val,
-	drag,
-	isActive,
-	isLast,
-	onDelete,
-	onPress,
-	onGear,
-}: Props) {
+export default function MoveableRow({ val, drag, isActive, onDelete, onPress, onEdit }: Props) {
 	const translateX = useSharedValue(0);
 
 	const panGesture = Gesture.Pan()
@@ -57,20 +48,23 @@ export default function MoveableRow({
 							style={[
 								styles.row,
 								isActive && styles.rowActive,
-								isLast && styles.rowLast,
 								pressed && !isActive && styles.rowPressed,
 								animatedStyle,
 							]}
 						>
 							<View style={styles.textWrapper}>
-								<Text style={[styles.text, pressed && !isActive && styles.textPressed]}>
+								<Text
+									numberOfLines={1}
+									ellipsizeMode="tail"
+									style={[styles.text, pressed && !isActive && styles.textPressed]}
+								>
 									{val.name}
 								</Text>
 							</View>
-							{onGear && (
-								<Pressable onPress={onGear} hitSlop={12}>
+							{onEdit && (
+								<Pressable onPress={onEdit} hitSlop={12}>
 									{({ pressed }) => (
-										<Settings
+										<EllipsisVertical
 											size={26}
 											color={pressed ? colors.button.accentLight : colors.button.muted}
 											strokeWidth={1.75}
@@ -89,24 +83,28 @@ export default function MoveableRow({
 const styles = StyleSheet.create({
 	container: {
 		width: "100%",
+		paddingHorizontal: "4%",
+		marginBottom: 10,
 	},
 	row: {
 		paddingHorizontal: "7%",
 		paddingVertical: "7%",
-		backgroundColor: colors.bg.secondary,
-		borderBottomWidth: 1,
-		borderBottomColor: colors.border.secondary,
+		backgroundColor: colors.bg.input,
+		borderBottomColor: colors.border.transparent,
 		alignItems: "center",
 		flexDirection: "row",
+		borderRadius: 18,
+		overflow: "hidden",
 	},
 	rowActive: {
 		elevation: 8,
-		shadowColor: colors.button.accentHighlight,
+		shadowColor: colors.shadow.primary,
 		backgroundColor: colors.bg.inputHighlight,
-		borderBottomWidth: 0,
 	},
-	rowLast: {
-		borderBottomWidth: 0,
+	rowPressed: {
+		backgroundColor: colors.bg.inputHighlight,
+		elevation: 8,
+		shadowColor: colors.shadow.primary,
 	},
 	text: {
 		fontFamily: "Play_700Bold",
@@ -117,9 +115,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: "row",
 		alignItems: "center",
-	},
-	rowPressed: {
-		backgroundColor: colors.bg.inputHighlight,
 	},
 	textPressed: {
 		color: colors.text.accent,

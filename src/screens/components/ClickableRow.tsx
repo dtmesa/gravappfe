@@ -22,6 +22,8 @@ export default function MoveableRow({ val, isLast, onPress, isVisited }: Props) 
 						]}
 					>
 						<Text
+							numberOfLines={1}
+							ellipsizeMode="tail"
 							style={[
 								styles.text,
 								isVisited && styles.textVisited,
@@ -41,21 +43,25 @@ export default function MoveableRow({ val, isLast, onPress, isVisited }: Props) 
 const styles = StyleSheet.create({
 	container: {
 		width: "100%",
+		paddingHorizontal: "4%",
+		marginBottom: 10,
 	},
 	row: {
 		paddingHorizontal: "7%",
 		paddingVertical: "7%",
-		backgroundColor: colors.bg.secondary,
-		borderBottomWidth: 1,
-		borderBottomColor: colors.border.secondary,
+		backgroundColor: colors.bg.input,
+		borderBottomColor: colors.border.transparent,
 		alignItems: "center",
 		flexDirection: "row",
+		borderRadius: 18,
 	},
 	rowLast: {
 		borderBottomWidth: 0,
 	},
 	rowPressed: {
 		backgroundColor: colors.bg.inputHighlight,
+		elevation: 8,
+		shadowColor: colors.shadow.primary,
 	},
 	rowVisited: {
 		backgroundColor: colors.bg.input,

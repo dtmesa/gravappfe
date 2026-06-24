@@ -29,7 +29,7 @@ export default function UsernameInput({
 				{...props}
 			/>
 
-			{value.length === 0 && !focused && <Text style={styles.placeholder}>{placeholder}</Text>}
+			{value.length === 0 && !focused && <Text style={styles.placeholderText}>{placeholder}</Text>}
 		</View>
 	);
 }

@@ -1,38 +1,70 @@
+import { Check, Trash, X } from "lucide-react-native";
 import { Modal, Pressable, Text, View } from "react-native";
+import { colors } from "../../css/color";
 import { styles } from "./styles";
 
 type Props = {
 	visible: boolean;
-	onConfirm: () => void;
+	onDiscard: () => void;
 	onCancel: () => void;
+	onSave: () => void;
 };
 
-export function LeaveAlert({ visible, onConfirm, onCancel }: Props) {
+type ButtonProps = {
+	onAction: () => void;
+	color?: string;
+};
+
+function TrashButton({ onAction, color = colors.button.muted }: ButtonProps) {
+	return (
+		<Pressable onPress={onAction} hitSlop={12}>
+			{({ pressed }) => (
+				<Trash
+					size={36}
+					color={pressed ? colors.button.accentHighlight : color}
+					strokeWidth={1.75}
+				/>
+			)}
+		</Pressable>
+	);
+}
+
+function CancelButton({ onAction, color = colors.button.muted }: ButtonProps) {
+	return (
+		<Pressable onPress={onAction} hitSlop={12}>
+			{({ pressed }) => (
+				<X size={40} color={pressed ? colors.button.accentHighlight : color} strokeWidth={1.75} />
+			)}
+		</Pressable>
+	);
+}
+
+function ConfirmButton({ onAction, color = colors.button.muted }: ButtonProps) {
+	return (
+		<Pressable onPress={onAction} hitSlop={8}>
+			{({ pressed }) => (
+				<Check
+					size={40}
+					color={pressed ? colors.button.accentHighlight : color}
+					strokeWidth={1.75}
+				/>
+			)}
+		</Pressable>
+	);
+}
+
+export function LeaveAlert({ visible, onSave, onDiscard, onCancel }: Props) {
 	return (
 		<Modal transparent visible={visible} animationType="fade">
 			<View style={styles.alertBackground}>
 				<View style={styles.alertModal}>
 					<Text style={styles.alertTitle}>End Workout?</Text>
-					<Text style={styles.alertText}>
-						You have started a workout. All data will be lost if you leave without saving.
-					</Text>
 					<View style={styles.alertButtons}>
-						<Pressable
-							style={({ pressed }) => [styles.alertCancel, pressed && styles.alertCancelPressed]}
-							onPress={onCancel}
-						>
-							{({ pressed }) => (
-								<Text style={[styles.alertCancelText, pressed && styles.alertCancelTextPressed]}>
-									Cancel
-								</Text>
-							)}
-						</Pressable>
-						<Pressable
-							style={({ pressed }) => [styles.alertConfirm, pressed && styles.alertConfirmPressed]}
-							onPress={onConfirm}
-						>
-							<Text style={styles.alertConfirmText}>Leave</Text>
-						</Pressable>
+						<ConfirmButton onAction={onSave} />
+
+						<TrashButton onAction={onDiscard} />
+
+						<CancelButton onAction={onCancel} />
 					</View>
 				</View>
 			</View>

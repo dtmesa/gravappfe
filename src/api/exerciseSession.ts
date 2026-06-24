@@ -6,16 +6,6 @@ const mapExerciseSession = (dto: ExerciseSessionDTO): ExerciseSession => ({
 	createdAt: new Date(dto.createdAt),
 });
 
-export async function getExerciseSessions(
-	sessionId: number,
-	workoutId: number,
-): Promise<ExerciseSession[]> {
-	const res = await api.get<ExerciseSessionDTO[]>(
-		`/workouts/${workoutId}/sessions/${sessionId}/exerciseSessions`,
-	);
-	return res.data.map(mapExerciseSession);
-}
-
 export async function getExerciseSession(
 	id: number,
 	sessionId: number,

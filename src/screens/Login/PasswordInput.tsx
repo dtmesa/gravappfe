@@ -38,7 +38,7 @@ export default function PasswordInput({
 				{...props}
 			/>
 
-			{value.length === 0 && !focused && <Text style={styles.placeholder}>{placeholder}</Text>}
+			{value.length === 0 && !focused && <Text style={styles.placeholderText}>{placeholder}</Text>}
 
 			<PasswordToggleButton visible={visible} onToggle={onToggleVisibility} />
 		</View>

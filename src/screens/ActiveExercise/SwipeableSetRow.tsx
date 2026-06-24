@@ -1,9 +1,13 @@
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
-import { SetRow, type SetVars } from "./SetRow";
+import { SetRow } from "./SetRow";
 
-type Props = SetVars & {
+type Props = {
 	index: number;
+	weight: string | null;
+	reps: string | null;
+	duration: string | null;
+	distance: string | null;
 	onDelete: () => void;
 	onChangeWeight?: (val: string) => void;
 	onChangeReps?: (val: string) => void;
@@ -11,7 +15,18 @@ type Props = SetVars & {
 	onChangeDistance?: (val: string) => void;
 };
 
-export default function SwipeableSetRow({ index, onDelete, ...setProps }: Props) {
+export default function SwipeableSetRow({
+	index,
+	onDelete,
+	weight,
+	reps,
+	duration,
+	distance,
+	onChangeWeight,
+	onChangeReps,
+	onChangeDuration,
+	onChangeDistance,
+}: Props) {
 	const translateX = useSharedValue(0);
 
 	const panGesture = Gesture.Pan()
@@ -36,7 +51,17 @@ export default function SwipeableSetRow({ index, onDelete, ...setProps }: Props)
 	return (
 		<GestureDetector gesture={panGesture}>
 			<Animated.View style={animatedStyle}>
-				<SetRow title={`Set ${index}`} {...setProps} />
+				<SetRow
+					title={`Set ${index}`}
+					weight={weight}
+					reps={reps}
+					duration={duration}
+					distance={distance}
+					onChangeWeight={onChangeWeight}
+					onChangeReps={onChangeReps}
+					onChangeDuration={onChangeDuration}
+					onChangeDistance={onChangeDistance}
+				/>
 			</Animated.View>
 		</GestureDetector>
 	);

@@ -8,7 +8,8 @@ import { useAppFonts } from "./src/css/fonts";
 import ActiveExerciseScreen from "./src/screens/ActiveExercise/ActiveExerciseScreen";
 import ActiveWorkoutScreen from "./src/screens/ActiveWorkout/ActiveWorkoutScreen";
 import ExerciseScreen from "./src/screens/Exercise/ExerciseScreen";
-import HomeScreen from "./src/screens/Home/HomeScreen";
+import HistoryScreen from "./src/screens/History/HistoryScreen";
+import HomeDrawer from "./src/screens/Home/HomeDrawer";
 import LoginScreen from "./src/screens/Login/LoginScreen";
 import RegisterScreen from "./src/screens/Register/RegisterScreen";
 import SettingsScreen from "./src/screens/Settings/SettingsScreen";
@@ -33,12 +34,13 @@ export default function App() {
 	}, [fontsLoaded, loading]);
 
 	return (
-		<GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg.loading }}>
+		<GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg.primary }}>
 			<NavigationContainer>
 				<Stack.Navigator screenOptions={{ headerShown: false }}>
 					{isLoggedIn ? (
 						<>
-							<Stack.Screen name="Home" component={HomeScreen} />
+							<Stack.Screen name="Home" component={HomeDrawer} />
+							<Stack.Screen name="History" component={HistoryScreen} />
 							<Stack.Screen name="Settings" component={SettingsScreen} />
 							<Stack.Screen name="Workout" component={WorkoutScreen} />
 							<Stack.Screen name="Exercise" component={ExerciseScreen} />

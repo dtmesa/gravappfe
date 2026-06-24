@@ -69,10 +69,7 @@ export default function ExerciseScreen({ navigation, route }: Props) {
 	if (!exercise) {
 		return (
 			<View style={styles.container}>
-				<View style={styles.inner}>
-					<StarBackground />
-					<Text style={styles.title}>404</Text>
-				</View>
+				<StarBackground />
 			</View>
 		);
 	}
@@ -80,19 +77,30 @@ export default function ExerciseScreen({ navigation, route }: Props) {
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 			<View style={styles.container}>
-				<View style={styles.inner}>
+				<View style={styles.headerContainer}>
 					<View style={styles.titleRow}>
-						<Text style={styles.title}>{exercise.name}</Text>
-						<BackButton onBack={() => navigation.goBack()} />
+						<View style={styles.titleRowLeft}>
+							<BackButton onBack={() => navigation.goBack()} />
+						</View>
+						<View style={styles.titleContainer}>
+							<Text numberOfLines={1} style={styles.title}>
+								{exercise.name}
+							</Text>
+						</View>
+						<View style={styles.titleRowRight} />
 					</View>
-
+				</View>
+				<View style={styles.innerContainer}>
 					<View
-						style={[styles.descrWrapper, focusedField === "description" && styles.descrFocused]}
+						style={[
+							styles.descriptionWrapper,
+							focusedField === "description" && styles.descriptionFocused,
+						]}
 					>
 						<TextInput
 							value={description}
 							style={[
-								styles.descrInput,
+								styles.descriptionText,
 								{ color: focusedField === "description" ? colors.text.input : colors.text.static },
 							]}
 							onChangeText={setDescription}
@@ -101,7 +109,7 @@ export default function ExerciseScreen({ navigation, route }: Props) {
 							multiline
 						/>
 						{description.length === 0 && focusedField !== "description" && (
-							<Text style={styles.descrPlaceholder}>Add a description...</Text>
+							<Text style={styles.descriptionPlaceholderText}>Add a description...</Text>
 						)}
 					</View>
 					<View style={styles.checksWrapper}>

@@ -1,16 +1,14 @@
 export const colors = {
 	bg: {
 		primary: "#000000",
-		secondary: "#141414",
-		input: "#1C1C1C",
-		inputHighlight: "#2b2238",
-		darken: "rgba(0,0,0,0.7)",
-		loading: "#000000",
+		input: "#171526",
+		inputHighlight: "#2B274D",
+		darken: "rgba(0,0,0,0.8)",
+		transparent: "transparent",
 	},
 
 	button: {
-		primary: "#333D4D",
-		muted: "#5B6775",
+		muted: "#46427A",
 		accentDark: "#6d28d9",
 		accent: "#7c3aed",
 		accentLight: "#8b5cf6",
@@ -18,20 +16,24 @@ export const colors = {
 	},
 
 	border: {
-		primary: "#333D4D",
-		secondary: "#2F2F2F",
-		secondaryActive: "#202020",
+		primary: "#2A2433",
+		primaryActive: "#2A2433",
 		accent: "#7c3aed",
+		transparent: "transparent",
 	},
 
 	star: {
 		primary: "#ffffff",
 	},
 
+	shadow: {
+		primary: "#9a6bff",
+	},
+
 	text: {
-		input: "#E4E4E4",
-		static: "#B9B9B9",
-		muted: "#5B6775",
+		input: "#CFCFCF",
+		static: "#9A98AD",
+		muted: "#6D68B0",
 		contrast: "#000000",
 		accentDark: "#6d28d9",
 		accent: "#7c3aed",

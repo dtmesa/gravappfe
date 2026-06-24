@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
 		justifyContent: "center",
 		backgroundColor: colors.bg.primary,
 	},
-	inner: {
+	innerContainer: {
 		backgroundColor: colors.bg.primary,
 		paddingLeft: 30,
 		paddingRight: 30,
@@ -24,7 +24,7 @@ export const styles = StyleSheet.create({
 	button: {
 		backgroundColor: colors.button.accent,
 		padding: 10,
-		borderRadius: 12,
+		borderRadius: 18,
 		marginTop: 12,
 		marginRight: 75,
 		marginLeft: 75,
@@ -32,7 +32,7 @@ export const styles = StyleSheet.create({
 	buttonPressed: {
 		backgroundColor: colors.button.accentHighlight,
 		elevation: 8,
-		shadowColor: colors.button.accentHighlight,
+		shadowColor: colors.shadow.primary,
 	},
 	buttonText: {
 		fontFamily: "Play_400Regular",
@@ -41,8 +41,7 @@ export const styles = StyleSheet.create({
 		textAlign: "center",
 	},
 	inputFocused: {
-		borderColor: colors.border.accent,
-		borderWidth: 2,
+		borderColor: colors.border.transparent,
 		backgroundColor: colors.bg.inputHighlight,
 	},
 	input: {
@@ -55,14 +54,13 @@ export const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		backgroundColor: colors.bg.input,
-		borderRadius: 12,
+		borderRadius: 18,
 		paddingHorizontal: 16,
 		height: 50,
-		borderWidth: 1,
-		borderColor: colors.border.primary,
+		borderColor: colors.border.transparent,
 		marginBottom: 10,
 	},
-	placeholder: {
+	placeholderText: {
 		fontFamily: "Play_400Regular",
 		position: "absolute",
 		left: 18,

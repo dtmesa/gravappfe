@@ -9,11 +9,10 @@ type Props = {
 	title: string;
 	expanded: boolean;
 	onToggle: () => void;
-	isLast?: boolean;
 	children: React.ReactNode;
 };
 
-export default function SettingsCard({ title, expanded, onToggle, isLast, children }: Props) {
+export default function SettingsCard({ title, expanded, onToggle, children }: Props) {
 	const rotation = useRef(new Animated.Value(0)).current;
 
 	useEffect(() => {
@@ -30,7 +29,7 @@ export default function SettingsCard({ title, expanded, onToggle, isLast, childr
 	});
 
 	return (
-		<View style={[styles.card, isLast && styles.rowLast]}>
+		<View style={[styles.card]}>
 			<Pressable
 				style={({ pressed }) => [styles.cardHeader, pressed && styles.cardHeaderPressed]}
 				onPress={onToggle}
