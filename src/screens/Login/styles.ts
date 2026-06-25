@@ -21,6 +21,13 @@ export const styles = StyleSheet.create({
 		marginBottom: 25,
 		textAlign: "center",
 	},
+	regTitle: {
+		fontFamily: "Syncopate_700Bold",
+		color: colors.text.accentDark,
+		fontSize: 40,
+		marginBottom: 25,
+		textAlign: "center",
+	},
 	button: {
 		backgroundColor: colors.button.accent,
 		padding: 10,
@@ -43,6 +50,7 @@ export const styles = StyleSheet.create({
 	inputFocused: {
 		borderColor: colors.border.transparent,
 		backgroundColor: colors.bg.inputHighlight,
+		shadowColor: colors.shadow.primary,
 	},
 	input: {
 		fontFamily: "Play_400Regular",
@@ -59,6 +67,7 @@ export const styles = StyleSheet.create({
 		height: 50,
 		borderColor: colors.border.transparent,
 		marginBottom: 10,
+		elevation: 8,
 	},
 	placeholderText: {
 		fontFamily: "Play_400Regular",

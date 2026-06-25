@@ -18,7 +18,7 @@ export default function SettingsCard({ title, expanded, onToggle, children }: Pr
 	useEffect(() => {
 		Animated.timing(rotation, {
 			toValue: expanded ? 1 : 0,
-			duration: 250,
+			duration: 350,
 			useNativeDriver: true,
 		}).start();
 	}, [expanded, rotation]);

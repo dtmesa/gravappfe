@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
 	card: {
 		marginHorizontal: "4%",
 		marginBottom: 10,
-		overflow: "hidden",
+		zIndex: 1,
 	},
 	cardHeader: {
 		flexDirection: "row",
@@ -44,6 +44,8 @@ export const styles = StyleSheet.create({
 		paddingVertical: "7%",
 		backgroundColor: colors.bg.input,
 		borderRadius: 18,
+		elevation: 8,
+		zIndex: 1,
 	},
 	cardHeaderText: {
 		fontFamily: "Play_700Bold",
@@ -52,6 +54,7 @@ export const styles = StyleSheet.create({
 	},
 	cardHeaderPressed: {
 		backgroundColor: colors.bg.inputHighlight,
+		shadowColor: colors.shadow.primary,
 	},
 	cardHeaderTextPressed: {
 		color: colors.text.accentLight,
@@ -72,6 +75,7 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		height: 50,
 		borderColor: colors.border.transparent,
+		elevation: 8,
 	},
 	input: {
 		fontFamily: "Play_400Regular",
@@ -82,6 +86,7 @@ export const styles = StyleSheet.create({
 	inputFocused: {
 		borderColor: colors.border.transparent,
 		backgroundColor: colors.bg.inputHighlight,
+		shadowColor: colors.shadow.primary,
 	},
 	button: {
 		backgroundColor: colors.button.accent,
@@ -89,10 +94,10 @@ export const styles = StyleSheet.create({
 		borderRadius: 18,
 		marginRight: 75,
 		marginLeft: 75,
+		elevation: 8,
 	},
 	buttonPressed: {
 		backgroundColor: colors.button.accentHighlight,
-		elevation: 8,
 		shadowColor: colors.shadow.primary,
 	},
 	buttonText: {

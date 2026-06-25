@@ -18,6 +18,9 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: 18,
 		paddingTop: 50,
 	},
+	flatListBuffer: {
+		paddingBottom: 50,
+	},
 	titleContainer: {
 		flex: 1,
 		paddingHorizontal: 12,

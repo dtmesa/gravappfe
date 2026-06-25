@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Pressable, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { getApiError } from "../../api/apiError";
 import { useAuthStore } from "../../store/auth.store";
@@ -23,6 +23,19 @@ export default function RegisterScreen({ navigation }: Props) {
 	const [showPassword, setShowPassword] = useState(false);
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
+
+	const breathe = useRef(new Animated.Value(0)).current;
+
+	useEffect(() => {
+		Animated.loop(
+			Animated.sequence([
+				Animated.timing(breathe, { toValue: 1, duration: 3500, useNativeDriver: false }),
+				Animated.timing(breathe, { toValue: 0, duration: 3500, useNativeDriver: false }),
+			]),
+		).start();
+	}, [breathe]);
+
+	const letterSpacing = breathe.interpolate({ inputRange: [0, 1], outputRange: [2, 4] });
 
 	const handleRegister = async () => {
 		if (loading) return;
@@ -62,7 +75,7 @@ export default function RegisterScreen({ navigation }: Props) {
 		>
 			<StarBackground />
 			<View style={styles.innerContainer}>
-				<Text style={styles.title}>Register</Text>
+				<Animated.Text style={[styles.regTitle, { letterSpacing }]}>Register</Animated.Text>
 				<UsernameInput
 					value={username}
 					onChangeText={setUsername}

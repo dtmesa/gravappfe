@@ -1,20 +1,17 @@
 # Fitness Tracker Front End
 
-Cross-platform fitness tracking application built with React Native, Expo, and TypeScript. Designed for fast workout logging, workout session tracking, and historical performance analysis.
+Cross-platform fitness tracking application built with React Native, Expo, and TypeScript. Designed for fast workout logging, workout session tracking, and historical performance reminders.
 
 ## Features
 
 - User authentication
-- Create and manage workouts
-- Create and organize exercises within workouts
-- Drag-and-drop exercise reordering
+- Create and manage workouts & exercises
 - Start and track workout sessions
-- Log exercise sets, weights, and reps
-- Historical performance insights
-- Auto-populated exercise data from previous workouts
+- Log exercise sets, weights, reps, durations and/or distances
+- Historical performance reminders
+- Auto-populating sets based on prior workout data
 - Persistent workout and exercise timers
 - Secure authentication token storage
-- Protected navigation flows
 - Responsive, dark-themed, animated UI
 - Cross-platform support (iOS, Android, Web)
 
@@ -27,10 +24,13 @@ Cross-platform fitness tracking application built with React Native, Expo, and T
 - Axios
 - Biome
 
-## WIP Snapshots
+##
+Snapshots
 <p align="center">
-<img width="288" height="570" alt="Screenshot_20260525_015716_Expo Go" src="https://github.com/user-attachments/assets/934440f3-3731-4a71-9faa-7e2ac24f63e1" />
-<img width="288" height="562" alt="Screenshot_20260525_015630_Expo Go" src="https://github.com/user-attachments/assets/f68e7431-f7b2-41cd-8c9f-ec5731f3078e" />
-<img width="288" height="597" alt="Screenshot_20260525_015007_Expo Go" src="https://github.com/user-attachments/assets/cb6c74a9-d30a-492b-8844-2486be48ff0a" />
-<img width="288" height="600" alt="Screenshot_20260525_014953_Expo Go" src="https://github.com/user-attachments/assets/469ee20e-258a-4ef2-8d69-1510270f2b8d" />
+<img width="288" height="600" alt="Screenshot_20260624_185519_Expo Go" src="https://github.com/user-attachments/assets/539f40ba-472b-43d6-b028-f3ee3acb3773" />
+<img width="288" height="600" alt="Screenshot_20260624_185444_Expo Go" src="https://github.com/user-attachments/assets/6c7600af-d42c-413c-9386-c72638e7e465" />
+<img width="288" height="600" alt="Screenshot_20260624_185508_Expo Go" src="https://github.com/user-attachments/assets/42a3d628-e79d-45eb-90dd-41dc201fe066" />
+<img width="288" height="600" alt="Screenshot_20260624_185817_Expo Go" src="https://github.com/user-attachments/assets/07d9db00-b926-45f9-a455-0e1b09329e4f" />
+<img width="288" height="600" alt="Screenshot_20260624_185828_Expo Go" src="https://github.com/user-attachments/assets/4eead7ca-241d-4d81-acce-6de7dc40e086" />
+<img width="288" height="600" alt="Screenshot_20260624_185857_Expo Go" src="https://github.com/user-attachments/assets/7b05c260-25d0-438f-8c33-39478fed8b4a" />
 </p>

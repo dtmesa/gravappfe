@@ -27,6 +27,11 @@ export default function MoveableRow({
 	onEdit,
 }: Props) {
 	const translateX = useSharedValue(0);
+	const ellipsisScale = useSharedValue(1); 
+
+	const ellipsisStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: ellipsisScale.value }],
+    }));
 
 	const panGesture = Gesture.Pan()
 		.activeOffsetX([-10, 10])
@@ -71,13 +76,21 @@ export default function MoveableRow({
 								</Text>
 							</View>
 							{onEdit && (
-								<Pressable onPress={onEdit} hitSlop={12} disabled={disabled}>
+								<Pressable 
+									onPress={onEdit} 
+									hitSlop={12} 
+									disabled={disabled}
+									onPressIn={() => { ellipsisScale.value = withSpring(1.15, { damping: 20, stiffness: 250 }); }}
+									onPressOut={() => { ellipsisScale.value = withSpring(1, { damping: 20, stiffness: 250 }); }}
+								>
 									{({ pressed }) => (
-										<EllipsisVertical
-											size={26}
-											color={pressed ? colors.button.accentLight : colors.button.muted}
-											strokeWidth={1.75}
-										/>
+										<Animated.View style={ellipsisStyle}>
+											<EllipsisVertical
+												size={26}
+												color={pressed ? colors.button.accentLight : colors.button.muted}
+												strokeWidth={1.75}
+											/>
+										</Animated.View>
 									)}
 								</Pressable>
 							)}

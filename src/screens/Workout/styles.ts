@@ -18,6 +18,9 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: 18,
 		paddingTop: 50,
 	},
+	flatListBuffer: {
+		paddingBottom: 50,
+	},
 	titleContainer: {
 		flex: 1,
 		paddingHorizontal: 12,
@@ -59,6 +62,7 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		height: 50,
 		marginBottom: 20,
+		elevation: 8,
 	},
 	inputText: {
 		color: colors.text.input,
@@ -69,6 +73,7 @@ export const styles = StyleSheet.create({
 	inputFocused: {
 		backgroundColor: colors.bg.inputHighlight,
 		borderColor: colors.border.transparent,
+		shadowColor: colors.shadow.primary,
 	},
 	inputPlaceholder: {
 		fontFamily: "Play_400Regular",
@@ -85,6 +90,7 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		minHeight: 50,
 		maxHeight: 150,
+		elevation: 8,
 	},
 	descriptionInput: {
 		color: colors.text.input,

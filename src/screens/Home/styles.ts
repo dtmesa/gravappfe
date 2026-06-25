@@ -6,6 +6,9 @@ export const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: colors.bg.primary,
 	},
+	headerMenuContainer: {
+		position: "relative",
+	},
 	inputContainer: {
 		paddingHorizontal: 40,
 		paddingVertical: 20,
@@ -46,6 +49,7 @@ export const styles = StyleSheet.create({
 	inputFocused: {
 		borderColor: colors.border.transparent,
 		backgroundColor: colors.bg.inputHighlight,
+		shadowColor: colors.shadow.primary,
 	},
 	inputWrapper: {
 		flexDirection: "row",
@@ -54,6 +58,7 @@ export const styles = StyleSheet.create({
 		borderRadius: 18,
 		paddingHorizontal: 16,
 		height: 50,
+		elevation: 8,
 		borderColor: colors.border.transparent,
 	},
 	infoText: {

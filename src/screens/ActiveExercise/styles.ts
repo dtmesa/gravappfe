@@ -66,7 +66,6 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: 75,
 		paddingVertical: 5,
 		marginBottom: 20,
-		overflow: "hidden",
 	},
 	plusRow: {
 		paddingVertical: "5%",

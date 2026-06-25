@@ -181,6 +181,7 @@ export default function ActiveWorkoutScreen({ navigation, route }: Props) {
 						<StarBackground />
 					) : (
 						<FlatList
+							contentContainerStyle={styles.flatListBuffer}
 							data={exercises}
 							keyExtractor={(item) => item.id.toString()}
 							renderItem={({ item, index }) => (

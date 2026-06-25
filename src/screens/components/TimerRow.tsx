@@ -1,5 +1,6 @@
 import { RotateCcw } from "lucide-react-native";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useRef } from "react";
+import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { colors } from "../../css/color";
 
 type Props = {
@@ -10,6 +11,31 @@ type Props = {
 };
 
 export default function TimerRow({ running, elapsed, onPress, onReset }: Props) {
+	const rotation = useRef(new Animated.Value(0)).current;
+
+	const rotate = rotation.interpolate({
+        inputRange: [-1, 0],
+        outputRange: ["-360deg", "0deg"],
+    });
+
+	const handleReset = (e: any) => {
+        e.stopPropagation();
+        Animated.sequence([
+            Animated.timing(rotation, {
+                toValue: -1,
+                duration: 300,
+                useNativeDriver: true,
+            }),
+            Animated.timing(rotation, {
+                toValue: 0,
+                duration: 0,
+                useNativeDriver: true,
+            }),
+        ]).start();
+        onReset();
+    };
+
+
 	const formatTime = (seconds: number) => {
 		const m = Math.floor(seconds / 60)
 			.toString()
@@ -30,25 +56,21 @@ export default function TimerRow({ running, elapsed, onPress, onReset }: Props) 
 								{formatTime(elapsed)}
 							</Text>
 						</View>
-						<Pressable
-							onPress={(e) => {
-								e.stopPropagation();
-								onReset();
-							}}
-							hitSlop={12}
-						>
+						<Pressable onPress={handleReset} hitSlop={12} >
 							{({ pressed: resetPressed }) => (
-								<RotateCcw
-									size={32}
-									color={
-										resetPressed
-											? colors.button.accentHighlight
-											: running
-												? colors.button.accent
-												: colors.button.muted
-									}
-									strokeWidth={1.75}
-								/>
+								<Animated.View style={{ transform: [{ rotate }] }}>
+									<RotateCcw
+										size={32}
+										color={
+											resetPressed
+												? colors.button.accentHighlight
+												: running
+													? colors.button.accent
+													: colors.button.muted
+										}
+										strokeWidth={1.75}
+									/>
+								</Animated.View>
 							)}
 						</Pressable>
 					</View>

@@ -47,6 +47,7 @@ export const styles = StyleSheet.create({
 	descriptionFocused: {
 		backgroundColor: colors.bg.inputHighlight,
 		borderColor: colors.border.transparent,
+		shadowColor: colors.shadow.primary,
 	},
 	descriptionWrapper: {
 		backgroundColor: colors.bg.input,
@@ -55,6 +56,7 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		minHeight: 50,
 		maxHeight: 150,
+		elevation: 8,
 	},
 	descriptionText: {
 		color: colors.text.input,

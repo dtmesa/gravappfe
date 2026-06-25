@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { login as apiLogin, register as apiRegister } from "../api/auth";
+import { api } from "../api/client";
 import { deleteToken, getToken, saveToken } from "../api/token";
 
 type AuthState = {
@@ -41,12 +42,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 			const token = await getToken();
 
 			if (token) {
-				set({ token, isLoggedIn: true });
+				const { data } = await api.get("/auth/me");
+				set({ token, isLoggedIn: true, username: data.username });
 			} else {
-				set({ token: null, isLoggedIn: false });
+				set({ token: null, isLoggedIn: false, username: null });
 			}
 		} catch {
-			set({ token: null, isLoggedIn: false });
+			await deleteToken();
+			set({ token: null, isLoggedIn: false, username: null });
 		} finally {
 			set({ loading: false });
 		}

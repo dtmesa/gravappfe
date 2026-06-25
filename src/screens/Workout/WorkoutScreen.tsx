@@ -204,6 +204,7 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 						<StarBackground />
 					) : (
 						<DraggableFlatList
+							contentContainerStyle={styles.flatListBuffer}
 							data={exercises}
 							keyExtractor={(item) => item.id.toString()}
 							onDragEnd={async ({ data }) => {
