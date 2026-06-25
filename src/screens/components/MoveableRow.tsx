@@ -11,12 +11,21 @@ type Props = {
 	onDelete: () => void;
 	onPress: () => void;
 	onEdit?: () => void;
+	disabled?: boolean;
 };
 
 const OPACITY_ACTIVE = 0.9;
 const OPACITY = 1;
 
-export default function MoveableRow({ val, drag, isActive, onDelete, onPress, onEdit }: Props) {
+export default function MoveableRow({
+	val,
+	drag,
+	isActive,
+	disabled,
+	onDelete,
+	onPress,
+	onEdit,
+}: Props) {
 	const translateX = useSharedValue(0);
 
 	const panGesture = Gesture.Pan()
@@ -42,7 +51,7 @@ export default function MoveableRow({ val, drag, isActive, onDelete, onPress, on
 	return (
 		<View style={styles.container}>
 			<GestureDetector gesture={panGesture}>
-				<Pressable onPress={onPress} onLongPress={drag}>
+				<Pressable onPress={onPress} onLongPress={drag} disabled={disabled}>
 					{({ pressed }) => (
 						<Animated.View
 							style={[
@@ -62,7 +71,7 @@ export default function MoveableRow({ val, drag, isActive, onDelete, onPress, on
 								</Text>
 							</View>
 							{onEdit && (
-								<Pressable onPress={onEdit} hitSlop={12}>
+								<Pressable onPress={onEdit} hitSlop={12} disabled={disabled}>
 									{({ pressed }) => (
 										<EllipsisVertical
 											size={26}

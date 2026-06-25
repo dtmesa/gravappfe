@@ -25,7 +25,6 @@ type Props = NativeStackScreenProps<RootStackParamList, "ActiveWorkout">;
 export default function ActiveWorkoutScreen({ navigation, route }: Props) {
 	const { workoutId, sessionId } = route.params;
 	const { running, elapsed, start, stop, reset } = useWorkoutTimerStore();
-
 	const [workout, setWorkout] = useState<Workout | null>(null);
 	const [exercises, setExercises] = useState<Exercise[]>([]);
 	const [workoutSession, setWorkoutSession] = useState<WorkoutSession | null>(null);
@@ -46,7 +45,7 @@ export default function ActiveWorkoutScreen({ navigation, route }: Props) {
 
 	const textShadowRadius = glowAnim.interpolate({
 		inputRange: [0, 1],
-		outputRange: [0, 15],
+		outputRange: [0, 20],
 	});
 
 	const fetchWorkout = useCallback(async () => {

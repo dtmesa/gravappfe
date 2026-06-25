@@ -37,6 +37,7 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 	const [allAverages, setAllAverages] = useState<Averages | null>(null);
 	const [running, setRunning] = useState<boolean>(false);
 	const [elapsed, setElapsed] = useState<number>(0);
+	const [loading, setLoading] = useState(false);
 	const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
 	const glowAnim = useRef(new Animated.Value(0)).current;
@@ -52,7 +53,7 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 
 	const textShadowRadius = glowAnim.interpolate({
 		inputRange: [0, 1],
-		outputRange: [0, 15],
+		outputRange: [0, 20],
 	});
 
 	const onReset = () => {
@@ -82,8 +83,30 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 	}, [exerciseSessionId, sessionId, workoutId]);
 
 	const handleCreateSet = async () => {
-		await createSetSession(exerciseSessionId, sessionId, workoutId);
-		await fetchSets();
+		if (loading) return;
+
+		setLoading(true);
+
+		try {
+			const newSet = await createSetSession(exerciseSessionId, sessionId, workoutId);
+
+			if (sets && sets.length > 0) {
+				const lastSet = sets[sets.length - 1];
+				if (lastSet.weight !== null) {
+					await updateSetSession(
+						newSet.id,
+						exerciseSessionId,
+						sessionId,
+						workoutId,
+						"weight",
+						parseFloat(lastSet.weight),
+					);
+				}
+			}
+			await fetchSets();
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	const handleDeleteSet = async (id: number) => {
@@ -98,7 +121,7 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 	) => {
 		setSets((prev) => prev?.map((s) => (s.id === id ? { ...s, [field]: val } : s)) ?? null);
 
-		const parsed = val === "" || val === "0" ? null : parseFloat(val);
+		const parsed = val === "" || val === "." ? null : parseFloat(val);
 
 		updateSetSession(
 			id,
@@ -209,12 +232,17 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 				extraHeight={90}
 				onScrollBeginDrag={Keyboard.dismiss}
 			>
-				<TimerRow
-					running={running}
-					elapsed={elapsed}
-					onPress={running ? onStop : onStart}
-					onReset={onReset}
-				/>
+				{!exercise.isWeight && !exercise.isReps && !exercise.isDuration && !exercise.isDistance && (
+					<StarBackground />
+				)}
+				{(exercise.isWeight || exercise.isReps || exercise.isDuration || exercise.isDistance) && (
+					<TimerRow
+						running={running}
+						elapsed={elapsed}
+						onPress={running ? onStop : onStart}
+						onReset={onReset}
+					/>
+				)}
 				{weeklyAverages && <AverageRow title={"Weekly Avg"} {...weeklyAverages} />}
 				{allAverages && <AverageRow title={"Total Avg     "} {...allAverages} />}
 				{sets.map((set, index) => {
@@ -242,7 +270,9 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 						/>
 					);
 				})}
-				<PlusRow onPress={handleCreateSet} />
+				{(exercise.isWeight || exercise.isReps || exercise.isDuration || exercise.isDistance) && (
+					<PlusRow onPress={handleCreateSet} disabled={loading} />
+				)}
 			</KeyboardAwareScrollView>
 		</View>
 	);

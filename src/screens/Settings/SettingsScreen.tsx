@@ -19,16 +19,14 @@ export default function SettingsScreen({ navigation }: Props) {
 	const username = useAuthStore((t) => t.username);
 
 	const [expandedCard, setExpandedCard] = useState<"username" | "password" | null>(null);
-
 	const [newUsername, setNewUsername] = useState("");
 	const [authPassForName, setAuthPassForName] = useState("");
-
 	const [newPassword, setNewPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [authPassForPass, setAuthPassForPass] = useState("");
-
 	const [passwordError, setPasswordError] = useState("");
 	const [nameError, setNameError] = useState("");
+	const [loading, setLoading] = useState(false);
 
 	React.useEffect(() => {
 		if (!nameError) return;
@@ -48,10 +46,12 @@ export default function SettingsScreen({ navigation }: Props) {
 	};
 
 	const handleUsernameChange = async () => {
+		if (loading) return;
+
 		const isInvalidUsername = validateUsername(newUsername);
 
 		if (newUsername === username) {
-			setNameError("New username must be different from your current password");
+			setNameError("New username must be different from your current username");
 			return;
 		} else if (newUsername === "" || authPassForName === "") {
 			setNameError("One or more required fields are missing");
@@ -60,6 +60,8 @@ export default function SettingsScreen({ navigation }: Props) {
 			setNameError(isInvalidUsername);
 			return;
 		}
+
+		setLoading(true);
 
 		try {
 			setNameError("");
@@ -73,10 +75,14 @@ export default function SettingsScreen({ navigation }: Props) {
 			setNameError(
 				code === "USERNAME_TAKEN" ? "Username already exists" : "Username change failed",
 			);
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	const handlePasswordChange = async () => {
+		if (loading) return;
+
 		const isInvalidPassword = validatePassword(newPassword);
 
 		if (newPassword === authPassForPass) {
@@ -92,6 +98,9 @@ export default function SettingsScreen({ navigation }: Props) {
 			setPasswordError("Passwords do not match");
 			return;
 		}
+
+		setLoading(true);
+
 		try {
 			setPasswordError("");
 			await updatePassword(authPassForPass, newPassword);
@@ -101,6 +110,8 @@ export default function SettingsScreen({ navigation }: Props) {
 			setAuthPassForPass("");
 		} catch {
 			setPasswordError("Password update failed");
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -154,6 +165,7 @@ export default function SettingsScreen({ navigation }: Props) {
 					<Pressable
 						style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
 						onPress={handleUsernameChange}
+						disabled={loading}
 					>
 						<Text style={styles.buttonText}>Update</Text>
 					</Pressable>
@@ -198,6 +210,7 @@ export default function SettingsScreen({ navigation }: Props) {
 					<Pressable
 						style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
 						onPress={handlePasswordChange}
+						disabled={loading}
 					>
 						<Text style={styles.buttonText}>Update</Text>
 					</Pressable>

@@ -18,6 +18,7 @@ export default function ExerciseScreen({ navigation, route }: Props) {
 	const [exercise, setExercise] = useState<Exercise | null>(null);
 	const [focusedField, setFocusedField] = useState<string | null>(null);
 	const [description, setDescription] = useState(exercise?.description ?? "");
+	const [loading, setLoading] = useState(false);
 
 	const fetchExercise = useCallback(async () => {
 		const data = await getExercise(workoutId, exerciseId);
@@ -26,19 +27,22 @@ export default function ExerciseScreen({ navigation, route }: Props) {
 
 	const handleToggleField = useCallback(
 		async (field: "isWeight" | "isReps" | "isDuration" | "isDistance") => {
-			if (!exercise) return;
+			if (loading || !exercise) return;
 
 			const newValue = !exercise[field];
 
+			setLoading(true);
 			setExercise((prev) => (prev ? { ...prev, [field]: newValue } : prev));
 
 			try {
 				await updateExercise(workoutId, exerciseId, field, newValue);
 			} catch {
 				setExercise((prev) => (prev ? { ...prev, [field]: !newValue } : prev));
+			} finally {
+				setLoading(false);
 			}
 		},
-		[exercise, workoutId, exerciseId],
+		[exercise, loading, workoutId, exerciseId],
 	);
 
 	const handleUpdateDescription = useCallback(async () => {
@@ -114,7 +118,7 @@ export default function ExerciseScreen({ navigation, route }: Props) {
 					</View>
 					<View style={styles.checksWrapper}>
 						{(["isWeight", "isReps", "isDuration", "isDistance"] as const).map((field) => (
-							<Pressable key={field} onPress={() => handleToggleField(field)}>
+							<Pressable disabled={loading} key={field} onPress={() => handleToggleField(field)}>
 								{({ pressed }) => (
 									<View style={[styles.checkRow, pressed && styles.checkRowPressed]}>
 										<Text style={[styles.checkLabel, pressed && styles.checkLabelPressed]}>

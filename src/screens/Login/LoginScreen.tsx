@@ -21,6 +21,7 @@ export default function LoginScreen({ navigation }: Props) {
 	const [focusedField, setFocusedField] = useState<string | null>(null);
 	const [showPassword, setShowPassword] = useState(false);
 	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(false);
 
 	const breathe = useRef(new Animated.Value(0)).current;
 
@@ -36,9 +37,10 @@ export default function LoginScreen({ navigation }: Props) {
 	const letterSpacing = breathe.interpolate({ inputRange: [0, 1], outputRange: [2, 4] });
 
 	const handleLogin = async () => {
+		if (loading) return;
 		try {
+			setLoading(true);
 			setError("");
-
 			await login(username, password);
 		} catch (err: unknown) {
 			const code = getApiError(err);
@@ -54,9 +56,13 @@ export default function LoginScreen({ navigation }: Props) {
 				setError("Invalid username or password");
 			} else if (code === "INVALID_PASSWORD") {
 				setError("Invalid username or password");
+			} else if (code === "RATE_LIMITED") {
+				setError("Too many attempts. You have been timed out.");
 			} else {
 				setError("Login failed");
 			}
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -99,6 +105,7 @@ export default function LoginScreen({ navigation }: Props) {
 				<Pressable
 					style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
 					onPress={handleLogin}
+					disabled={loading}
 				>
 					<Text style={styles.buttonText}>Login</Text>
 				</Pressable>
@@ -106,6 +113,7 @@ export default function LoginScreen({ navigation }: Props) {
 				<Pressable
 					style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
 					onPress={() => navigation.navigate("Register")}
+					disabled={loading}
 				>
 					<Text style={styles.buttonText}>Register</Text>
 				</Pressable>

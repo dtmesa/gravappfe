@@ -22,8 +22,11 @@ export default function RegisterScreen({ navigation }: Props) {
 	const [focusedField, setFocusedField] = useState<string | null>(null);
 	const [showPassword, setShowPassword] = useState(false);
 	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(false);
 
 	const handleRegister = async () => {
+		if (loading) return;
+
 		const isInvalidInputs = validateJoint(username, password);
 
 		if (isInvalidInputs) {
@@ -31,6 +34,7 @@ export default function RegisterScreen({ navigation }: Props) {
 			return;
 		}
 		try {
+			setLoading(true);
 			setError("");
 			await register(username, password);
 			navigation.replace("Home");
@@ -42,6 +46,8 @@ export default function RegisterScreen({ navigation }: Props) {
 			} else {
 				setError("Registration failed");
 			}
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -84,6 +90,7 @@ export default function RegisterScreen({ navigation }: Props) {
 				<Pressable
 					style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
 					onPress={handleRegister}
+					disabled={loading}
 				>
 					<Text style={styles.buttonText}>Submit</Text>
 				</Pressable>
@@ -91,6 +98,7 @@ export default function RegisterScreen({ navigation }: Props) {
 				<Pressable
 					style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
 					onPress={() => navigation.navigate("Login")}
+					disabled={loading}
 				>
 					<Text style={styles.buttonText}>Return to Login</Text>
 				</Pressable>

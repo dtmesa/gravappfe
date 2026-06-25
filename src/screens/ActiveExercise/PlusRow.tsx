@@ -5,12 +5,13 @@ import { styles } from "./styles";
 
 type Props = {
 	onPress: () => void;
+	disabled?: boolean;
 };
 
-export default function PlusRow({ onPress }: Props) {
+export default function PlusRow({ onPress, disabled }: Props) {
 	return (
 		<View style={styles.plusRowContainer}>
-			<Pressable onPress={onPress}>
+			<Pressable onPress={onPress} disabled={disabled}>
 				{({ pressed }) => (
 					<View style={[styles.plusRow, pressed && styles.plusRowPressed]}>
 						<Plus

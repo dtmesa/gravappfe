@@ -22,8 +22,8 @@ export default function HomeScreen() {
 	const [name, setName] = useState("");
 	const [focusedField, setFocusedField] = useState<string | null>(null);
 	const [pendingDelete, setPendingDelete] = useState<Workout | null>(null);
-	const [undoTimeout, setUndoTimeout] = useState<number | null>(null);
 	const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const [loading, setLoading] = useState(false);
 
 	const fetchWorkouts = useCallback(async () => {
 		const data = await getWorkouts();
@@ -51,19 +51,29 @@ export default function HomeScreen() {
 		Keyboard.dismiss();
 	};
 
+	const handleNavWorkout = (workoutId: number) => {
+		if (loading) return;
+		rootNav.navigate("Workout", { workoutId });
+	};
+
 	const handleStartWorkout = async (workoutId: number) => {
-		const session = await createWorkoutSession(workoutId);
-		rootNav.navigate("ActiveWorkout", { workoutId, sessionId: session.id });
+		if (loading) return;
+		setLoading(true);
+
+		try {
+			const session = await createWorkoutSession(workoutId);
+			rootNav.navigate("ActiveWorkout", { workoutId, sessionId: session.id });
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	const handleDelete = async (id: number) => {
 		const workout = workouts.find((w) => w.id === id);
 		if (!workout) return;
 
-		if (pendingDelete && undoTimeout) {
-			clearTimeout(undoTimeout);
-			setUndoTimeout(null);
-			setPendingDelete(null);
+		if (pendingDelete && undoTimeoutRef.current) {
+			clearTimeout(undoTimeoutRef.current);
 
 			try {
 				await deleteWorkout(pendingDelete.id);
@@ -75,18 +85,16 @@ export default function HomeScreen() {
 		setWorkouts((prev) => prev.filter((w) => w.id !== id));
 		setPendingDelete(workout);
 
-		const timeout = setTimeout(async () => {
+		undoTimeoutRef.current = setTimeout(async () => {
 			try {
 				await deleteWorkout(id);
 			} catch {
-				setUndoTimeout(null);
 				fetchWorkouts();
 			} finally {
 				setPendingDelete(null);
+				undoTimeoutRef.current = null;
 			}
 		}, 3000);
-
-		setUndoTimeout(timeout);
 	};
 
 	const handleUndo = () => {
@@ -97,12 +105,13 @@ export default function HomeScreen() {
 			return restored.sort((a, b) => a.order - b.order);
 		});
 
-		if (undoTimeout) {
-			clearTimeout(undoTimeout);
-			setUndoTimeout(null);
+		if (undoTimeoutRef.current) {
+			clearTimeout(undoTimeoutRef.current);
+			undoTimeoutRef.current = null;
 		}
 
 		setPendingDelete(null);
+		fetchWorkouts();
 	};
 
 	return (
@@ -164,11 +173,12 @@ export default function HomeScreen() {
 							}}
 							renderItem={({ item, drag, isActive }) => (
 								<MoveableRow
+									disabled={loading}
 									val={item}
 									drag={drag}
 									isActive={isActive}
 									onDelete={() => handleDelete(item.id)}
-									onEdit={() => rootNav.navigate("Workout", { workoutId: item.id })}
+									onEdit={() => handleNavWorkout(item.id)}
 									onPress={() => handleStartWorkout(item.id)}
 								/>
 							)}

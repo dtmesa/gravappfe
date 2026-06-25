@@ -81,7 +81,6 @@ export function SetRow({
 								keyboardType="decimal-pad"
 								onFocus={() => {
 									setFocusedMetric(metric);
-									if (value === "0") onChange("");
 								}}
 								onBlur={() => {
 									setFocusedMetric(null);
@@ -93,8 +92,6 @@ export function SetRow({
 									} else {
 										cleaned = cleaned.replace(/[^0-9.]/g, "").replace(/(\..*)\./g, "$1");
 									}
-
-									if (cleaned === "") cleaned = "0";
 
 									onChange(cleaned);
 								}}

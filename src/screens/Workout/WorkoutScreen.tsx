@@ -1,5 +1,5 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
 import { createExercise, deleteExercise, getExercises, updateExercise } from "../../api/exercises";
@@ -25,8 +25,7 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 	const [name, setName] = useState("");
 	const [focusedField, setFocusedField] = useState<string | null>(null);
 	const [pendingDelete, setPendingDelete] = useState<Exercise | null>(null);
-	const [undoTimeout, setUndoTimeout] = useState<number | null>(null);
-
+	const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const [description, setDescription] = useState(workout?.description ?? "");
 
 	const fetchWorkout = useCallback(async () => {
@@ -39,6 +38,10 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 		setExercises(data);
 	}, [workoutId]);
 
+	const handleNavExercise = (workoutId: number, exerciseId: number) => {
+		navigation.navigate("Exercise", { workoutId, exerciseId });
+	};
+
 	const handleUndo = () => {
 		if (!pendingDelete) return;
 
@@ -47,9 +50,13 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 			return restored.sort((a, b) => a.order - b.order);
 		});
 
-		if (undoTimeout) clearTimeout(undoTimeout);
+		if (undoTimeoutRef.current) {
+			clearTimeout(undoTimeoutRef.current);
+			undoTimeoutRef.current = null;
+		}
 
 		setPendingDelete(null);
+		fetchExercises();
 	};
 
 	const handleDelete = useCallback(
@@ -57,19 +64,29 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 			const exercise = exercises.find((w) => w.id === id);
 			if (!exercise) return;
 
-			setExercises((prev) => prev.filter((w) => w.id !== id));
-			setPendingDelete(exercise);
+			if (pendingDelete && undoTimeoutRef.current) {
+				clearTimeout(undoTimeoutRef.current);
 
-			const timeout = setTimeout(async () => {
 				try {
-					await deleteExercise(workoutId, id);
-					setPendingDelete(null);
+					await deleteExercise(workoutId, pendingDelete.id);
 				} catch {
 					fetchExercises();
 				}
-			}, 3000);
+			}
 
-			setUndoTimeout(timeout);
+			setExercises((prev) => prev.filter((w) => w.id !== id));
+			setPendingDelete(exercise);
+
+			undoTimeoutRef.current = setTimeout(async () => {
+				try {
+					await deleteExercise(workoutId, id);
+				} catch {
+					fetchExercises();
+				} finally {
+					setPendingDelete(null);
+					undoTimeoutRef.current = null;
+				}
+			}, 3000);
 		},
 		[exercises, workoutId, fetchExercises],
 	);
@@ -209,9 +226,7 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 									drag={drag}
 									isActive={isActive}
 									onDelete={() => handleDelete(item.id)}
-									onPress={() =>
-										navigation.navigate("Exercise", { workoutId, exerciseId: item.id })
-									}
+									onPress={() => handleNavExercise(workoutId, item.id)}
 								/>
 							)}
 						/>
