@@ -15,6 +15,7 @@ import type { Workout } from "../../types/workout";
 import type { WorkoutSession } from "../../types/workoutSession";
 import BackButton from "../components/BackButton";
 import ClickableRow from "../components/ClickableRow";
+import { FadeIn } from "../components/FadeIn";
 import { StarBackground } from "../components/StarBackground";
 import TimerRow from "../components/TimerRow";
 import { LeaveAlert } from "./LeaveAlert";
@@ -160,22 +161,26 @@ export default function ActiveWorkoutScreen({ navigation, route }: Props) {
 				onCancel={() => setAlertVisible(false)}
 			/>
 
-			<View style={styles.innerContainer}>
-				{workout.description && (
-					<View style={styles.descriptionWrapper}>
-						<ScrollView nestedScrollEnabled>
-							<Text style={styles.descriptionText}>{workout.description}</Text>
-						</ScrollView>
-					</View>
-				)}
-			</View>
+			<FadeIn visible={true}>
+				<View style={styles.innerContainer}>
+					{workout.description && (
+						<View style={styles.descriptionWrapper}>
+							<ScrollView nestedScrollEnabled>
+								<Text style={styles.descriptionText}>{workout.description}</Text>
+							</ScrollView>
+						</View>
+					)}
+				</View>
+			</FadeIn>
 			<View style={styles.container}>
-				<TimerRow
-					running={running}
-					elapsed={elapsed}
-					onPress={() => (running ? stop() : start())}
-					onReset={reset}
-				/>
+				<FadeIn visible={true}>
+					<TimerRow
+						running={running}
+						elapsed={elapsed}
+						onPress={() => (running ? stop() : start())}
+						onReset={reset}
+					/>
+				</FadeIn>
 				<View style={styles.container}>
 					{exercises.length === 0 ? (
 						<StarBackground />
@@ -185,11 +190,13 @@ export default function ActiveWorkoutScreen({ navigation, route }: Props) {
 							data={exercises}
 							keyExtractor={(item) => item.id.toString()}
 							renderItem={({ item }) => (
-								<ClickableRow
-									val={item}
-									onPress={() => handleExercisePress(item.id)}
-									isVisited={exerciseSessions.some((s) => s.exerciseId === item.id)}
-								/>
+								<FadeIn key={item.id} visible={true}>
+									<ClickableRow
+										val={item}
+										onPress={() => handleExercisePress(item.id)}
+										isVisited={exerciseSessions.some((s) => s.exerciseId === item.id)}
+									/>
+								</FadeIn>
 							)}
 						/>
 					)}

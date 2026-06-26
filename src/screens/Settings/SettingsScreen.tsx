@@ -8,6 +8,7 @@ import { useAuthStore } from "../../store/auth.store";
 import type { RootStackParamList } from "../../types/navigation";
 import { validatePassword, validateUsername } from "../../util/inputValidation";
 import BackButton from "../components/BackButton";
+import { FadeIn } from "../components/FadeIn";
 import { StarBackground } from "../components/StarBackground";
 import { useScaleAnimation } from "../components/scaleAnim";
 import SettingsCard from "./SettingsCard";
@@ -163,138 +164,140 @@ export default function SettingsScreen({ navigation }: Props) {
 					<View style={styles.titleRowRight} />
 				</View>
 			</View>
-			<View>
-				<SettingsCard
-					title="Change Username"
-					expanded={expandedCard === "username"}
-					onToggle={() => toggle("username")}
-				>
-					<SettingsInput
-						placeholder="New username"
-						value={newUsername}
-						onChangeText={setNewUsername}
-					/>
-					<SettingsInput
-						placeholder="Current password"
-						value={authPassForName}
-						onChangeText={setAuthPassForName}
-						secureTextEntry
-						showToggle={true}
-					/>
-					{nameError ? (
-						<Text
-							style={[
-								styles.statusText,
-								nameError === "Username updated" ? styles.success : styles.error,
-							]}
-						>
-							{nameError}
-						</Text>
-					) : null}
-					<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
-						<Pressable
-							style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-							onPress={handleUsernameChange}
-							disabled={loading}
-							onPressIn={anim.pressIn}
-							onPressOut={anim.pressOut}
-						>
-							<Text style={styles.buttonText}>Update</Text>
-						</Pressable>
-					</Animated.View>
-				</SettingsCard>
+			<FadeIn visible={true}>
+				<View>
+					<SettingsCard
+						title="Change Username"
+						expanded={expandedCard === "username"}
+						onToggle={() => toggle("username")}
+					>
+						<SettingsInput
+							placeholder="New username"
+							value={newUsername}
+							onChangeText={setNewUsername}
+						/>
+						<SettingsInput
+							placeholder="Current password"
+							value={authPassForName}
+							onChangeText={setAuthPassForName}
+							secureTextEntry
+							showToggle={true}
+						/>
+						{nameError ? (
+							<Text
+								style={[
+									styles.statusText,
+									nameError === "Username updated" ? styles.success : styles.error,
+								]}
+							>
+								{nameError}
+							</Text>
+						) : null}
+						<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
+							<Pressable
+								style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+								onPress={handleUsernameChange}
+								disabled={loading}
+								onPressIn={anim.pressIn}
+								onPressOut={anim.pressOut}
+							>
+								<Text style={styles.buttonText}>Update</Text>
+							</Pressable>
+						</Animated.View>
+					</SettingsCard>
 
-				<SettingsCard
-					title="Change Password"
-					expanded={expandedCard === "password"}
-					onToggle={() => toggle("password")}
-				>
-					<SettingsInput
-						placeholder="Current password"
-						value={authPassForPass}
-						onChangeText={setAuthPassForPass}
-						secureTextEntry
-						showToggle={true}
-					/>
-					<SettingsInput
-						placeholder="New password"
-						value={newPassword}
-						onChangeText={setNewPassword}
-						secureTextEntry
-						showToggle={true}
-					/>
-					<SettingsInput
-						placeholder="Confirm new password"
-						value={confirmPassword}
-						onChangeText={setConfirmPassword}
-						secureTextEntry
-						showToggle={true}
-					/>
-					{passwordError ? (
-						<Text
-							style={[
-								styles.statusText,
-								passwordError === "Password updated" ? styles.success : styles.error,
-							]}
-						>
-							{passwordError}
-						</Text>
-					) : null}
-					<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
-						<Pressable
-							style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-							onPress={handlePasswordChange}
-							disabled={loading}
-							onPressIn={anim.pressIn}
-							onPressOut={anim.pressOut}
-						>
-							<Text style={styles.buttonText}>Update</Text>
-						</Pressable>
-					</Animated.View>
-				</SettingsCard>
+					<SettingsCard
+						title="Change Password"
+						expanded={expandedCard === "password"}
+						onToggle={() => toggle("password")}
+					>
+						<SettingsInput
+							placeholder="Current password"
+							value={authPassForPass}
+							onChangeText={setAuthPassForPass}
+							secureTextEntry
+							showToggle={true}
+						/>
+						<SettingsInput
+							placeholder="New password"
+							value={newPassword}
+							onChangeText={setNewPassword}
+							secureTextEntry
+							showToggle={true}
+						/>
+						<SettingsInput
+							placeholder="Confirm new password"
+							value={confirmPassword}
+							onChangeText={setConfirmPassword}
+							secureTextEntry
+							showToggle={true}
+						/>
+						{passwordError ? (
+							<Text
+								style={[
+									styles.statusText,
+									passwordError === "Password updated" ? styles.success : styles.error,
+								]}
+							>
+								{passwordError}
+							</Text>
+						) : null}
+						<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
+							<Pressable
+								style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+								onPress={handlePasswordChange}
+								disabled={loading}
+								onPressIn={anim.pressIn}
+								onPressOut={anim.pressOut}
+							>
+								<Text style={styles.buttonText}>Update</Text>
+							</Pressable>
+						</Animated.View>
+					</SettingsCard>
 
-				<SettingsCard
-					title="Delete Account"
-					expanded={expandedCard === "account"}
-					onToggle={() => toggle("account")}
-				>
-					<SettingsInput
-						placeholder="Password"
-						value={deletionPassword}
-						onChangeText={setDeletionPassword}
-						secureTextEntry
-						showToggle={true}
-					/>
-					<SettingsInput
-						placeholder="Confirm password"
-						value={deletionAuthPassword}
-						onChangeText={setDeletionAuthPassword}
-						secureTextEntry
-						showToggle={true}
-					/>
-					{deletionError ? (
-						<Text
-							style={[
-								styles.statusText,
-								deletionError === "Account deleted" ? styles.success : styles.error,
-							]}
-						>
-							{deletionError}
-						</Text>
-					) : null}
-					<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
-						<Pressable
-							style={({ pressed }) => [styles.buttonDanger, pressed && styles.buttonDangerPressed]}
-							onPress={handleDeleteAccount}
-							disabled={loading}
-							onPressIn={anim.pressIn}
-							onPressOut={anim.pressOut}
-						>
-							<Text style={styles.buttonText}>Confirm</Text>
-						</Pressable>
-					</Animated.View>
-				</SettingsCard>
-			</View>
+					<SettingsCard
+						title="Delete Account"
+						expanded={expandedCard === "account"}
+						onToggle={() => toggle("account")}
+					>
+						<SettingsInput
+							placeholder="Password"
+							value={deletionPassword}
+							onChangeText={setDeletionPassword}
+							secureTextEntry
+							showToggle={true}
+						/>
+						<SettingsInput
+							placeholder="Confirm password"
+							value={deletionAuthPassword}
+							onChangeText={setDeletionAuthPassword}
+							secureTextEntry
+							showToggle={true}
+						/>
+						{deletionError ? (
+							<Text
+								style={[
+									styles.statusText,
+									deletionError === "Account deleted" ? styles.success : styles.error,
+								]}
+							>
+								{deletionError}
+							</Text>
+						) : null}
+						<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
+							<Pressable
+								style={({ pressed }) => [styles.buttonDanger, pressed && styles.buttonDangerPressed]}
+								onPress={handleDeleteAccount}
+								disabled={loading}
+								onPressIn={anim.pressIn}
+								onPressOut={anim.pressOut}
+							>
+								<Text style={styles.buttonText}>Confirm</Text>
+							</Pressable>
+						</Animated.View>
+					</SettingsCard>
+				</View>
+			</FadeIn>
 		</KeyboardAwareScrollView>
 	);
 }

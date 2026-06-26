@@ -16,6 +16,7 @@ import type { ExerciseSession } from "../../types/exerciseSession";
 import type { RootStackParamList } from "../../types/navigation";
 import type { SetSession } from "../../types/setSession";
 import BackButton from "../components/BackButton";
+import { FadeIn } from "../components/FadeIn";
 import { StarBackground } from "../components/StarBackground";
 import TimerRow from "../components/TimerRow";
 import type { Averages } from "./AverageRow";
@@ -216,11 +217,13 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 			</View>
 			<View style={styles.innerContainer}>
 				{exercise.description && (
-					<View style={styles.descriptionWrapper}>
-						<ScrollView nestedScrollEnabled>
-							<Text style={styles.descriptionText}>{exercise.description}</Text>
-						</ScrollView>
-					</View>
+					<FadeIn visible={true}>
+						<View style={styles.descriptionWrapper}>
+							<ScrollView nestedScrollEnabled>
+								<Text style={styles.descriptionText}>{exercise.description}</Text>
+							</ScrollView>
+						</View>
+					</FadeIn>
 				)}
 			</View>
 			<KeyboardAwareScrollView
@@ -236,15 +239,25 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 					<StarBackground />
 				)}
 				{(exercise.isWeight || exercise.isReps || exercise.isDuration || exercise.isDistance) && (
-					<TimerRow
-						running={running}
-						elapsed={elapsed}
-						onPress={running ? onStop : onStart}
-						onReset={onReset}
-					/>
+					<FadeIn visible={true}>
+						<TimerRow
+							running={running}
+							elapsed={elapsed}
+							onPress={running ? onStop : onStart}
+							onReset={onReset}
+						/>
+					</FadeIn>
 				)}
-				{weeklyAverages && <AverageRow title={"Weekly Avg"} {...weeklyAverages} />}
-				{allAverages && <AverageRow title={"Total Avg     "} {...allAverages} />}
+				{weeklyAverages && 
+					<FadeIn visible={true}>
+						<AverageRow title={"Weekly Avg"} {...weeklyAverages} />
+					</FadeIn>
+				}
+				{allAverages && 
+					<FadeIn visible={true}>
+						<AverageRow title={"Total Avg     "} {...allAverages} />
+					</FadeIn>
+				}
 				{sets.map((set, index) => {
 					const sharedProps = {
 						weight: set.weight,
@@ -258,20 +271,28 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 					};
 
 					if (index === 0) {
-						return <SetRow key={set.id} {...sharedProps} title="Set 1" />;
+						return (
+							<FadeIn key={set.id} visible={true}>
+								<SetRow key={set.id} {...sharedProps} title="Set 1" />
+							</FadeIn>
+						)
 					}
 
 					return (
-						<SwipeableSetRow
-							key={set.id}
-							index={index + 1}
-							{...sharedProps}
-							onDelete={() => handleDeleteSet(set.id)}
-						/>
+						<FadeIn key={set.id} visible={true}>
+							<SwipeableSetRow
+								key={set.id}
+								index={index + 1}
+								{...sharedProps}
+								onDelete={() => handleDeleteSet(set.id)}
+							/>
+						</FadeIn>
 					);
 				})}
 				{(exercise.isWeight || exercise.isReps || exercise.isDuration || exercise.isDistance) && (
-					<PlusRow onPress={handleCreateSet} disabled={loading} />
+					<FadeIn visible={true}>
+						<PlusRow onPress={handleCreateSet} disabled={loading} />
+					</FadeIn>
 				)}
 			</KeyboardAwareScrollView>
 		</View>

@@ -6,6 +6,7 @@ import { colors } from "../../css/color";
 import type { Exercise } from "../../types/exercise";
 import type { RootStackParamList } from "../../types/navigation";
 import BackButton from "../components/BackButton";
+import { FadeIn } from "../components/FadeIn";
 import { StarBackground } from "../components/StarBackground";
 import { ExerciseChecks } from "./CheckRow";
 import { styles } from "./styles";
@@ -80,6 +81,7 @@ export default function ExerciseScreen({ navigation, route }: Props) {
 
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+			
 			<View style={styles.container}>
 				<View style={styles.headerContainer}>
 					<View style={styles.titleRow}>
@@ -94,30 +96,32 @@ export default function ExerciseScreen({ navigation, route }: Props) {
 						<View style={styles.titleRowRight} />
 					</View>
 				</View>
-				<View style={styles.innerContainer}>
-					<View
-						style={[
-							styles.descriptionWrapper,
-							focusedField === "description" && styles.descriptionFocused,
-						]}
-					>
-						<TextInput
-							value={description}
+				<FadeIn visible={true}>
+					<View style={styles.innerContainer}>
+						<View
 							style={[
-								styles.descriptionText,
-								{ color: focusedField === "description" ? colors.text.input : colors.text.static },
+								styles.descriptionWrapper,
+								focusedField === "description" && styles.descriptionFocused,
 							]}
-							onChangeText={setDescription}
-							onFocus={() => setFocusedField("description")}
-							onBlur={handleUpdateDescription}
-							multiline
-						/>
-						{description.length === 0 && focusedField !== "description" && (
-							<Text style={styles.descriptionPlaceholderText}>Add a description...</Text>
-						)}
+						>
+							<TextInput
+								value={description}
+								style={[
+									styles.descriptionText,
+									{ color: focusedField === "description" ? colors.text.input : colors.text.static },
+								]}
+								onChangeText={setDescription}
+								onFocus={() => setFocusedField("description")}
+								onBlur={handleUpdateDescription}
+								multiline
+							/>
+							{description.length === 0 && focusedField !== "description" && (
+								<Text style={styles.descriptionPlaceholderText}>Add a description...</Text>
+							)}
+						</View>
+							<ExerciseChecks exercise={exercise} loading={loading} onToggle={handleToggleField} />
 					</View>
-					<ExerciseChecks exercise={exercise} loading={loading} onToggle={handleToggleField} />
-				</View>
+				</FadeIn>
 			</View>
 		</TouchableWithoutFeedback>
 	);

@@ -10,6 +10,7 @@ import type { RootStackParamList } from "../../types/navigation";
 import type { Workout } from "../../types/workout";
 import AddButton from "../components/AddButton";
 import BackButton from "../components/BackButton";
+import { FadeIn } from "../components/FadeIn";
 import MoveableRow from "../components/MoveableRow";
 import { StarBackground } from "../components/StarBackground";
 import UndoButton from "../components/UndoButton";
@@ -152,53 +153,55 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 						<View style={styles.titleRowRight} />
 					</View>
 				</View>
-				<View style={styles.innerContainer}>
-					<View
-						style={[
-							styles.descriptionWrapper,
-							focusedField === "description" && styles.inputFocused,
-						]}
-					>
-						<TextInput
-							value={description}
-							style={[
-								styles.descriptionInput,
-								{ color: focusedField === "description" ? colors.text.input : colors.text.static },
-							]}
-							onChangeText={setDescription}
-							onFocus={() => setFocusedField("description")}
-							onBlur={handleUpdateDescription}
-							multiline
-						/>
-						{description.length === 0 && focusedField !== "description" && (
-							<Text style={styles.descriptionPlaceholder}>Add a description...</Text>
-						)}
+				<FadeIn visible={true}>
+					<View style={styles.innerContainer}>
+							<View
+								style={[
+									styles.descriptionWrapper,
+									focusedField === "description" && styles.inputFocused,
+								]}
+							>
+								<TextInput
+									value={description}
+									style={[
+										styles.descriptionInput,
+										{ color: focusedField === "description" ? colors.text.input : colors.text.static },
+									]}
+									onChangeText={setDescription}
+									onFocus={() => setFocusedField("description")}
+									onBlur={handleUpdateDescription}
+									multiline
+								/>
+								{description.length === 0 && focusedField !== "description" && (
+									<Text style={styles.descriptionPlaceholder}>Add a description...</Text>
+								)}
+							</View>
+
+						<View style={[styles.inputWrapper, focusedField === "name" && styles.inputFocused]}>
+							<TextInput
+								value={name}
+								onChangeText={setName}
+								style={styles.inputText}
+								keyboardType="visible-password"
+								onSubmitEditing={handleCreateExercise}
+								onFocus={() => setFocusedField("name")}
+								onBlur={() => {
+									setFocusedField(null);
+									setName("");
+								}}
+							/>
+
+							<AddButton
+								onAdd={handleCreateExercise}
+								color={focusedField === "name" ? colors.button.accent : colors.button.muted}
+							/>
+
+							{name.length === 0 && focusedField !== "name" && (
+								<Text style={styles.inputPlaceholder}>Create an exercise...</Text>
+							)}
+						</View>
 					</View>
-
-					<View style={[styles.inputWrapper, focusedField === "name" && styles.inputFocused]}>
-						<TextInput
-							value={name}
-							onChangeText={setName}
-							style={styles.inputText}
-							keyboardType="visible-password"
-							onSubmitEditing={handleCreateExercise}
-							onFocus={() => setFocusedField("name")}
-							onBlur={() => {
-								setFocusedField(null);
-								setName("");
-							}}
-						/>
-
-						<AddButton
-							onAdd={handleCreateExercise}
-							color={focusedField === "name" ? colors.button.accent : colors.button.muted}
-						/>
-
-						{name.length === 0 && focusedField !== "name" && (
-							<Text style={styles.inputPlaceholder}>Create an exercise...</Text>
-						)}
-					</View>
-				</View>
+				</FadeIn>
 				<View style={styles.container}>
 					{exercises.length === 0 ? (
 						<StarBackground />
@@ -222,13 +225,15 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 								);
 							}}
 							renderItem={({ item, drag, isActive }) => (
-								<MoveableRow
-									val={item}
-									drag={drag}
-									isActive={isActive}
-									onDelete={() => handleDelete(item.id)}
-									onPress={() => handleNavExercise(workoutId, item.id)}
-								/>
+								<FadeIn visible={true}>
+									<MoveableRow
+										val={item}
+										drag={drag}
+										isActive={isActive}
+										onDelete={() => handleDelete(item.id)}
+										onPress={() => handleNavExercise(workoutId, item.id)}
+									/>
+								</FadeIn>
 							)}
 						/>
 					)}

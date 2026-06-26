@@ -6,6 +6,7 @@ import { getApiError } from "../../api/apiError";
 import { useAuthStore } from "../../store/auth.store";
 import type { RootStackParamList } from "../../types/navigation";
 import { validateJoint } from "../../util/inputValidation";
+import { FadeIn } from "../components/FadeIn";
 import { useScaleAnimation } from "../components/scaleAnim";
 import { StarBackground } from "../components/StarBackground";
 import StatusMessage from "../components/StatusMessage";
@@ -78,7 +79,9 @@ export default function RegisterScreen({ navigation }: Props) {
 		>
 			<StarBackground />
 			<View style={styles.innerContainer}>
+				<FadeIn visible={true}>
 				<Animated.Text style={[styles.registerTitle, { letterSpacing }]}>Register</Animated.Text>
+				
 				<UsernameInput
 					value={username}
 					onChangeText={setUsername}
@@ -126,6 +129,7 @@ export default function RegisterScreen({ navigation }: Props) {
 						<Text style={styles.buttonText}>Return to Login</Text>
 					</Pressable>
 				</Animated.View>
+				</FadeIn>
 			</View>
 		</KeyboardAwareScrollView>
 	);

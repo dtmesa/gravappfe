@@ -5,6 +5,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { getApiError } from "../../api/apiError";
 import { useAuthStore } from "../../store/auth.store";
 import type { RootStackParamList } from "../../types/navigation";
+import { FadeIn } from "../components/FadeIn";
 import { useScaleAnimation } from "../components/scaleAnim";
 import { StarBackground } from "../components/StarBackground";
 import StatusMessage from "../components/StatusMessage";
@@ -80,54 +81,57 @@ export default function LoginScreen({ navigation }: Props) {
 		>
 			<StarBackground />
 			<View style={styles.innerContainer}>
-				<Animated.Text style={[styles.title, { letterSpacing }]}>Gravity</Animated.Text>
-				<UsernameInput
-					value={username}
-					onChangeText={setUsername}
-					placeholder="Username "
-					keyboardType="visible-password"
-					autoCapitalize="none"
-					focused={focusedField === "username"}
-					onFocus={() => setFocusedField("username")}
-					onBlur={() => setFocusedField(null)}
-				/>
+				<FadeIn visible={true}>
+					<Animated.Text style={[styles.title, { letterSpacing }]}>Gravity</Animated.Text>
+				
+					<UsernameInput
+						value={username}
+						onChangeText={setUsername}
+						placeholder="Username "
+						keyboardType="visible-password"
+						autoCapitalize="none"
+						focused={focusedField === "username"}
+						onFocus={() => setFocusedField("username")}
+						onBlur={() => setFocusedField(null)}
+					/>
 
-				<PasswordInput
-					value={password}
-					visible={showPassword}
-					focused={focusedField === "password"}
-					placeholder="Password "
-					onChangeText={setPassword}
-					onFocus={() => setFocusedField("password")}
-					onBlur={() => setFocusedField(null)}
-					onToggleVisibility={() => setShowPassword((v) => !v)}
-				/>
+					<PasswordInput
+						value={password}
+						visible={showPassword}
+						focused={focusedField === "password"}
+						placeholder="Password "
+						onChangeText={setPassword}
+						onFocus={() => setFocusedField("password")}
+						onBlur={() => setFocusedField(null)}
+						onToggleVisibility={() => setShowPassword((v) => !v)}
+					/>
 
-				<StatusMessage message={error} type="error" onClear={() => setError("")} />
+					<StatusMessage message={error} type="error" onClear={() => setError("")} />
 
-				<Animated.View style={{ transform: [{ scale: loginAnim.scale }] }}>
-					<Pressable
-						style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-						onPress={handleLogin}
-						disabled={loading}
-						onPressIn={loginAnim.pressIn}
-						onPressOut={loginAnim.pressOut}
-					>
-						<Text style={styles.buttonText}>Login</Text>
-					</Pressable>
-				</Animated.View>
-
-				<Animated.View style={{ transform: [{ scale: registerAnim.scale }] }}>
-					<Pressable
-						style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-						onPress={() => navigation.navigate("Register")}
-						disabled={loading}
-						onPressIn={registerAnim.pressIn}
-						onPressOut={registerAnim.pressOut}
-					>
-						<Text style={styles.buttonText}>Register</Text>
-					</Pressable>
-				</Animated.View>
+					<Animated.View style={{ transform: [{ scale: loginAnim.scale }] }}>
+						<Pressable
+							style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+							onPress={handleLogin}
+							disabled={loading}
+							onPressIn={loginAnim.pressIn}
+							onPressOut={loginAnim.pressOut}
+						>
+							<Text style={styles.buttonText}>Login</Text>
+						</Pressable>
+					</Animated.View>
+					
+					<Animated.View style={{ transform: [{ scale: registerAnim.scale }] }}>
+						<Pressable
+							style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+							onPress={() => navigation.navigate("Register")}
+							disabled={loading}
+							onPressIn={registerAnim.pressIn}
+							onPressOut={registerAnim.pressOut}
+						>
+							<Text style={styles.buttonText}>Register</Text>
+						</Pressable>
+					</Animated.View>
+				</FadeIn>
 			</View>
 		</KeyboardAwareScrollView>
 	);

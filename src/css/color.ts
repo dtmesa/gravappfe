@@ -19,8 +19,7 @@ export const colors = {
 
 	border: {
 		primary: "#2A2433",
-		primaryActive: "#2A2433",
-		accent: "#7c3aed",
+		accent: "#6d28d9",
 	},
 
 	star: {

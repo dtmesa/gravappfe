@@ -9,6 +9,7 @@ import { colors } from "../../css/color";
 import type { RootStackParamList } from "../../types/navigation";
 import type { Workout } from "../../types/workout";
 import AddButton from "../components/AddButton";
+import { FadeIn } from "../components/FadeIn";
 import MoveableRow from "../components/MoveableRow";
 import { StarBackground } from "../components/StarBackground";
 import UndoButton from "../components/UndoButton";
@@ -126,31 +127,33 @@ export default function HomeScreen() {
 						</View>
 					</View>
 				</View>
-				<View style={styles.inputContainer}>
-					<View style={[styles.inputWrapper, focusedField === "name" && styles.inputFocused]}>
-						<TextInput
-							value={name}
-							onChangeText={setName}
-							style={styles.input}
-							keyboardType="visible-password"
-							onSubmitEditing={handleCreateWorkout}
-							onFocus={() => setFocusedField("name")}
-							onBlur={() => {
-								setFocusedField(null);
-								setName("");
-							}}
-						/>
+				<FadeIn visible={true}>
+					<View style={styles.inputContainer}>
+						<View style={[styles.inputWrapper, focusedField === "name" && styles.inputFocused]}>
+							<TextInput
+								value={name}
+								onChangeText={setName}
+								style={styles.input}
+								keyboardType="visible-password"
+								onSubmitEditing={handleCreateWorkout}
+								onFocus={() => setFocusedField("name")}
+								onBlur={() => {
+									setFocusedField(null);
+									setName("");
+								}}
+							/>
 
-						<AddButton
-							onAdd={handleCreateWorkout}
-							color={focusedField === "name" ? colors.button.accent : colors.button.muted}
-						/>
+							<AddButton
+								onAdd={handleCreateWorkout}
+								color={focusedField === "name" ? colors.button.accent : colors.button.muted}
+							/>
 
-						{name.length === 0 && focusedField !== "name" && (
-							<Text style={styles.placeholderText}>Create a workout...</Text>
-						)}
+							{name.length === 0 && focusedField !== "name" && (
+								<Text style={styles.placeholderText}>Create a workout...</Text>
+							)}
+						</View>
 					</View>
-				</View>
+				</FadeIn>
 				<View style={styles.container}>
 					{workouts.length === 0 ? (
 						<StarBackground />
@@ -172,15 +175,17 @@ export default function HomeScreen() {
 								);
 							}}
 							renderItem={({ item, drag, isActive }) => (
-								<MoveableRow
-									disabled={loading}
-									val={item}
-									drag={drag}
-									isActive={isActive}
-									onDelete={() => handleDelete(item.id)}
-									onEdit={() => handleNavWorkout(item.id)}
-									onPress={() => handleStartWorkout(item.id)}
-								/>
+								<FadeIn key={item.id} visible={true}>
+									<MoveableRow
+										disabled={loading}
+										val={item}
+										drag={drag}
+										isActive={isActive}
+										onDelete={() => handleDelete(item.id)}
+										onEdit={() => handleNavWorkout(item.id)}
+										onPress={() => handleStartWorkout(item.id)}
+									/>
+								</FadeIn>
 							)}
 						/>
 					)}

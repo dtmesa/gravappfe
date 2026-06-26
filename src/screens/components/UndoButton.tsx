@@ -44,7 +44,9 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		alignItems: "center",
 		elevation: 8,
-		shadowColor: colors.shadow.primary
+		shadowColor: colors.shadow.primary,
+		borderColor: colors.border.accent,
+		borderWidth: 1,
 	},
 	text: {
 		fontFamily: "Play_400Regular",
