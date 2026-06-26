@@ -184,10 +184,9 @@ export default function ActiveWorkoutScreen({ navigation, route }: Props) {
 							contentContainerStyle={styles.flatListBuffer}
 							data={exercises}
 							keyExtractor={(item) => item.id.toString()}
-							renderItem={({ item, index }) => (
+							renderItem={({ item }) => (
 								<ClickableRow
 									val={item}
-									isLast={index === exercises.length - 1}
 									onPress={() => handleExercisePress(item.id)}
 									isVisited={exerciseSessions.some((s) => s.exerciseId === item.id)}
 								/>

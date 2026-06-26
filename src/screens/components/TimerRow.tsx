@@ -2,6 +2,7 @@ import { RotateCcw } from "lucide-react-native";
 import { useRef } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { colors } from "../../css/color";
+import { useScaleAnimation } from "../components/scaleAnim";
 
 type Props = {
 	running: boolean;
@@ -11,30 +12,31 @@ type Props = {
 };
 
 export default function TimerRow({ running, elapsed, onPress, onReset }: Props) {
+	const { scale, pressIn, pressOut } = useScaleAnimation();
+
 	const rotation = useRef(new Animated.Value(0)).current;
 
 	const rotate = rotation.interpolate({
-        inputRange: [-1, 0],
-        outputRange: ["-360deg", "0deg"],
-    });
+		inputRange: [-1, 0],
+		outputRange: ["-360deg", "0deg"],
+	});
 
 	const handleReset = (e: any) => {
-        e.stopPropagation();
-        Animated.sequence([
-            Animated.timing(rotation, {
-                toValue: -1,
-                duration: 300,
-                useNativeDriver: true,
-            }),
-            Animated.timing(rotation, {
-                toValue: 0,
-                duration: 0,
-                useNativeDriver: true,
-            }),
-        ]).start();
-        onReset();
-    };
-
+		e.stopPropagation();
+		Animated.sequence([
+			Animated.timing(rotation, {
+				toValue: -1,
+				duration: 300,
+				useNativeDriver: true,
+			}),
+			Animated.timing(rotation, {
+				toValue: 0,
+				duration: 0,
+				useNativeDriver: true,
+			}),
+		]).start();
+		onReset();
+	};
 
 	const formatTime = (seconds: number) => {
 		const m = Math.floor(seconds / 60)
@@ -46,17 +48,29 @@ export default function TimerRow({ running, elapsed, onPress, onReset }: Props) 
 
 	return (
 		<View style={styles.rowContainer}>
-			<Pressable onPress={onPress}>
+			<Pressable onPress={onPress} onPressIn={pressIn} onPressOut={pressOut}>
 				{({ pressed }) => (
-					<View style={[styles.row, pressed && styles.rowPressed, running && styles.rowActive]}>
+					<Animated.View
+						style={[
+							styles.row,
+							pressed && styles.rowPressed,
+							running && styles.rowActive,
+							{ transform: [{ scale }] },
+						]}
+					>
 						<View style={styles.textWrapper}>
 							<Text
-								style={[styles.text, running && styles.textRunning, pressed && styles.textPressed]}
+								style={[
+									styles.text,
+									running && styles.textPressed,
+									pressed && styles.textPressed,
+									running && pressed && styles.textPressedRunning,
+								]}
 							>
 								{formatTime(elapsed)}
 							</Text>
 						</View>
-						<Pressable onPress={handleReset} hitSlop={12} >
+						<Pressable onPress={handleReset} hitSlop={12}>
 							{({ pressed: resetPressed }) => (
 								<Animated.View style={{ transform: [{ rotate }] }}>
 									<RotateCcw
@@ -73,7 +87,7 @@ export default function TimerRow({ running, elapsed, onPress, onReset }: Props) 
 								</Animated.View>
 							)}
 						</Pressable>
-					</View>
+					</Animated.View>
 				)}
 			</Pressable>
 		</View>
@@ -90,10 +104,10 @@ const styles = StyleSheet.create({
 		paddingHorizontal: "7.5%",
 		paddingVertical: "4.5%",
 		backgroundColor: colors.bg.input,
-		borderBottomColor: colors.border.transparent,
 		alignItems: "center",
 		flexDirection: "row",
 		borderRadius: 18,
+		transform: [{ scale: 1 }],
 	},
 	rowActive: {
 		backgroundColor: colors.bg.inputHighlight,
@@ -116,9 +130,9 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 	textPressed: {
-		color: colors.text.accentHighlight,
-	},
-	textRunning: {
 		color: colors.text.accent,
+	},
+	textPressedRunning: {
+		color: colors.text.accentHighlight,
 	},
 });

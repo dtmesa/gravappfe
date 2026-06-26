@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { LayoutAnimation, Pressable, Text, View } from "react-native";
+import { Animated, LayoutAnimation, Pressable, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { getApiError } from "../../api/apiError";
 import { updatePassword, updateUsername } from "../../api/auth";
@@ -9,6 +9,7 @@ import type { RootStackParamList } from "../../types/navigation";
 import { validatePassword, validateUsername } from "../../util/inputValidation";
 import BackButton from "../components/BackButton";
 import { StarBackground } from "../components/StarBackground";
+import { useScaleAnimation } from "../components/scaleAnim";
 import SettingsCard from "./SettingsCard";
 import SettingsInput from "./SettingsInput";
 import { styles } from "./styles";
@@ -27,6 +28,8 @@ export default function SettingsScreen({ navigation }: Props) {
 	const [passwordError, setPasswordError] = useState("");
 	const [nameError, setNameError] = useState("");
 	const [loading, setLoading] = useState(false);
+	const usernameAnim = useScaleAnimation();
+	const registerAnim = useScaleAnimation();
 
 	React.useEffect(() => {
 		if (!nameError) return;
@@ -162,13 +165,17 @@ export default function SettingsScreen({ navigation }: Props) {
 							{nameError}
 						</Text>
 					) : null}
-					<Pressable
-						style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-						onPress={handleUsernameChange}
-						disabled={loading}
-					>
-						<Text style={styles.buttonText}>Update</Text>
-					</Pressable>
+					<Animated.View style={{ transform: [{ scale: usernameAnim.scale }] }}>
+						<Pressable
+							style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+							onPress={handleUsernameChange}
+							disabled={loading}
+							onPressIn={usernameAnim.pressIn}
+							onPressOut={usernameAnim.pressOut}
+						>
+							<Text style={styles.buttonText}>Update</Text>
+						</Pressable>
+					</Animated.View>
 				</SettingsCard>
 
 				<SettingsCard
@@ -207,13 +214,17 @@ export default function SettingsScreen({ navigation }: Props) {
 							{passwordError}
 						</Text>
 					) : null}
-					<Pressable
-						style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-						onPress={handlePasswordChange}
-						disabled={loading}
-					>
-						<Text style={styles.buttonText}>Update</Text>
-					</Pressable>
+					<Animated.View style={{ transform: [{ scale: registerAnim.scale }] }}>
+						<Pressable
+							style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+							onPress={handlePasswordChange}
+							disabled={loading}
+							onPressIn={registerAnim.pressIn}
+							onPressOut={registerAnim.pressOut}
+						>
+							<Text style={styles.buttonText}>Update</Text>
+						</Pressable>
+					</Animated.View>
 				</SettingsCard>
 			</View>
 		</KeyboardAwareScrollView>

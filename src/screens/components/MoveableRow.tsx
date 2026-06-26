@@ -1,8 +1,8 @@
-import { EllipsisVertical } from "lucide-react-native";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { colors } from "../../css/color";
+import ListAddButton from "./ListAddButton";
 
 type Props = {
 	val: { id: number; name: string };
@@ -14,7 +14,7 @@ type Props = {
 	disabled?: boolean;
 };
 
-const OPACITY_ACTIVE = 0.9;
+const OPACITY_ACTIVE = 0.85;
 const OPACITY = 1;
 
 export default function MoveableRow({
@@ -26,12 +26,8 @@ export default function MoveableRow({
 	onPress,
 	onEdit,
 }: Props) {
+	const scale = useSharedValue(1);
 	const translateX = useSharedValue(0);
-	const ellipsisScale = useSharedValue(1); 
-
-	const ellipsisStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: ellipsisScale.value }],
-    }));
 
 	const panGesture = Gesture.Pan()
 		.activeOffsetX([-10, 10])
@@ -49,14 +45,27 @@ export default function MoveableRow({
 		});
 
 	const animatedStyle = useAnimatedStyle(() => ({
-		transform: [{ translateX: translateX.value }, { scale: withSpring(isActive ? 1.02 : 1) }],
+		transform: [
+			{ translateX: translateX.value },
+			{ scale: withSpring(isActive ? 0.975 : scale.value) },
+		],
 		opacity: isActive ? OPACITY_ACTIVE : OPACITY,
 	}));
 
 	return (
 		<View style={styles.container}>
 			<GestureDetector gesture={panGesture}>
-				<Pressable onPress={onPress} onLongPress={drag} disabled={disabled}>
+				<Pressable
+					onPress={onPress}
+					onLongPress={drag}
+					disabled={disabled}
+					onPressIn={() => {
+						scale.value = withSpring(0.975, { stiffness: 500, damping: 20, mass: 1 });
+					}}
+					onPressOut={() => {
+						scale.value = withSpring(1, { stiffness: 500, damping: 20, mass: 1 });
+					}}
+				>
 					{({ pressed }) => (
 						<Animated.View
 							style={[
@@ -75,25 +84,7 @@ export default function MoveableRow({
 									{val.name}
 								</Text>
 							</View>
-							{onEdit && (
-								<Pressable 
-									onPress={onEdit} 
-									hitSlop={12} 
-									disabled={disabled}
-									onPressIn={() => { ellipsisScale.value = withSpring(1.15, { damping: 20, stiffness: 250 }); }}
-									onPressOut={() => { ellipsisScale.value = withSpring(1, { damping: 20, stiffness: 250 }); }}
-								>
-									{({ pressed }) => (
-										<Animated.View style={ellipsisStyle}>
-											<EllipsisVertical
-												size={26}
-												color={pressed ? colors.button.accentLight : colors.button.muted}
-												strokeWidth={1.75}
-											/>
-										</Animated.View>
-									)}
-								</Pressable>
-							)}
+							{onEdit && <ListAddButton onEdit={onEdit} />}
 						</Animated.View>
 					)}
 				</Pressable>
@@ -112,7 +103,6 @@ const styles = StyleSheet.create({
 		paddingHorizontal: "7%",
 		paddingVertical: "7%",
 		backgroundColor: colors.bg.input,
-		borderBottomColor: colors.border.transparent,
 		alignItems: "center",
 		flexDirection: "row",
 		borderRadius: 18,

@@ -1,13 +1,13 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Check } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
-import { Keyboard, Pressable, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
+import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import { getExercise, updateExercise } from "../../api/exercises";
 import { colors } from "../../css/color";
 import type { Exercise } from "../../types/exercise";
 import type { RootStackParamList } from "../../types/navigation";
 import BackButton from "../components/BackButton";
 import { StarBackground } from "../components/StarBackground";
+import { ExerciseChecks } from "./CheckRow";
 import { styles } from "./styles";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Exercise">;
@@ -116,30 +116,7 @@ export default function ExerciseScreen({ navigation, route }: Props) {
 							<Text style={styles.descriptionPlaceholderText}>Add a description...</Text>
 						)}
 					</View>
-					<View style={styles.checksWrapper}>
-						{(["isWeight", "isReps", "isDuration", "isDistance"] as const).map((field) => (
-							<Pressable disabled={loading} key={field} onPress={() => handleToggleField(field)}>
-								{({ pressed }) => (
-									<View style={[styles.checkRow, pressed && styles.checkRowPressed]}>
-										<Text style={[styles.checkLabel, pressed && styles.checkLabelPressed]}>
-											{field === "isWeight"
-												? "Weighted"
-												: field === "isReps"
-													? "Repetitions"
-													: field === "isDuration"
-														? "Duration"
-														: "Distance"}
-										</Text>
-										<View style={[styles.checkbox, exercise[field] && styles.checkboxChecked]}>
-											{exercise[field] && (
-												<Check size={14} color={colors.text.static} strokeWidth={2.5} />
-											)}
-										</View>
-									</View>
-								)}
-							</Pressable>
-						))}
-					</View>
+					<ExerciseChecks exercise={exercise} loading={loading} onToggle={handleToggleField} />
 				</View>
 			</View>
 		</TouchableWithoutFeedback>

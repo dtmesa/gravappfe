@@ -5,6 +5,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { getApiError } from "../../api/apiError";
 import { useAuthStore } from "../../store/auth.store";
 import type { RootStackParamList } from "../../types/navigation";
+import { useScaleAnimation } from "../components/scaleAnim";
 import { StarBackground } from "../components/StarBackground";
 import StatusMessage from "../components/StatusMessage";
 import PasswordInput from "./PasswordInput";
@@ -24,6 +25,8 @@ export default function LoginScreen({ navigation }: Props) {
 	const [loading, setLoading] = useState(false);
 
 	const breathe = useRef(new Animated.Value(0)).current;
+	const loginAnim = useScaleAnimation();
+	const registerAnim = useScaleAnimation();
 
 	useEffect(() => {
 		Animated.loop(
@@ -102,21 +105,29 @@ export default function LoginScreen({ navigation }: Props) {
 
 				<StatusMessage message={error} type="error" onClear={() => setError("")} />
 
-				<Pressable
-					style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-					onPress={handleLogin}
-					disabled={loading}
-				>
-					<Text style={styles.buttonText}>Login</Text>
-				</Pressable>
+				<Animated.View style={{ transform: [{ scale: loginAnim.scale }] }}>
+					<Pressable
+						style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+						onPress={handleLogin}
+						disabled={loading}
+						onPressIn={loginAnim.pressIn}
+						onPressOut={loginAnim.pressOut}
+					>
+						<Text style={styles.buttonText}>Login</Text>
+					</Pressable>
+				</Animated.View>
 
-				<Pressable
-					style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-					onPress={() => navigation.navigate("Register")}
-					disabled={loading}
-				>
-					<Text style={styles.buttonText}>Register</Text>
-				</Pressable>
+				<Animated.View style={{ transform: [{ scale: registerAnim.scale }] }}>
+					<Pressable
+						style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+						onPress={() => navigation.navigate("Register")}
+						disabled={loading}
+						onPressIn={registerAnim.pressIn}
+						onPressOut={registerAnim.pressOut}
+					>
+						<Text style={styles.buttonText}>Register</Text>
+					</Pressable>
+				</Animated.View>
 			</View>
 		</KeyboardAwareScrollView>
 	);

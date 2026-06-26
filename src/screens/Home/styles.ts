@@ -47,7 +47,6 @@ export const styles = StyleSheet.create({
 		color: colors.text.input,
 	},
 	inputFocused: {
-		borderColor: colors.border.transparent,
 		backgroundColor: colors.bg.inputHighlight,
 		shadowColor: colors.shadow.primary,
 	},
@@ -59,7 +58,6 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		height: 50,
 		elevation: 8,
-		borderColor: colors.border.transparent,
 	},
 	infoText: {
 		fontSize: 25,

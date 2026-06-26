@@ -46,12 +46,10 @@ export const styles = StyleSheet.create({
 	},
 	descriptionFocused: {
 		backgroundColor: colors.bg.inputHighlight,
-		borderColor: colors.border.transparent,
 		shadowColor: colors.shadow.primary,
 	},
 	descriptionWrapper: {
 		backgroundColor: colors.bg.input,
-		borderColor: colors.border.transparent,
 		borderRadius: 18,
 		paddingHorizontal: 16,
 		minHeight: 50,
@@ -82,11 +80,9 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 		backgroundColor: colors.bg.input,
 		borderRadius: 18,
-		borderColor: colors.border.transparent,
 	},
 	checkRowPressed: {
 		backgroundColor: colors.bg.inputHighlight,
-		borderColor: colors.border.transparent,
 		elevation: 8,
 		shadowColor: colors.shadow.primary,
 	},

@@ -19,7 +19,6 @@ export const colors = {
 		primary: "#2A2433",
 		primaryActive: "#2A2433",
 		accent: "#7c3aed",
-		transparent: "transparent",
 	},
 
 	star: {

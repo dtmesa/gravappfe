@@ -55,7 +55,6 @@ export const styles = StyleSheet.create({
 	},
 	inputWrapper: {
 		backgroundColor: colors.bg.input,
-		borderColor: colors.border.transparent,
 		borderRadius: 18,
 		flexDirection: "row",
 		alignItems: "center",
@@ -72,7 +71,6 @@ export const styles = StyleSheet.create({
 	},
 	inputFocused: {
 		backgroundColor: colors.bg.inputHighlight,
-		borderColor: colors.border.transparent,
 		shadowColor: colors.shadow.primary,
 	},
 	inputPlaceholder: {
@@ -85,7 +83,6 @@ export const styles = StyleSheet.create({
 	},
 	descriptionWrapper: {
 		backgroundColor: colors.bg.input,
-		borderColor: colors.border.transparent,
 		borderRadius: 18,
 		paddingHorizontal: 16,
 		minHeight: 50,

@@ -55,7 +55,6 @@ export const styles = StyleSheet.create({
 	},
 	descriptionWrapper: {
 		backgroundColor: colors.bg.input,
-		borderColor: colors.border.transparent,
 		borderRadius: 18,
 		paddingHorizontal: 16,
 		minHeight: 50,
@@ -77,7 +76,6 @@ export const styles = StyleSheet.create({
 	alertModal: {
 		backgroundColor: colors.bg.input,
 		borderRadius: 18,
-		borderColor: colors.border.transparent,
 		padding: 28,
 		gap: 42,
 	},

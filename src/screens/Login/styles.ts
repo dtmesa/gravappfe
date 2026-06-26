@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
 		marginBottom: 25,
 		textAlign: "center",
 	},
-	regTitle: {
+	registerTitle: {
 		fontFamily: "Syncopate_700Bold",
 		color: colors.text.accentDark,
 		fontSize: 40,
@@ -48,7 +48,6 @@ export const styles = StyleSheet.create({
 		textAlign: "center",
 	},
 	inputFocused: {
-		borderColor: colors.border.transparent,
 		backgroundColor: colors.bg.inputHighlight,
 		shadowColor: colors.shadow.primary,
 	},
@@ -65,7 +64,6 @@ export const styles = StyleSheet.create({
 		borderRadius: 18,
 		paddingHorizontal: 16,
 		height: 50,
-		borderColor: colors.border.transparent,
 		marginBottom: 10,
 		elevation: 8,
 	},

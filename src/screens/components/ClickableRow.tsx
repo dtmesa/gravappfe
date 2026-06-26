@@ -1,24 +1,26 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { colors } from "../../css/color";
+import { useScaleAnimation } from "../components/scaleAnim";
 
 type Props = {
 	val: { id: number; name: string };
-	isLast: boolean;
 	onPress: () => void;
 	isVisited?: boolean;
 };
 
-export default function MoveableRow({ val, isLast, onPress, isVisited }: Props) {
+export default function MoveableRow({ val, onPress, isVisited }: Props) {
+	const { scale, pressIn, pressOut } = useScaleAnimation();
+
 	return (
 		<View style={styles.container}>
-			<Pressable onPress={onPress}>
+			<Pressable onPress={onPress} onPressIn={pressIn} onPressOut={pressOut}>
 				{({ pressed }) => (
-					<View
+					<Animated.View
 						style={[
 							styles.row,
-							isLast && styles.rowLast,
 							isVisited && styles.rowVisited,
 							pressed && styles.rowPressed,
+							{ transform: [{ scale }] },
 						]}
 					>
 						<Text
@@ -33,7 +35,7 @@ export default function MoveableRow({ val, isLast, onPress, isVisited }: Props) 
 						>
 							{val.name}
 						</Text>
-					</View>
+					</Animated.View>
 				)}
 			</Pressable>
 		</View>
@@ -50,13 +52,9 @@ const styles = StyleSheet.create({
 		paddingHorizontal: "7%",
 		paddingVertical: "7%",
 		backgroundColor: colors.bg.input,
-		borderBottomColor: colors.border.transparent,
 		alignItems: "center",
 		flexDirection: "row",
 		borderRadius: 18,
-	},
-	rowLast: {
-		borderBottomWidth: 0,
 	},
 	rowPressed: {
 		backgroundColor: colors.bg.inputHighlight,

@@ -48,7 +48,6 @@ export const styles = StyleSheet.create({
 	},
 	descriptionWrapper: {
 		backgroundColor: colors.bg.input,
-		borderColor: colors.border.transparent,
 		borderRadius: 18,
 		paddingHorizontal: 16,
 		minHeight: 50,
@@ -88,7 +87,6 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: "5%",
 		paddingVertical: "5%",
 		backgroundColor: colors.bg.input,
-		borderBottomColor: colors.border.transparent,
 		flexDirection: "row",
 		alignItems: "center",
 		borderRadius: 18,
@@ -133,7 +131,6 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: "5%",
 		paddingVertical: "3%",
 		backgroundColor: colors.bg.input,
-		borderBottomColor: colors.border.transparent,
 		flexDirection: "row",
 		alignItems: "center",
 		borderRadius: 18,
@@ -146,6 +143,7 @@ export const styles = StyleSheet.create({
 	},
 	setMetricContainer: {
 		alignItems: "center",
+		shadowColor: colors.shadow.primary,
 	},
 	setMetricLabel: {
 		fontFamily: "Play_700Bold",
@@ -164,5 +162,6 @@ export const styles = StyleSheet.create({
 		backgroundColor: colors.bg.inputHighlight,
 		borderRadius: 9,
 		paddingHorizontal: 9,
+		elevation: 4,
 	},
 });

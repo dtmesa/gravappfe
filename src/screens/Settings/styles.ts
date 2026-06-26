@@ -74,7 +74,6 @@ export const styles = StyleSheet.create({
 		borderRadius: 18,
 		paddingHorizontal: 16,
 		height: 50,
-		borderColor: colors.border.transparent,
 		elevation: 8,
 	},
 	input: {
@@ -84,7 +83,6 @@ export const styles = StyleSheet.create({
 		color: colors.text.input,
 	},
 	inputFocused: {
-		borderColor: colors.border.transparent,
 		backgroundColor: colors.bg.inputHighlight,
 		shadowColor: colors.shadow.primary,
 	},

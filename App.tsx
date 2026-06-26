@@ -7,7 +7,7 @@ import { colors } from "./src/css/color";
 import { useAppFonts } from "./src/css/fonts";
 import ActiveExerciseScreen from "./src/screens/ActiveExercise/ActiveExerciseScreen";
 import ActiveWorkoutScreen from "./src/screens/ActiveWorkout/ActiveWorkoutScreen";
-import NavigationBar from "./src/screens/components/NavigationBar";
+import { NavigationBar, TopBar } from "./src/screens/components/NavigationBars";
 import ExerciseScreen from "./src/screens/Exercise/ExerciseScreen";
 import HistoryScreen from "./src/screens/History/HistoryScreen";
 import HomeDrawer from "./src/screens/Home/HomeDrawer";
@@ -56,6 +56,7 @@ export default function App() {
 					)}
 				</Stack.Navigator>
 			</NavigationContainer>
+			<TopBar />
 			<NavigationBar />
 		</GestureHandlerRootView>
 	);

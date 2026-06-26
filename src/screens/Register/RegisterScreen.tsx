@@ -6,6 +6,7 @@ import { getApiError } from "../../api/apiError";
 import { useAuthStore } from "../../store/auth.store";
 import type { RootStackParamList } from "../../types/navigation";
 import { validateJoint } from "../../util/inputValidation";
+import { useScaleAnimation } from "../components/scaleAnim";
 import { StarBackground } from "../components/StarBackground";
 import StatusMessage from "../components/StatusMessage";
 import PasswordInput from "../Login/PasswordInput";
@@ -25,6 +26,8 @@ export default function RegisterScreen({ navigation }: Props) {
 	const [loading, setLoading] = useState(false);
 
 	const breathe = useRef(new Animated.Value(0)).current;
+	const submitAnim = useScaleAnimation();
+	const returnAnim = useScaleAnimation();
 
 	useEffect(() => {
 		Animated.loop(
@@ -75,11 +78,11 @@ export default function RegisterScreen({ navigation }: Props) {
 		>
 			<StarBackground />
 			<View style={styles.innerContainer}>
-				<Animated.Text style={[styles.regTitle, { letterSpacing }]}>Register</Animated.Text>
+				<Animated.Text style={[styles.registerTitle, { letterSpacing }]}>Register</Animated.Text>
 				<UsernameInput
 					value={username}
 					onChangeText={setUsername}
-					placeholder="Username"
+					placeholder="New username"
 					keyboardType="visible-password"
 					autoCapitalize="none"
 					focused={focusedField === "username"}
@@ -91,7 +94,7 @@ export default function RegisterScreen({ navigation }: Props) {
 					value={password}
 					visible={showPassword}
 					focused={focusedField === "password"}
-					placeholder="Password"
+					placeholder="New password"
 					onChangeText={setPassword}
 					onFocus={() => setFocusedField("password")}
 					onBlur={() => setFocusedField(null)}
@@ -100,21 +103,29 @@ export default function RegisterScreen({ navigation }: Props) {
 
 				<StatusMessage message={error} type="error" onClear={() => setError("")} />
 
-				<Pressable
-					style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-					onPress={handleRegister}
-					disabled={loading}
-				>
-					<Text style={styles.buttonText}>Submit</Text>
-				</Pressable>
+				<Animated.View style={{ transform: [{ scale: submitAnim.scale }] }}>
+					<Pressable
+						style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+						onPress={handleRegister}
+						disabled={loading}
+						onPressIn={submitAnim.pressIn}
+						onPressOut={submitAnim.pressOut}
+					>
+						<Text style={styles.buttonText}>Submit</Text>
+					</Pressable>
+				</Animated.View>
 
-				<Pressable
-					style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-					onPress={() => navigation.navigate("Login")}
-					disabled={loading}
-				>
-					<Text style={styles.buttonText}>Return to Login</Text>
-				</Pressable>
+				<Animated.View style={{ transform: [{ scale: returnAnim.scale }] }}>
+					<Pressable
+						style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+						onPress={() => navigation.navigate("Login")}
+						disabled={loading}
+						onPressIn={returnAnim.pressIn}
+						onPressOut={returnAnim.pressOut}
+					>
+						<Text style={styles.buttonText}>Return to Login</Text>
+					</Pressable>
+				</Animated.View>
 			</View>
 		</KeyboardAwareScrollView>
 	);
