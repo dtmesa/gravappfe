@@ -23,7 +23,8 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
-	const { isLoggedIn, checkAuth, loading } = useAuthStore();
+	const { token, checkAuth, loading } = useAuthStore();
+	const isLoggedIn = !!token;
 	const fontsLoaded = useAppFonts();
 
 	useEffect(() => {

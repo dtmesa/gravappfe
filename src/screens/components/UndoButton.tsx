@@ -43,8 +43,8 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",
-		borderWidth: 2,
-		borderColor: colors.border.accent,
+		elevation: 8,
+		shadowColor: colors.shadow.primary
 	},
 	text: {
 		fontFamily: "Play_400Regular",

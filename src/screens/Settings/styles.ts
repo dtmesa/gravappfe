@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
 	card: {
 		marginHorizontal: "4%",
 		marginBottom: 10,
-		zIndex: 1,
+		backgroundColor: colors.bg.primary,
 	},
 	cardHeader: {
 		flexDirection: "row",
@@ -45,7 +45,6 @@ export const styles = StyleSheet.create({
 		backgroundColor: colors.bg.input,
 		borderRadius: 18,
 		elevation: 8,
-		zIndex: 1,
 	},
 	cardHeaderText: {
 		fontFamily: "Play_700Bold",
@@ -60,7 +59,6 @@ export const styles = StyleSheet.create({
 		color: colors.text.accentLight,
 	},
 	cardBody: {
-		backgroundColor: colors.bg.primary,
 		gap: 10,
 		paddingLeft: 30,
 		paddingRight: 30,
@@ -103,6 +101,18 @@ export const styles = StyleSheet.create({
 		fontSize: 18,
 		color: colors.text.contrast,
 		textAlign: "center",
+	},
+	buttonDanger: {
+		backgroundColor: colors.button.danger,
+		padding: 10,
+		borderRadius: 18,
+		marginRight: 75,
+		marginLeft: 75,
+		elevation: 8,
+	},
+	buttonDangerPressed: {
+		backgroundColor: colors.button.dangerHighlight,
+		shadowColor: colors.shadow.primary,
 	},
 	statusText: {
 		fontFamily: "Play_400Regular",

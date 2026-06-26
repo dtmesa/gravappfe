@@ -27,10 +27,10 @@ Cross-platform fitness tracking application built with React Native, Expo, and T
 ##
 Snapshots
 <p align="center">
-<img width="288" height="600" alt="Screenshot_20260624_185519_Expo Go" src="https://github.com/user-attachments/assets/539f40ba-472b-43d6-b028-f3ee3acb3773" />
-<img width="288" height="600" alt="Screenshot_20260624_185444_Expo Go" src="https://github.com/user-attachments/assets/6c7600af-d42c-413c-9386-c72638e7e465" />
-<img width="288" height="600" alt="Screenshot_20260624_185508_Expo Go" src="https://github.com/user-attachments/assets/42a3d628-e79d-45eb-90dd-41dc201fe066" />
-<img width="288" height="600" alt="Screenshot_20260624_185817_Expo Go" src="https://github.com/user-attachments/assets/07d9db00-b926-45f9-a455-0e1b09329e4f" />
-<img width="288" height="600" alt="Screenshot_20260624_185828_Expo Go" src="https://github.com/user-attachments/assets/4eead7ca-241d-4d81-acce-6de7dc40e086" />
-<img width="288" height="600" alt="Screenshot_20260624_185857_Expo Go" src="https://github.com/user-attachments/assets/7b05c260-25d0-438f-8c33-39478fed8b4a" />
+<img width="216" height="450" alt="Screenshot_20260625_171630_Expo Go" src="https://github.com/user-attachments/assets/fc778883-9cef-4d80-9387-d62f95c6ae35" />
+<img width="216" height="450" alt="Screenshot_20260625_171625_Expo Go" src="https://github.com/user-attachments/assets/e2c4dcbd-d9d3-47d8-a6d5-19fc5f945b1f" />
+<img width="216" height="450" alt="Screenshot_20260625_171619_Expo Go" src="https://github.com/user-attachments/assets/32465bf7-0935-44ab-86ff-ea7ab38c8399" />
+<img width="216" height="450" alt="Screenshot_20260625_171730_Expo Go" src="https://github.com/user-attachments/assets/5ddebb96-9088-43f6-b07c-7c10e6972730" />
+<img width="216" height="450" alt="Screenshot_20260625_171810_Expo Go" src="https://github.com/user-attachments/assets/c587432b-5671-4bab-b92c-dd69fbf72a89" />
+<img width="216" height="450" alt="Screenshot_20260625_171747_Expo Go" src="https://github.com/user-attachments/assets/32cd0c8c-335c-4e69-a026-998c62e9848b" />
 </p>

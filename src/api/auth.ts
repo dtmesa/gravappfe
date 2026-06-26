@@ -26,3 +26,7 @@ export const updatePassword = async (
 	const res = await api.put("/auth/password", { currentPassword, newPassword });
 	return res.data;
 };
+
+export const deleteAccount = async (password: string): Promise<void> => {
+	await api.delete("/auth/delete", { data: { password }});
+};

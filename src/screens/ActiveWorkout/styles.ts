@@ -76,13 +76,15 @@ export const styles = StyleSheet.create({
 	alertModal: {
 		backgroundColor: colors.bg.input,
 		borderRadius: 18,
-		padding: 28,
-		gap: 42,
+		padding: 24,
+		gap: 36,
+		elevation: 8,
+		shadowColor: colors.shadow.primary,
 	},
 	alertTitle: {
 		fontFamily: "Syncopate_700Bold",
 		color: colors.text.accentDark,
-		fontSize: 20,
+		fontSize: 22,
 		textAlign: "center",
 	},
 	alertButtons: {

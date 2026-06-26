@@ -3,7 +3,7 @@ export const colors = {
 		primary: "#000000",
 		input: "#171526",
 		inputHighlight: "#2B274D",
-		darken: "rgba(0,0,0,0.8)",
+		darken: "rgba(0,0,0,0.85)",
 		transparent: "transparent",
 	},
 
@@ -13,6 +13,8 @@ export const colors = {
 		accent: "#7c3aed",
 		accentLight: "#8b5cf6",
 		accentHighlight: "#9a6bff",
+		danger: "#B91C1C",
+		dangerHighlight: "#DC2626"
 	},
 
 	border: {

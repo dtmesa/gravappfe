@@ -4,7 +4,6 @@ import { api } from "../api/client";
 import { deleteToken, getToken, saveToken } from "../api/token";
 
 type AuthState = {
-	isLoggedIn: boolean;
 	loading: boolean;
 	token: string | null;
 	username: string | null;
@@ -16,7 +15,6 @@ type AuthState = {
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({
-	isLoggedIn: false,
 	loading: true,
 	token: null,
 	username: null,
@@ -24,7 +22,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 	login: async (username, password) => {
 		const res = await apiLogin(username, password);
 		await saveToken(res.token);
-		set({ token: res.token, isLoggedIn: true, username });
+		set({ token: res.token, username });
 	},
 
 	register: async (username, password) => {
@@ -34,7 +32,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
 	logout: async () => {
 		await deleteToken();
-		set({ token: null, isLoggedIn: false, username: null });
+		set({ token: null, username: null });
 	},
 
 	checkAuth: async () => {
@@ -43,13 +41,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
 			if (token) {
 				const { data } = await api.get("/auth/me");
-				set({ token, isLoggedIn: true, username: data.username });
+				set({ token, username: data.username });
 			} else {
-				set({ token: null, isLoggedIn: false, username: null });
+				set({ token: null, username: null });
 			}
 		} catch {
 			await deleteToken();
-			set({ token: null, isLoggedIn: false, username: null });
+			set({ token: null, username: null });
 		} finally {
 			set({ loading: false });
 		}

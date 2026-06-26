@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Animated, LayoutAnimation, Pressable, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { getApiError } from "../../api/apiError";
-import { updatePassword, updateUsername } from "../../api/auth";
+import { deleteAccount, updatePassword, updateUsername } from "../../api/auth";
 import { useAuthStore } from "../../store/auth.store";
 import type { RootStackParamList } from "../../types/navigation";
 import { validatePassword, validateUsername } from "../../util/inputValidation";
@@ -19,17 +19,19 @@ type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
 export default function SettingsScreen({ navigation }: Props) {
 	const username = useAuthStore((t) => t.username);
 
-	const [expandedCard, setExpandedCard] = useState<"username" | "password" | null>(null);
+	const [expandedCard, setExpandedCard] = useState<"username" | "password" | "account" | null>(null);
 	const [newUsername, setNewUsername] = useState("");
 	const [authPassForName, setAuthPassForName] = useState("");
 	const [newPassword, setNewPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [authPassForPass, setAuthPassForPass] = useState("");
+	const [deletionPassword, setDeletionPassword] = useState("");
+	const [deletionAuthPassword, setDeletionAuthPassword] = useState("")
 	const [passwordError, setPasswordError] = useState("");
 	const [nameError, setNameError] = useState("");
+	const [deletionError, setDeletionError] = useState("");
 	const [loading, setLoading] = useState(false);
-	const usernameAnim = useScaleAnimation();
-	const registerAnim = useScaleAnimation();
+	const anim = useScaleAnimation();
 
 	React.useEffect(() => {
 		if (!nameError) return;
@@ -43,10 +45,34 @@ export default function SettingsScreen({ navigation }: Props) {
 		return () => clearTimeout(t);
 	}, [passwordError]);
 
-	const toggle = (card: "username" | "password") => {
+	const toggle = (card: "username" | "password" | "account") => {
 		LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 		setExpandedCard((prev) => (prev === card ? null : card));
 	};
+
+	const handleDeleteAccount = async () => {
+		if (loading) return;
+
+		if (deletionPassword === "" || deletionAuthPassword === "") {
+			setDeletionError("One or more required fields are missing");
+			return;
+		} else if (deletionPassword !== deletionAuthPassword) {
+			setDeletionError("Passwords do not match");
+			return;
+		}
+
+		setLoading(true);
+
+		try {
+			setDeletionError("");
+			await deleteAccount(deletionPassword)
+			useAuthStore.setState({ token: null, username: null });
+		} catch (err) {
+			setDeletionError("Account deletion failed");
+		} finally {
+			setLoading(false);
+		}
+	}
 
 	const handleUsernameChange = async () => {
 		if (loading) return;
@@ -165,13 +191,13 @@ export default function SettingsScreen({ navigation }: Props) {
 							{nameError}
 						</Text>
 					) : null}
-					<Animated.View style={{ transform: [{ scale: usernameAnim.scale }] }}>
+					<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
 						<Pressable
 							style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
 							onPress={handleUsernameChange}
 							disabled={loading}
-							onPressIn={usernameAnim.pressIn}
-							onPressOut={usernameAnim.pressOut}
+							onPressIn={anim.pressIn}
+							onPressOut={anim.pressOut}
 						>
 							<Text style={styles.buttonText}>Update</Text>
 						</Pressable>
@@ -214,15 +240,57 @@ export default function SettingsScreen({ navigation }: Props) {
 							{passwordError}
 						</Text>
 					) : null}
-					<Animated.View style={{ transform: [{ scale: registerAnim.scale }] }}>
+					<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
 						<Pressable
 							style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
 							onPress={handlePasswordChange}
 							disabled={loading}
-							onPressIn={registerAnim.pressIn}
-							onPressOut={registerAnim.pressOut}
+							onPressIn={anim.pressIn}
+							onPressOut={anim.pressOut}
 						>
 							<Text style={styles.buttonText}>Update</Text>
+						</Pressable>
+					</Animated.View>
+				</SettingsCard>
+
+				<SettingsCard
+					title="Delete Account"
+					expanded={expandedCard === "account"}
+					onToggle={() => toggle("account")}
+				>
+					<SettingsInput
+						placeholder="Password"
+						value={deletionPassword}
+						onChangeText={setDeletionPassword}
+						secureTextEntry
+						showToggle={true}
+					/>
+					<SettingsInput
+						placeholder="Confirm password"
+						value={deletionAuthPassword}
+						onChangeText={setDeletionAuthPassword}
+						secureTextEntry
+						showToggle={true}
+					/>
+					{deletionError ? (
+						<Text
+							style={[
+								styles.statusText,
+								deletionError === "Account deleted" ? styles.success : styles.error,
+							]}
+						>
+							{deletionError}
+						</Text>
+					) : null}
+					<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
+						<Pressable
+							style={({ pressed }) => [styles.buttonDanger, pressed && styles.buttonDangerPressed]}
+							onPress={handleDeleteAccount}
+							disabled={loading}
+							onPressIn={anim.pressIn}
+							onPressOut={anim.pressOut}
+						>
+							<Text style={styles.buttonText}>Confirm</Text>
 						</Pressable>
 					</Animated.View>
 				</SettingsCard>
