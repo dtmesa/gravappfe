@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SWRConfig } from "swr";
 import { colors } from "./src/css/color";
 import { useAppFonts } from "./src/css/fonts";
 import ActiveExerciseScreen from "./src/screens/ActiveExercise/ActiveExerciseScreen";
@@ -36,29 +37,31 @@ export default function App() {
 	}, [fontsLoaded, loading]);
 
 	return (
-		<GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg.primary }}>
-			<NavigationContainer>
-				<Stack.Navigator screenOptions={{ headerShown: false }}>
-					{isLoggedIn ? (
-						<>
-							<Stack.Screen name="Home" component={HomeDrawer} />
-							<Stack.Screen name="History" component={HistoryScreen} />
-							<Stack.Screen name="Settings" component={SettingsScreen} />
-							<Stack.Screen name="Workout" component={WorkoutScreen} />
-							<Stack.Screen name="Exercise" component={ExerciseScreen} />
-							<Stack.Screen name="ActiveWorkout" component={ActiveWorkoutScreen} />
-							<Stack.Screen name="ActiveExercise" component={ActiveExerciseScreen} />
-						</>
-					) : (
-						<>
-							<Stack.Screen name="Login" component={LoginScreen} />
-							<Stack.Screen name="Register" component={RegisterScreen} />
-						</>
-					)}
-				</Stack.Navigator>
-			</NavigationContainer>
-			<TopBar />
-			<NavigationBar />
-		</GestureHandlerRootView>
+		<SWRConfig value={{ revalidateOnFocus: false }}>
+			<GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg.primary }}>
+				<NavigationContainer>
+					<Stack.Navigator screenOptions={{ headerShown: false }}>
+						{isLoggedIn ? (
+							<>
+								<Stack.Screen name="Home" component={HomeDrawer} />
+								<Stack.Screen name="History" component={HistoryScreen} />
+								<Stack.Screen name="Settings" component={SettingsScreen} />
+								<Stack.Screen name="Workout" component={WorkoutScreen} />
+								<Stack.Screen name="Exercise" component={ExerciseScreen} />
+								<Stack.Screen name="ActiveWorkout" component={ActiveWorkoutScreen} />
+								<Stack.Screen name="ActiveExercise" component={ActiveExerciseScreen} />
+							</>
+						) : (
+							<>
+								<Stack.Screen name="Login" component={LoginScreen} />
+								<Stack.Screen name="Register" component={RegisterScreen} />
+							</>
+						)}
+					</Stack.Navigator>
+				</NavigationContainer>
+				<TopBar />
+				<NavigationBar />
+			</GestureHandlerRootView>
+		</SWRConfig>
 	);
 }

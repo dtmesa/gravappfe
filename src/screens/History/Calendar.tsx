@@ -1,13 +1,16 @@
 import { ChevronLeft, ChevronRight } from "lucide-react-native";
 import { useRef } from "react";
-import { Animated, Pressable, Text, View } from "react-native";
-import { Calendar, type DateData, LocaleConfig } from "react-native-calendars";
+import { Animated } from "react-native";
+import { Calendar, LocaleConfig } from "react-native-calendars";
 import { colors } from "../../css/color";
-import { useScaleAnimation } from "../components/scaleAnim";
+import type { WorkoutSession } from "../../types/workoutSession";
+import { CalendarDay } from "./CalendarDay";
 
 type Props = {
 	selected: string;
 	setSelected: (date: string) => void;
+	onMonthChange: (month: string) => void;
+	sessionsByDay: Record<string, WorkoutSession[]>;
 };
 
 LocaleConfig.locales["en-short"] = {
@@ -16,62 +19,12 @@ LocaleConfig.locales["en-short"] = {
 };
 LocaleConfig.defaultLocale = "en-short";
 
-function CalendarDay({
-	date,
-	state,
-	marking,
-	onPress,
-}: {
-	date?: DateData;
-	state?: string;
-	marking?: any;
-	onPress: (dateString: string) => void;
-}) {
-	const { scale, pressIn, pressOut } = useScaleAnimation(0.9);
-
-	return (
-		<Pressable
-			onPress={() => date && onPress(date.dateString)}
-			onPressIn={pressIn}
-			onPressOut={pressOut}
-			android_ripple={null}
-			style={{ width: 32, height: 32, alignItems: "center", justifyContent: "center" }}
-		>
-			{({ pressed }) => (
-				<Animated.View style={{ transform: [{ scale }] }}>
-					<View
-						style={{
-							width: 35,
-							height: 35,
-							borderRadius: 999,
-							alignItems: "center",
-							justifyContent: "center",
-							backgroundColor: marking?.selected ? colors.bg.inputHighlight : "transparent",
-						}}
-					>
-						<Text
-							style={{
-								fontFamily: "Play_700Bold",
-								fontSize: 14,
-								paddingBottom: 2,
-								color:
-									pressed || marking?.selected
-										? colors.text.accentHighlight
-										: state === "today"
-											? colors.text.accent
-											: colors.text.static,
-							}}
-						>
-							{date?.day}
-						</Text>
-					</View>
-				</Animated.View>
-			)}
-		</Pressable>
-	);
-}
-
-export default function CalendarDisplay({ selected, setSelected }: Props) {
+export default function CalendarDisplay({
+	selected,
+	setSelected,
+	onMonthChange,
+	sessionsByDay,
+}: Props) {
 	const opacity = useRef(new Animated.Value(1)).current;
 
 	const fadeTransition = () => {
@@ -96,13 +49,23 @@ export default function CalendarDisplay({ selected, setSelected }: Props) {
 		>
 			<Calendar
 				enableSwipeMonths={true}
+				onMonthChange={(month) => onMonthChange(month.dateString.slice(0, 7))}
 				disableArrowLeft={true}
 				disableArrowRight={true}
 				hideExtraDays={true}
 				onDayPress={(day) => {
 					setSelected(day.dateString);
 				}}
-				markedDates={{ [selected]: { selected: true } }}
+				markedDates={{
+					...Object.keys(sessionsByDay).reduce(
+						(acc, day) => {
+							acc[day] = { marked: true };
+							return acc;
+						},
+						{} as Record<string, any>,
+					),
+					...(selected && { [selected]: { selected: true, marked: !!sessionsByDay[selected] } }),
+				}}
 				renderArrow={(direction) =>
 					direction === "left" ? (
 						<ChevronLeft color={colors.button.primary} size={20} />

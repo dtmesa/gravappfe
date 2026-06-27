@@ -20,3 +20,10 @@ export async function createWorkoutSession(workoutId: number): Promise<WorkoutSe
 export async function deleteWorkoutSession(id: number, workoutId: number): Promise<void> {
 	await api.delete(`/workouts/${workoutId}/sessions/${id}`);
 }
+
+export async function getWorkoutSessionsByMonth(month: string): Promise<WorkoutSession[]> {
+	const res = await api.get<WorkoutSessionDTO[]>(`/history/sessions`, {
+		params: { month },
+	});
+	return res.data.map(mapWorkoutSession);
+}

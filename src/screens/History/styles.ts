@@ -19,12 +19,11 @@ export const styles = StyleSheet.create({
 		marginHorizontal: "4%",
 		backgroundColor: colors.bg.input,
 		overflow: "hidden",
-		marginBottom: 5,
+		marginBottom: 30,
 	},
 	inputContainer: {
-		paddingHorizontal: 40,
-		paddingVertical: 20,
-		marginBottom: 20,
+		marginHorizontal: 40,
+		marginBottom: 15,
 	},
 	flatListBuffer: {
 		paddingBottom: 50,

@@ -4,6 +4,7 @@ export type WorkoutSessionDTO = {
 	userId: number;
 	workoutId: number;
 	createdAt: string;
+	workout: { id: number; name: string };
 };
 
 export type WorkoutSession = {
@@ -12,4 +13,5 @@ export type WorkoutSession = {
 	userId: number;
 	workoutId: number;
 	createdAt: Date;
+	workout: { id: number; name: string };
 };

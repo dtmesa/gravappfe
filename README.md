@@ -1,28 +1,33 @@
 # Fitness Tracker Front End
 
-Cross-platform fitness tracking application built with React Native, Expo, and TypeScript. Designed for fast workout logging, workout session tracking, and historical performance reminders.
+Cross-platform fitness tracking application built with React Native, Expo, and TypeScript. Designed for fast workout logging, workout session tracking, and relevant performance reminders.
 
 ## Features
 
-- User authentication
+- Android support
+- Responsive, dark-themed, animated UI
 - Create and manage workouts & exercises
 - Start and track workout sessions
 - Log exercise sets, weights, reps, durations and/or distances
 - Historical performance reminders
 - Auto-populating sets based on prior workout data
 - Persistent workout and exercise timers
+- User authentication
 - Secure authentication token storage
-- Responsive, dark-themed, animated UI
-- Cross-platform support (iOS, Android, Web)
 
 ## Tech Stack
 
 - React Native
 - Expo
-- TypeScript
-- Zustand
 - Axios
+- Zustand
+- SWR
+- TypeScript
 - Biome
+
+## Plans
+
+- Cross-platform support (Android, iOS, Web)
 
 ##
 Snapshots
