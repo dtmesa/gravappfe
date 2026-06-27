@@ -1,23 +1,23 @@
-import { ListPlus } from "lucide-react-native";
+import { SquarePen } from "lucide-react-native";
 import { Animated, Pressable } from "react-native";
 import { colors } from "../../css/color";
-import { useScaleAnimation } from "../components/scaleAnim";
+import { useScaleAnimation } from "./scaleAnim";
 
 type Props = {
 	onEdit: () => void;
 	color?: string;
 };
 
-export default function ListAddButton({ onEdit }: Props) {
+export default function ModifyButton({ onEdit }: Props) {
 	const { scale, pressIn, pressOut } = useScaleAnimation(0.9);
 
 	return (
 		<Pressable onPress={onEdit} onPressIn={pressIn} onPressOut={pressOut} hitSlop={18}>
 			{({ pressed }) => (
 				<Animated.View style={{ transform: [{ scale }] }}>
-					<ListPlus
-						size={26}
-						color={pressed ? colors.button.accentLight : colors.button.muted}
+					<SquarePen
+						size={24}
+						color={pressed ? colors.button.accentLight : colors.button.mutedLight}
 						strokeWidth={1.75}
 					/>
 				</Animated.View>

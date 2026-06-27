@@ -1,8 +1,10 @@
+import { ChevronRight, GripVertical } from "lucide-react-native";
+import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { colors } from "../../css/color";
-import ListAddButton from "./ListAddButton";
+import ModifyButton from "./ModifyButton";
 
 type Props = {
 	val: { id: number; name: string };
@@ -26,6 +28,8 @@ export default function MoveableRow({
 	onPress,
 	onEdit,
 }: Props) {
+	const [swiping, setSwiping] = useState(false);
+	const [gripPressed, setGripPressed] = useState(false);
 	const scale = useSharedValue(1);
 	const translateX = useSharedValue(0);
 
@@ -33,15 +37,17 @@ export default function MoveableRow({
 		.activeOffsetX([-10, 10])
 		.runOnJS(true)
 		.onUpdate((event) => {
-			if (event.translationX < 0) {
+			if (event.translationX > 0) {
 				translateX.value = event.translationX;
+				setSwiping(true);
 			}
 		})
 		.onEnd(() => {
-			if (translateX.value < -120) {
+			if (translateX.value > 120) {
 				onDelete();
 			}
 			translateX.value = withSpring(0);
+			setSwiping(false);
 		});
 
 	const animatedStyle = useAnimatedStyle(() => ({
@@ -57,7 +63,6 @@ export default function MoveableRow({
 			<GestureDetector gesture={panGesture}>
 				<Pressable
 					onPress={onPress}
-					onLongPress={drag}
 					disabled={disabled}
 					onPressIn={() => {
 						scale.value = withSpring(0.975, { stiffness: 500, damping: 20, mass: 1 });
@@ -75,6 +80,29 @@ export default function MoveableRow({
 								animatedStyle,
 							]}
 						>
+							<Pressable
+								onLongPress={drag}
+								onPressIn={() => setGripPressed(true)}
+								onPressOut={() => setGripPressed(false)}
+								hitSlop={16}
+							>
+								{({ pressed }) => (
+									<Animated.View style={{ transform: [{ scale: pressed ? 0.9 : 1 }] }}>
+										<GripVertical
+											size={24}
+											color={
+												gripPressed
+													? colors.button.accent
+													: isActive
+														? colors.text.accent
+														: colors.button.muted
+											}
+											strokeWidth={1.75}
+											style={styles.gripBuffer}
+										/>
+									</Animated.View>
+								)}
+							</Pressable>
 							<View style={styles.textWrapper}>
 								<Text
 									numberOfLines={1}
@@ -84,7 +112,12 @@ export default function MoveableRow({
 									{val.name}
 								</Text>
 							</View>
-							{onEdit && <ListAddButton onEdit={onEdit} />}
+							{onEdit && <ModifyButton onEdit={onEdit} />}
+							<ChevronRight
+								size={24}
+								color={swiping ? colors.text.accent : colors.button.muted}
+								style={styles.chevronBuffer}
+							/>
 						</Animated.View>
 					)}
 				</Pressable>
@@ -122,6 +155,8 @@ const styles = StyleSheet.create({
 		fontFamily: "Play_700Bold",
 		color: colors.text.static,
 		fontSize: 20,
+		paddingBottom: 2,
+		includeFontPadding: false,
 	},
 	textWrapper: {
 		flex: 1,
@@ -130,5 +165,11 @@ const styles = StyleSheet.create({
 	},
 	textPressed: {
 		color: colors.text.accent,
+	},
+	gripBuffer: {
+		marginRight: 10,
+	},
+	chevronBuffer: {
+		marginLeft: 10,
 	},
 });

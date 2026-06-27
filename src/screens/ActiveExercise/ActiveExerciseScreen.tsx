@@ -68,8 +68,8 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 		if (running) return;
 		setRunning(true);
 		intervalRef.current = setInterval(() => {
-			setElapsed((prev) => prev + 1);
-		}, 1000);
+			setElapsed((prev) => prev + 10);
+		}, 10);
 	};
 
 	const onStop = () => {
@@ -248,16 +248,16 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 						/>
 					</FadeIn>
 				)}
-				{weeklyAverages && 
+				{weeklyAverages && (
 					<FadeIn visible={true}>
 						<AverageRow title={"Weekly Avg"} {...weeklyAverages} />
 					</FadeIn>
-				}
-				{allAverages && 
+				)}
+				{allAverages && (
 					<FadeIn visible={true}>
 						<AverageRow title={"Total Avg     "} {...allAverages} />
 					</FadeIn>
-				}
+				)}
 				{sets.map((set, index) => {
 					const sharedProps = {
 						weight: set.weight,
@@ -275,7 +275,7 @@ export default function ActiveExerciseScreen({ navigation, route }: Props) {
 							<FadeIn key={set.id} visible={true}>
 								<SetRow key={set.id} {...sharedProps} title="Set 1" />
 							</FadeIn>
-						)
+						);
 					}
 
 					return (

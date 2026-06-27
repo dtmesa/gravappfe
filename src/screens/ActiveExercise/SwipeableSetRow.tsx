@@ -1,6 +1,11 @@
+import { ChevronRight } from "lucide-react-native";
+import { useState } from "react";
+import { View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import { colors } from "../../css/color";
 import { SetRow } from "./SetRow";
+import { styles } from "./styles";
 
 type Props = {
 	index: number;
@@ -27,21 +32,24 @@ export default function SwipeableSetRow({
 	onChangeDuration,
 	onChangeDistance,
 }: Props) {
+	const [swiping, setSwiping] = useState(false);
 	const translateX = useSharedValue(0);
 
 	const panGesture = Gesture.Pan()
 		.activeOffsetX([-10, 10])
 		.runOnJS(true)
 		.onUpdate((event) => {
-			if (event.translationX < 0) {
+			if (event.translationX > 0) {
 				translateX.value = event.translationX;
+				setSwiping(true);
 			}
 		})
 		.onEnd(() => {
-			if (translateX.value < -120) {
+			if (translateX.value > 120) {
 				onDelete();
 			}
 			translateX.value = withSpring(0);
+			setSwiping(false);
 		});
 
 	const animatedStyle = useAnimatedStyle(() => ({
@@ -62,6 +70,13 @@ export default function SwipeableSetRow({
 					onChangeDuration={onChangeDuration}
 					onChangeDistance={onChangeDistance}
 				/>
+				<View style={styles.setChevronContainer}>
+					<ChevronRight
+						size={22}
+						color={swiping ? colors.text.accent : colors.button.muted}
+						strokeWidth={1.75}
+					/>
+				</View>
 			</Animated.View>
 		</GestureDetector>
 	);

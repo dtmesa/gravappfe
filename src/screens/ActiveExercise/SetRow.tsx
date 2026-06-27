@@ -36,26 +36,26 @@ export function SetRow({
 	const [focusedMetric, setFocusedMetric] = useState<string | null>(null);
 
 	const metrics = [
-		{ metric: "Weight", value: weight, unit: "lbs", onChange: onChangeWeight, showUnit: true },
+		{ metric: "Wt", value: weight, unit: "lbs", onChange: onChangeWeight, showUnit: true },
 		{ metric: "Reps", value: reps, unit: "reps", onChange: onChangeReps, showUnit: false },
 		{
-			metric: "Duration",
+			metric: "Dur",
 			value: duration,
 			unit: "min",
 			onChange: onChangeDuration,
 			showUnit: true,
 		},
-		{ metric: "Distance", value: distance, unit: "mi", onChange: onChangeDistance, showUnit: true },
+		{ metric: "Dist", value: distance, unit: "mi", onChange: onChangeDistance, showUnit: true },
 	].filter((row): row is MetricRow => row.value !== null && row.onChange !== undefined);
 
 	if (metrics.length === 0) return null;
 
 	return (
-		<View style={styles.setRowContainer}>
+		<View style={styles.rowContainer}>
 			<View style={styles.setRow}>
 				<Text style={styles.setTitle}>{title}</Text>
 
-				<View style={styles.setMetrics}>
+				<View style={styles.metrics}>
 					{metrics.map(({ metric, value, unit, onChange, showUnit }) => (
 						<View
 							key={metric}

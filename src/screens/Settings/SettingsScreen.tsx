@@ -20,14 +20,16 @@ type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
 export default function SettingsScreen({ navigation }: Props) {
 	const username = useAuthStore((t) => t.username);
 
-	const [expandedCard, setExpandedCard] = useState<"username" | "password" | "account" | null>(null);
+	const [expandedCard, setExpandedCard] = useState<"username" | "password" | "account" | null>(
+		null,
+	);
 	const [newUsername, setNewUsername] = useState("");
 	const [authPassForName, setAuthPassForName] = useState("");
 	const [newPassword, setNewPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [authPassForPass, setAuthPassForPass] = useState("");
 	const [deletionPassword, setDeletionPassword] = useState("");
-	const [deletionAuthPassword, setDeletionAuthPassword] = useState("")
+	const [deletionAuthPassword, setDeletionAuthPassword] = useState("");
 	const [passwordError, setPasswordError] = useState("");
 	const [nameError, setNameError] = useState("");
 	const [deletionError, setDeletionError] = useState("");
@@ -66,14 +68,14 @@ export default function SettingsScreen({ navigation }: Props) {
 
 		try {
 			setDeletionError("");
-			await deleteAccount(deletionPassword)
+			await deleteAccount(deletionPassword);
 			useAuthStore.setState({ token: null, username: null });
-		} catch (err) {
+		} catch {
 			setDeletionError("Account deletion failed");
 		} finally {
 			setLoading(false);
 		}
-	}
+	};
 
 	const handleUsernameChange = async () => {
 		if (loading) return;
@@ -286,7 +288,10 @@ export default function SettingsScreen({ navigation }: Props) {
 						) : null}
 						<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
 							<Pressable
-								style={({ pressed }) => [styles.buttonDanger, pressed && styles.buttonDangerPressed]}
+								style={({ pressed }) => [
+									styles.buttonDanger,
+									pressed && styles.buttonDangerPressed,
+								]}
 								onPress={handleDeleteAccount}
 								disabled={loading}
 								onPressIn={anim.pressIn}

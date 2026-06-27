@@ -8,13 +8,15 @@ export const colors = {
 	},
 
 	button: {
+		primary: "#9A98AD",
 		muted: "#46427A",
+		mutedLight: "#6D68B0",
 		accentDark: "#6d28d9",
 		accent: "#7c3aed",
 		accentLight: "#8b5cf6",
 		accentHighlight: "#9a6bff",
 		danger: "#B91C1C",
-		dangerHighlight: "#DC2626"
+		dangerHighlight: "#DC2626",
 	},
 
 	border: {

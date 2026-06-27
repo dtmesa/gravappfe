@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
 		fontFamily: "Play_700Bold",
 		color: colors.text.muted,
 		fontSize: 20,
+		includeFontPadding: false,
 	},
 	textVisited: {
 		color: colors.text.static,

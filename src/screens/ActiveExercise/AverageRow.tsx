@@ -31,10 +31,10 @@ export function AverageRow({ title, weight, reps, duration, distance }: Props) {
 	if (rows.length === 0) return null;
 
 	return (
-		<View style={styles.avgRowContainer}>
+		<View style={styles.rowContainer}>
 			<View style={styles.avgRow}>
 				<Text style={styles.avgLabel}>{title}</Text>
-				<View style={styles.avgMetrics}>
+				<View style={styles.metrics}>
 					{rows.map(({ isInteger, label, value, unit, showUnit }) => (
 						<View key={label} style={styles.avgMetric}>
 							<Text style={styles.avgMetricLabel}>

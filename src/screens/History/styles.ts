@@ -16,9 +16,9 @@ export const styles = StyleSheet.create({
 	},
 	calendarContainer: {
 		borderRadius: 18,
-		marginHorizontal: "7%",
+		marginHorizontal: "4%",
 		backgroundColor: colors.bg.input,
-		overflow: 'hidden',
+		overflow: "hidden",
 		marginBottom: 5,
 	},
 	inputContainer: {

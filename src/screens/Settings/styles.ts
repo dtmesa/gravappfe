@@ -62,8 +62,8 @@ export const styles = StyleSheet.create({
 		gap: 10,
 		paddingLeft: 30,
 		paddingRight: 30,
-		paddingTop: 20,
-		paddingBottom: 10,
+		paddingTop: 25,
+		paddingBottom: 15,
 	},
 	inputWrapper: {
 		flexDirection: "row",
@@ -88,6 +88,7 @@ export const styles = StyleSheet.create({
 		backgroundColor: colors.button.accent,
 		padding: 10,
 		borderRadius: 18,
+		marginTop: 5,
 		marginRight: 75,
 		marginLeft: 75,
 		elevation: 8,
