@@ -1,36 +1,42 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useMemo, useRef, useState } from "react";
-import { FlatList, Text, TextInput, View } from "react-native";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { FlatList, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import useSWR from "swr";
-import { getWorkoutSessionsByMonth } from "../../api/workoutSession";
+import { deleteWorkoutSession, getWorkoutSessionsByMonth } from "../../api/workoutSession";
 import type { RootStackParamList } from "../../types/navigation";
 import type { WorkoutSession } from "../../types/workoutSession";
 import BackButton from "../components/BackButton";
 import { FadeIn } from "../components/FadeIn";
 import { StarBackground } from "../components/StarBackground";
 import SwipeableRow from "../components/SwipeableRow";
+import UndoBubble from "../components/UndoBubble";
 import CalendarDisplay from "./Calendar";
+import { CreationModal } from "./CreationModal";
+import InsertButton from "./InsertButton";
 import { styles } from "./styles";
 
 type Props = NativeStackScreenProps<RootStackParamList, "History">;
 
 export default function HistoryScreen({ navigation }: Props) {
-	const [name, setName] = useState("");
-	const [focusedField, setFocusedField] = useState<string | null>(null);
 	const [selected, setSelected] = useState<string>("");
 	const [pendingDelete, setPendingDelete] = useState<WorkoutSession | null>(null);
 	const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const [modalVisible, setModalVisible] = useState(false);
 
 	const [currentMonth, setCurrentMonth] = useState(() => {
 		const now = new Date();
 		return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 	});
 
-	const { data: sessions = [] } = useSWR<WorkoutSession[]>(["sessions", currentMonth], async () => {
-		const result = await getWorkoutSessionsByMonth(currentMonth);
-		return result;
-	});
+	const { data: sessions = [], mutate } = useSWR<WorkoutSession[]>(
+		["sessions", currentMonth],
+		async () => {
+			const result = await getWorkoutSessionsByMonth(currentMonth);
+			return result;
+		},
+		{ revalidateOnFocus: true },
+	);
 
 	const sessionsByDay = useMemo(() => {
 		return sessions.reduce<Record<string, WorkoutSession[]>>((acc, session) => {
@@ -43,84 +49,115 @@ export default function HistoryScreen({ navigation }: Props) {
 
 	const selectedSessions = sessionsByDay[selected] ?? [];
 
-	const handleCreate = async () => {
+	const handleNavSession = () => {
 		return;
 	};
 
-	const handleDelete = async () => {
-		return;
+	const handleDelete = async (id: number) => {
+		const session = sessions.find((s) => s.id === id);
+		if (!session) return;
+
+		if (pendingDelete && undoTimeoutRef.current) {
+			clearTimeout(undoTimeoutRef.current);
+
+			try {
+				await deleteWorkoutSession(pendingDelete.id, pendingDelete.workout.id);
+			} catch {
+				mutate();
+			}
+		}
+
+		mutate((current = []) => current.filter((s) => s.id !== id), false);
+		setPendingDelete(session);
+
+		undoTimeoutRef.current = setTimeout(async () => {
+			console.log("Deleting", id);
+
+			try {
+				await deleteWorkoutSession(id, session.workout.id);
+				console.log("Delete finished");
+			} catch (e) {
+				console.error(e);
+				mutate();
+			} finally {
+				setPendingDelete(null);
+				undoTimeoutRef.current = null;
+			}
+		}, 3000);
 	};
 
-	const handlePress = () => {
-		return;
+	const handleUndo = () => {
+		if (!pendingDelete) return;
+
+		if (undoTimeoutRef.current) {
+			clearTimeout(undoTimeoutRef.current);
+			undoTimeoutRef.current = null;
+		}
+
+		setPendingDelete(null);
+		mutate();
 	};
+
+	useEffect(() => {
+		return () => {
+			if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
+		};
+	}, []);
 
 	return (
-		<KeyboardAwareScrollView
-			contentContainerStyle={styles.scrollContainer}
-			keyboardShouldPersistTaps="handled"
-			enableOnAndroid={true}
-			enableAutomaticScroll={true}
-			extraScrollHeight={240}
-			extraHeight={240}
-		>
-			<View style={styles.headerContainer}>
-				<View style={styles.titleRow}>
-					<View style={styles.titleRowLeft}>
-						<BackButton onBack={() => navigation.goBack()} />
-					</View>
-					<Text style={styles.title}>History</Text>
-					<View style={styles.titleRowRight} />
-				</View>
-			</View>
-			<FadeIn visible={true}>
-				<View style={styles.calendarContainer}>
-					<CalendarDisplay
-						selected={selected}
-						setSelected={setSelected}
-						onMonthChange={setCurrentMonth}
-						sessionsByDay={sessionsByDay}
-					/>
-				</View>
-			</FadeIn>
-			<View>{selected.length === 0 && <StarBackground />}</View>
-			<FadeIn visible={selected.length > 0} key={selected}>
-				<FlatList
-					style={styles.flatListBuffer}
-					data={selectedSessions}
-					keyExtractor={(item) => String(item.id)}
-					scrollEnabled={false}
-					renderItem={({ item }) => (
-						<SwipeableRow
-							val={{ id: item.id, name: item.workout.name }}
-							onDelete={() => handleDelete()}
-							onPress={() => handlePress()}
-						/>
-					)}
-					ListHeaderComponent={
-						<View style={styles.inputContainer}>
-							<View style={[styles.inputWrapper, focusedField === "name" && styles.inputFocused]}>
-								<TextInput
-									value={name}
-									onChangeText={setName}
-									style={styles.input}
-									keyboardType="visible-password"
-									onSubmitEditing={handleCreate}
-									onFocus={() => setFocusedField("name")}
-									onBlur={() => {
-										setFocusedField(null);
-										setName("");
-									}}
-								/>
-
-								{name.length === 0 && focusedField !== "name" && (
-									<Text style={styles.placeholderText}>Insert a workout session...</Text>
-								)}
-							</View>
+		<>
+			<KeyboardAwareScrollView
+				contentContainerStyle={styles.scrollContainer}
+				keyboardShouldPersistTaps="handled"
+				enableOnAndroid={true}
+			>
+				<View style={styles.headerContainer}>
+					<View style={styles.titleRow}>
+						<View style={styles.titleRowLeft}>
+							<BackButton onBack={() => navigation.goBack()} />
 						</View>
-					}
-				/>
-			</FadeIn>
-		</KeyboardAwareScrollView>
+						<Text style={styles.title}>History</Text>
+						<View style={styles.titleRowRight} />
+					</View>
+				</View>
+				<FadeIn visible={true}>
+					<View style={styles.calendarContainer}>
+						<CalendarDisplay
+							selected={selected}
+							setSelected={setSelected}
+							onMonthChange={setCurrentMonth}
+							sessionsByDay={sessionsByDay}
+						/>
+					</View>
+				</FadeIn>
+				<View>{selected.length === 0 && <StarBackground />}</View>
+				<FadeIn visible={selected.length > 0} key={selected}>
+					<FlatList
+						style={styles.flatListBuffer}
+						data={selectedSessions}
+						keyExtractor={(item) => String(item.id)}
+						scrollEnabled={false}
+						renderItem={({ item }) => (
+							<SwipeableRow
+								val={{
+									id: item.id,
+									name: `${new Date(item.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} · ${item.workout.name}`,
+								}}
+								onDelete={() => handleDelete(item.id)}
+								onPress={() => handleNavSession()}
+							/>
+						)}
+						ListHeaderComponent={
+							<InsertButton
+								onPress={() => setModalVisible(true)}
+								label={"Insert a workout session..."}
+							/>
+						}
+					/>
+				</FadeIn>
+			</KeyboardAwareScrollView>
+			<CreationModal visible={modalVisible} onExit={() => setModalVisible(false)} />
+			{pendingDelete && <UndoBubble name={pendingDelete.workout.name} onUndo={handleUndo} />}
+		</>
 	);
 }

@@ -106,7 +106,6 @@ export default function MoveableRow({
 							<View style={styles.textWrapper}>
 								<Text
 									numberOfLines={1}
-									ellipsizeMode="tail"
 									style={[styles.text, pressed && !isActive && styles.textPressed]}
 								>
 									{val.name}

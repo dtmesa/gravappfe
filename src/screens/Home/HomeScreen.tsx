@@ -12,7 +12,7 @@ import AddButton from "../components/AddButton";
 import { FadeIn } from "../components/FadeIn";
 import MoveableRow from "../components/MoveableRow";
 import { StarBackground } from "../components/StarBackground";
-import UndoButton from "../components/UndoButton";
+import UndoBubble from "../components/UndoBubble";
 import { HeaderMenu } from "./HeaderMenu";
 import { styles } from "./styles";
 
@@ -21,7 +21,7 @@ export default function HomeScreen() {
 
 	const [workouts, setWorkouts] = useState<Workout[]>([]);
 	const [name, setName] = useState("");
-	const [focusedField, setFocusedField] = useState<string | null>(null);
+	const [focusedField, setFocusedField] = useState(false);
 	const [pendingDelete, setPendingDelete] = useState<Workout | null>(null);
 	const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const [loading, setLoading] = useState(false);
@@ -48,7 +48,7 @@ export default function HomeScreen() {
 		setWorkouts((prev) => [newWorkout, ...prev]);
 
 		setName("");
-		setFocusedField(null);
+		setFocusedField(false);
 		Keyboard.dismiss();
 	};
 
@@ -129,26 +129,26 @@ export default function HomeScreen() {
 				</View>
 				<FadeIn visible={true}>
 					<View style={styles.inputContainer}>
-						<View style={[styles.inputWrapper, focusedField === "name" && styles.inputFocused]}>
+						<View style={[styles.inputWrapper, focusedField && styles.inputFocused]}>
 							<TextInput
 								value={name}
 								onChangeText={setName}
 								style={styles.input}
 								keyboardType="visible-password"
 								onSubmitEditing={handleCreateWorkout}
-								onFocus={() => setFocusedField("name")}
+								onFocus={() => setFocusedField(true)}
 								onBlur={() => {
-									setFocusedField(null);
+									setFocusedField(false);
 									setName("");
 								}}
 							/>
 
 							<AddButton
 								onAdd={handleCreateWorkout}
-								color={focusedField === "name" ? colors.button.accent : colors.button.muted}
+								color={focusedField ? colors.button.accent : colors.button.muted}
 							/>
 
-							{name.length === 0 && focusedField !== "name" && (
+							{name.length === 0 && !focusedField && (
 								<Text style={styles.placeholderText}>Create a workout...</Text>
 							)}
 						</View>
@@ -191,7 +191,7 @@ export default function HomeScreen() {
 					)}
 				</View>
 
-				{pendingDelete && <UndoButton name={pendingDelete.name} onUndo={handleUndo} />}
+				{pendingDelete && <UndoBubble name={pendingDelete.name} onUndo={handleUndo} />}
 			</View>
 		</TouchableWithoutFeedback>
 	);

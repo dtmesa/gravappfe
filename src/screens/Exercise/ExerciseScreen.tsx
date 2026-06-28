@@ -17,7 +17,7 @@ export default function ExerciseScreen({ navigation, route }: Props) {
 	const { exerciseId, workoutId } = route.params;
 
 	const [exercise, setExercise] = useState<Exercise | null>(null);
-	const [focusedField, setFocusedField] = useState<string | null>(null);
+	const [focusedField, setFocusedField] = useState(false);
 	const [description, setDescription] = useState(exercise?.description ?? "");
 	const [loading, setLoading] = useState(false);
 
@@ -50,7 +50,7 @@ export default function ExerciseScreen({ navigation, route }: Props) {
 		if (!exercise) return;
 
 		const trimmed = description.trim();
-		setFocusedField(null);
+		setFocusedField(false);
 		Keyboard.dismiss();
 
 		if (trimmed === (exercise.description ?? "").trim()) return;
@@ -81,7 +81,6 @@ export default function ExerciseScreen({ navigation, route }: Props) {
 
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-			
 			<View style={styles.container}>
 				<View style={styles.headerContainer}>
 					<View style={styles.titleRow}>
@@ -98,28 +97,23 @@ export default function ExerciseScreen({ navigation, route }: Props) {
 				</View>
 				<FadeIn visible={true}>
 					<View style={styles.innerContainer}>
-						<View
-							style={[
-								styles.descriptionWrapper,
-								focusedField === "description" && styles.descriptionFocused,
-							]}
-						>
+						<View style={[styles.descriptionWrapper, focusedField && styles.descriptionFocused]}>
 							<TextInput
 								value={description}
 								style={[
 									styles.descriptionText,
-									{ color: focusedField === "description" ? colors.text.input : colors.text.static },
+									{ color: focusedField ? colors.text.input : colors.text.static },
 								]}
 								onChangeText={setDescription}
-								onFocus={() => setFocusedField("description")}
+								onFocus={() => setFocusedField(true)}
 								onBlur={handleUpdateDescription}
 								multiline
 							/>
-							{description.length === 0 && focusedField !== "description" && (
+							{description.length === 0 && !focusedField && (
 								<Text style={styles.descriptionPlaceholderText}>Add a description...</Text>
 							)}
 						</View>
-							<ExerciseChecks exercise={exercise} loading={loading} onToggle={handleToggleField} />
+						<ExerciseChecks exercise={exercise} loading={loading} onToggle={handleToggleField} />
 					</View>
 				</FadeIn>
 			</View>

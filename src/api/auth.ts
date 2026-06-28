@@ -28,5 +28,5 @@ export const updatePassword = async (
 };
 
 export const deleteAccount = async (password: string): Promise<void> => {
-	await api.delete("/auth/delete", { data: { password }});
+	await api.delete("/auth/delete", { data: { password } });
 };

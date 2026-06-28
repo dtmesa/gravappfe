@@ -25,7 +25,6 @@ export default function MoveableRow({ val, onPress, isVisited }: Props) {
 					>
 						<Text
 							numberOfLines={1}
-							ellipsizeMode="tail"
 							style={[
 								styles.text,
 								isVisited && styles.textVisited,

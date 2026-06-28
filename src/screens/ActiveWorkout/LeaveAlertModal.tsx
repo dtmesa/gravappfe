@@ -66,7 +66,7 @@ function ConfirmButton({ onAction, color = colors.button.muted }: ButtonProps) {
 	);
 }
 
-export function LeaveAlert({ visible, onSave, onDiscard, onCancel }: Props) {
+export function LeaveAlertModal({ visible, onSave, onDiscard, onCancel }: Props) {
 	return (
 		<Modal transparent visible={visible} animationType="fade">
 			<View style={styles.alertBackground}>

@@ -56,11 +56,7 @@ export default function SwipeableRow({ val, disabled, onDelete, onPress, onEdit 
 					{({ pressed }) => (
 						<Animated.View style={[styles.row, pressed && styles.rowPressed, animatedStyle]}>
 							<View style={styles.textWrapper}>
-								<Text
-									numberOfLines={1}
-									ellipsizeMode="tail"
-									style={[styles.text, pressed && styles.textPressed]}
-								>
+								<Text numberOfLines={1} style={[styles.text, pressed && styles.textPressed]}>
 									{val.name}
 								</Text>
 							</View>

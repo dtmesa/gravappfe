@@ -29,8 +29,7 @@ Cross-platform fitness tracking application built with React Native, Expo, and T
 
 - Cross-platform support (Android, iOS, Web)
 
-##
-Snapshots
+## Snapshots
 <p align="center">
 <img width="216" height="450" alt="Screenshot_20260625_171630_Expo Go" src="https://github.com/user-attachments/assets/fc778883-9cef-4d80-9387-d62f95c6ae35" />
 <img width="216" height="450" alt="Screenshot_20260625_171625_Expo Go" src="https://github.com/user-attachments/assets/e2c4dcbd-d9d3-47d8-a6d5-19fc5f945b1f" />

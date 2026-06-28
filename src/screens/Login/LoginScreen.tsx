@@ -6,9 +6,9 @@ import { getApiError } from "../../api/apiError";
 import { useAuthStore } from "../../store/auth.store";
 import type { RootStackParamList } from "../../types/navigation";
 import { FadeIn } from "../components/FadeIn";
-import { useScaleAnimation } from "../components/scaleAnim";
 import { StarBackground } from "../components/StarBackground";
 import StatusMessage from "../components/StatusMessage";
+import { useScaleAnimation } from "../components/scaleAnim";
 import PasswordInput from "./PasswordInput";
 import { styles } from "./styles";
 import UsernameInput from "./UsernameInput";
@@ -83,7 +83,7 @@ export default function LoginScreen({ navigation }: Props) {
 			<View style={styles.innerContainer}>
 				<FadeIn visible={true}>
 					<Animated.Text style={[styles.title, { letterSpacing }]}>Gravity</Animated.Text>
-				
+
 					<UsernameInput
 						value={username}
 						onChangeText={setUsername}
@@ -119,7 +119,7 @@ export default function LoginScreen({ navigation }: Props) {
 							<Text style={styles.buttonText}>Login</Text>
 						</Pressable>
 					</Animated.View>
-					
+
 					<Animated.View style={{ transform: [{ scale: registerAnim.scale }] }}>
 						<Pressable
 							style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}

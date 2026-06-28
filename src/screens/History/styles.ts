@@ -19,6 +19,7 @@ export const styles = StyleSheet.create({
 		marginHorizontal: "4%",
 		backgroundColor: colors.bg.input,
 		overflow: "hidden",
+		paddingBottom: 2,
 		marginBottom: 30,
 	},
 	inputContainer: {
@@ -26,7 +27,7 @@ export const styles = StyleSheet.create({
 		marginBottom: 15,
 	},
 	flatListBuffer: {
-		paddingBottom: 50,
+		marginBottom: 50,
 	},
 	title: {
 		fontFamily: "Syncopate_700Bold",
@@ -46,12 +47,6 @@ export const styles = StyleSheet.create({
 		width: 50,
 		alignItems: "flex-end",
 	},
-	input: {
-		fontFamily: "Play_400Regular",
-		fontSize: 16,
-		flex: 1,
-		color: colors.text.input,
-	},
 	inputFocused: {
 		backgroundColor: colors.bg.inputHighlight,
 		shadowColor: colors.shadow.primary,
@@ -67,10 +62,95 @@ export const styles = StyleSheet.create({
 	},
 	placeholderText: {
 		fontFamily: "Play_400Regular",
-		position: "absolute",
-		left: 18,
-		top: 13,
 		color: colors.text.muted,
 		fontSize: 16,
+		includeFontPadding: false,
+	},
+	textHighlight: {
+		color: colors.text.accentHighlight,
+	},
+	modalBackground: {
+		flex: 1,
+		backgroundColor: colors.bg.darken,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	modalContainer: {
+		backgroundColor: colors.bg.input,
+		borderRadius: 18,
+		width: "86%",
+		height: "60%",
+		elevation: 8,
+		shadowColor: colors.shadow.primary,
+	},
+	modalTitle: {
+		marginTop: 20,
+		fontFamily: "Syncopate_700Bold",
+		color: colors.text.accentDark,
+		fontSize: 20,
+		textAlign: "center",
+	},
+	modalInputText: {
+		fontFamily: "Play_400Regular",
+		fontSize: 16,
+		flex: 1,
+		color: colors.text.input,
+	},
+	modalInputFocused: {
+		backgroundColor: colors.bg.inputSecondaryHighlight,
+		shadowColor: colors.shadow.primary,
+	},
+	modalInputWrapper: {
+		flexDirection: "row",
+		alignItems: "center",
+		backgroundColor: colors.bg.inputHighlight,
+		borderRadius: 18,
+		marginHorizontal: 16,
+		paddingHorizontal: 18,
+		height: 50,
+		elevation: 8,
+		shadowColor: colors.bg.transparent,
+		marginBottom: 20,
+	},
+	modalInputContainer: {
+		marginTop: 20,
+	},
+	modalFilterBuffer: {
+		marginLeft: 8,
+	},
+	modalListBuffer: {
+		marginBottom: 20,
+	},
+	modalPlaceholderText: {
+		fontFamily: "Play_400Regular",
+		color: colors.text.mutedSecondary,
+		fontSize: 16,
+		position: "absolute",
+		left: 18,
+		includeFontPadding: false,
+	},
+	rowContainer: {
+		paddingHorizontal: "4%",
+		marginBottom: 8,
+	},
+	rowWrapper: {
+		paddingHorizontal: "5%",
+		paddingVertical: "5%",
+		backgroundColor: colors.bg.input,
+		alignItems: "center",
+		flexDirection: "row",
+		borderRadius: 18,
+	},
+	rowWrapperPressed: {
+		backgroundColor: colors.bg.inputHighlight,
+	},
+	rowText: {
+		fontFamily: "Play_700Bold",
+		color: colors.text.muted,
+		fontSize: 18,
+		includeFontPadding: false,
+	},
+	rowTextPressed: {
+		color: colors.text.accent,
 	},
 });

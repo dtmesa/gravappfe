@@ -18,7 +18,7 @@ import ClickableRow from "../components/ClickableRow";
 import { FadeIn } from "../components/FadeIn";
 import { StarBackground } from "../components/StarBackground";
 import TimerRow from "../components/TimerRow";
-import { LeaveAlert } from "./LeaveAlert";
+import { LeaveAlertModal } from "./LeaveAlertModal";
 import { styles } from "./styles";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ActiveWorkout">;
@@ -154,7 +154,7 @@ export default function ActiveWorkoutScreen({ navigation, route }: Props) {
 				</View>
 			</View>
 
-			<LeaveAlert
+			<LeaveAlertModal
 				visible={alertVisible}
 				onDiscard={() => handleBack()}
 				onSave={() => handleSave()}

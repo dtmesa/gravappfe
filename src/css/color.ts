@@ -3,6 +3,7 @@ export const colors = {
 		primary: "#000000",
 		input: "#171526",
 		inputHighlight: "#2B274D",
+		inputSecondaryHighlight: "#3F3F74",
 		darken: "rgba(0,0,0,0.85)",
 		transparent: "transparent",
 	},
@@ -10,6 +11,7 @@ export const colors = {
 	button: {
 		primary: "#9A98AD",
 		muted: "#46427A",
+		mutedSecondary: "#5A54A1",
 		mutedLight: "#6D68B0",
 		accentDark: "#6d28d9",
 		accent: "#7c3aed",
@@ -36,6 +38,7 @@ export const colors = {
 		input: "#CFCFCF",
 		static: "#9A98AD",
 		muted: "#6D68B0",
+		mutedSecondary: "#817AD7",
 		contrast: "#000000",
 		accentDark: "#6d28d9",
 		accent: "#7c3aed",

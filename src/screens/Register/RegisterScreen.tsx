@@ -7,9 +7,9 @@ import { useAuthStore } from "../../store/auth.store";
 import type { RootStackParamList } from "../../types/navigation";
 import { validateJoint } from "../../util/inputValidation";
 import { FadeIn } from "../components/FadeIn";
-import { useScaleAnimation } from "../components/scaleAnim";
 import { StarBackground } from "../components/StarBackground";
 import StatusMessage from "../components/StatusMessage";
+import { useScaleAnimation } from "../components/scaleAnim";
 import PasswordInput from "../Login/PasswordInput";
 import { styles } from "../Login/styles";
 import UsernameInput from "../Login/UsernameInput";
@@ -80,55 +80,55 @@ export default function RegisterScreen({ navigation }: Props) {
 			<StarBackground />
 			<View style={styles.innerContainer}>
 				<FadeIn visible={true}>
-				<Animated.Text style={[styles.registerTitle, { letterSpacing }]}>Register</Animated.Text>
-				
-				<UsernameInput
-					value={username}
-					onChangeText={setUsername}
-					placeholder="New username"
-					keyboardType="visible-password"
-					autoCapitalize="none"
-					focused={focusedField === "username"}
-					onFocus={() => setFocusedField("username")}
-					onBlur={() => setFocusedField(null)}
-				/>
+					<Animated.Text style={[styles.registerTitle, { letterSpacing }]}>Register</Animated.Text>
 
-				<PasswordInput
-					value={password}
-					visible={showPassword}
-					focused={focusedField === "password"}
-					placeholder="New password"
-					onChangeText={setPassword}
-					onFocus={() => setFocusedField("password")}
-					onBlur={() => setFocusedField(null)}
-					onToggleVisibility={() => setShowPassword((v) => !v)}
-				/>
+					<UsernameInput
+						value={username}
+						onChangeText={setUsername}
+						placeholder="New username"
+						keyboardType="visible-password"
+						autoCapitalize="none"
+						focused={focusedField === "username"}
+						onFocus={() => setFocusedField("username")}
+						onBlur={() => setFocusedField(null)}
+					/>
 
-				<StatusMessage message={error} type="error" onClear={() => setError("")} />
+					<PasswordInput
+						value={password}
+						visible={showPassword}
+						focused={focusedField === "password"}
+						placeholder="New password"
+						onChangeText={setPassword}
+						onFocus={() => setFocusedField("password")}
+						onBlur={() => setFocusedField(null)}
+						onToggleVisibility={() => setShowPassword((v) => !v)}
+					/>
 
-				<Animated.View style={{ transform: [{ scale: submitAnim.scale }] }}>
-					<Pressable
-						style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-						onPress={handleRegister}
-						disabled={loading}
-						onPressIn={submitAnim.pressIn}
-						onPressOut={submitAnim.pressOut}
-					>
-						<Text style={styles.buttonText}>Submit</Text>
-					</Pressable>
-				</Animated.View>
+					<StatusMessage message={error} type="error" onClear={() => setError("")} />
 
-				<Animated.View style={{ transform: [{ scale: returnAnim.scale }] }}>
-					<Pressable
-						style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-						onPress={() => navigation.navigate("Login")}
-						disabled={loading}
-						onPressIn={returnAnim.pressIn}
-						onPressOut={returnAnim.pressOut}
-					>
-						<Text style={styles.buttonText}>Return to Login</Text>
-					</Pressable>
-				</Animated.View>
+					<Animated.View style={{ transform: [{ scale: submitAnim.scale }] }}>
+						<Pressable
+							style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+							onPress={handleRegister}
+							disabled={loading}
+							onPressIn={submitAnim.pressIn}
+							onPressOut={submitAnim.pressOut}
+						>
+							<Text style={styles.buttonText}>Submit</Text>
+						</Pressable>
+					</Animated.View>
+
+					<Animated.View style={{ transform: [{ scale: returnAnim.scale }] }}>
+						<Pressable
+							style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+							onPress={() => navigation.navigate("Login")}
+							disabled={loading}
+							onPressIn={returnAnim.pressIn}
+							onPressOut={returnAnim.pressOut}
+						>
+							<Text style={styles.buttonText}>Return to Login</Text>
+						</Pressable>
+					</Animated.View>
 				</FadeIn>
 			</View>
 		</KeyboardAwareScrollView>

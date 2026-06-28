@@ -13,7 +13,7 @@ import BackButton from "../components/BackButton";
 import { FadeIn } from "../components/FadeIn";
 import MoveableRow from "../components/MoveableRow";
 import { StarBackground } from "../components/StarBackground";
-import UndoButton from "../components/UndoButton";
+import UndoBubble from "../components/UndoBubble";
 import { styles } from "./styles";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Workout">;
@@ -155,27 +155,29 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 				</View>
 				<FadeIn visible={true}>
 					<View style={styles.innerContainer}>
-							<View
+						<View
+							style={[
+								styles.descriptionWrapper,
+								focusedField === "description" && styles.inputFocused,
+							]}
+						>
+							<TextInput
+								value={description}
 								style={[
-									styles.descriptionWrapper,
-									focusedField === "description" && styles.inputFocused,
+									styles.descriptionInput,
+									{
+										color: focusedField === "description" ? colors.text.input : colors.text.static,
+									},
 								]}
-							>
-								<TextInput
-									value={description}
-									style={[
-										styles.descriptionInput,
-										{ color: focusedField === "description" ? colors.text.input : colors.text.static },
-									]}
-									onChangeText={setDescription}
-									onFocus={() => setFocusedField("description")}
-									onBlur={handleUpdateDescription}
-									multiline
-								/>
-								{description.length === 0 && focusedField !== "description" && (
-									<Text style={styles.descriptionPlaceholder}>Add a description...</Text>
-								)}
-							</View>
+								onChangeText={setDescription}
+								onFocus={() => setFocusedField("description")}
+								onBlur={handleUpdateDescription}
+								multiline
+							/>
+							{description.length === 0 && focusedField !== "description" && (
+								<Text style={styles.descriptionPlaceholder}>Add a description...</Text>
+							)}
+						</View>
 
 						<View style={[styles.inputWrapper, focusedField === "name" && styles.inputFocused]}>
 							<TextInput
@@ -239,7 +241,7 @@ export default function WorkoutScreen({ navigation, route }: Props) {
 					)}
 				</View>
 
-				{pendingDelete && <UndoButton name={pendingDelete.name} onUndo={handleUndo} />}
+				{pendingDelete && <UndoBubble name={pendingDelete.name} onUndo={handleUndo} />}
 			</View>
 		</TouchableWithoutFeedback>
 	);

@@ -1,14 +1,14 @@
 import { Undo2 } from "lucide-react-native";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { colors } from "../../css/color";
-import { useScaleAnimation } from "../components/scaleAnim";
+import { useScaleAnimation } from "./scaleAnim";
 
 type Props = {
 	name: string;
 	onUndo: () => void;
 };
 
-export default function UndoButton({ name, onUndo }: Props) {
+export default function UndoBubble({ name, onUndo }: Props) {
 	const { scale, pressIn, pressOut } = useScaleAnimation(0.9);
 
 	return (
