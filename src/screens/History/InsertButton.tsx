@@ -2,12 +2,12 @@ import { Animated, Pressable, Text } from "react-native";
 import { useScaleAnimation } from "../components/scaleAnim";
 import { styles } from "./styles";
 
-interface Props {
+type Props = {
 	onPress: () => void;
 	label: string;
-}
+};
 
-export default function InsertButton({ onPress, label }: Props) {
+export function InsertButton({ onPress, label }: Props) {
 	const { scale, pressIn, pressOut } = useScaleAnimation();
 
 	return (

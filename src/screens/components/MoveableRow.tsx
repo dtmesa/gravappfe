@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { colors } from "../../css/color";
-import ModifyButton from "./ModifyButton";
+import { ModifyButton } from "./ModifyButton";
 
 type Props = {
 	val: { id: number; name: string };
@@ -19,15 +19,7 @@ type Props = {
 const OPACITY_ACTIVE = 0.85;
 const OPACITY = 1;
 
-export default function MoveableRow({
-	val,
-	drag,
-	isActive,
-	disabled,
-	onDelete,
-	onPress,
-	onEdit,
-}: Props) {
+export function MoveableRow({ val, drag, isActive, disabled, onDelete, onPress, onEdit }: Props) {
 	const [swiping, setSwiping] = useState(false);
 	const [gripPressed, setGripPressed] = useState(false);
 	const scale = useSharedValue(1);

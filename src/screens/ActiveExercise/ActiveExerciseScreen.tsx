@@ -2,33 +2,33 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Animated, Keyboard, ScrollView, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { getExerciseSession, getPreviousSetCount } from "../../api/exerciseSession";
-import { getAllAverages, getExercise, getWeeklyAverages } from "../../api/exercises";
+import { getExerciseSession, getPreviousSetCount } from "../../api/exerciseSession.api";
+import { getAllAverages, getExercise, getWeeklyAverages } from "../../api/exercises.api";
 import {
 	createSetSession,
 	deleteSetSession,
 	getSetSessions,
 	updateSetSession,
-} from "../../api/setSession";
+} from "../../api/setSession.api";
 import { colors } from "../../css/color";
-import type { Exercise } from "../../types/exercise";
-import type { ExerciseSession } from "../../types/exerciseSession";
-import type { RootStackParamList } from "../../types/navigation";
-import type { SetSession } from "../../types/setSession";
-import BackButton from "../components/BackButton";
+import type { Exercise } from "../../types/exercise.types";
+import type { ExerciseSession } from "../../types/exerciseSession.types";
+import type { RootStackParamList } from "../../types/navigation.types";
+import type { SetSession } from "../../types/setSession.types";
+import { BackButton } from "../components/BackButton";
 import { FadeIn } from "../components/FadeIn";
 import { StarBackground } from "../components/StarBackground";
-import TimerRow from "../components/TimerRow";
+import { TimerRow } from "../components/TimerRow";
 import type { Averages } from "./AverageRow";
 import { AverageRow } from "./AverageRow";
-import PlusRow from "./PlusRow";
+import { PlusRow } from "./PlusRow";
 import { SetRow } from "./SetRow";
-import SwipeableSetRow from "./SwipeableSetRow";
+import { SwipeableSetRow } from "./SwipeableSetRow";
 import { styles } from "./styles";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ActiveExercise">;
 
-export default function ActiveExerciseScreen({ navigation, route }: Props) {
+export function ActiveExerciseScreen({ navigation, route }: Props) {
 	const { workoutId, sessionId, exerciseSessionId } = route.params;
 
 	const [exerciseSession, setExerciseSession] = useState<ExerciseSession | null>(null);

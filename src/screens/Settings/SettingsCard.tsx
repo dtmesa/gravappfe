@@ -13,7 +13,7 @@ type Props = {
 	children: React.ReactNode;
 };
 
-export default function SettingsCard({ title, expanded, onToggle, children }: Props) {
+export function SettingsCard({ title, expanded, onToggle, children }: Props) {
 	const rotation = useRef(new Animated.Value(0)).current;
 	const { scale, pressIn, pressOut } = useScaleAnimation();
 	const rotate = rotation.interpolate({

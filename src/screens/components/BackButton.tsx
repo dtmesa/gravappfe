@@ -8,7 +8,7 @@ type Props = {
 	color?: string;
 };
 
-export default function BackButton({ onBack }: Props) {
+export function BackButton({ onBack }: Props) {
 	const { scale, pressIn, pressOut } = useScaleAnimation(0.9);
 
 	return (

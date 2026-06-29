@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { Animated } from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 import { colors } from "../../css/color";
-import type { WorkoutSession } from "../../types/workoutSession";
+import type { WorkoutSession } from "../../types/workoutSession.types";
 import { CalendarDay } from "./CalendarDay";
 
 type Props = {
@@ -19,12 +19,7 @@ LocaleConfig.locales["en-short"] = {
 };
 LocaleConfig.defaultLocale = "en-short";
 
-export default function CalendarDisplay({
-	selected,
-	setSelected,
-	onMonthChange,
-	sessionsByDay,
-}: Props) {
+export function CalendarDisplay({ selected, setSelected, onMonthChange, sessionsByDay }: Props) {
 	const opacity = useRef(new Animated.Value(1)).current;
 
 	const fadeTransition = () => {

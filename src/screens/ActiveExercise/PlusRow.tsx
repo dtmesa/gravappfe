@@ -9,7 +9,7 @@ type Props = {
 	disabled?: boolean;
 };
 
-export default function PlusRow({ onPress, disabled }: Props) {
+export function PlusRow({ onPress, disabled }: Props) {
 	const { scale, pressIn, pressOut } = useScaleAnimation();
 
 	return (

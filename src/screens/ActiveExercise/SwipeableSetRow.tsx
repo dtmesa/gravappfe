@@ -20,7 +20,7 @@ type Props = {
 	onChangeDistance?: (val: string) => void;
 };
 
-export default function SwipeableSetRow({
+export function SwipeableSetRow({
 	index,
 	onDelete,
 	weight,

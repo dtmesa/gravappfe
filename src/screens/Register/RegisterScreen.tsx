@@ -2,21 +2,21 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Pressable, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { getApiError } from "../../api/apiError";
+import { getApiError } from "../../api/error.api";
 import { useAuthStore } from "../../store/auth.store";
-import type { RootStackParamList } from "../../types/navigation";
-import { validateJoint } from "../../util/inputValidation";
+import type { RootStackParamList } from "../../types/navigation.types";
+import { validateJoint } from "../../util/inputValidation.util";
 import { FadeIn } from "../components/FadeIn";
 import { StarBackground } from "../components/StarBackground";
-import StatusMessage from "../components/StatusMessage";
+import { StatusMessage } from "../components/StatusMessage";
 import { useScaleAnimation } from "../components/scaleAnim";
 import PasswordInput from "../Login/PasswordInput";
 import { styles } from "../Login/styles";
-import UsernameInput from "../Login/UsernameInput";
+import { UsernameInput } from "../Login/UsernameInput";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Register">;
 
-export default function RegisterScreen({ navigation }: Props) {
+export function RegisterScreen({ navigation }: Props) {
 	const register = useAuthStore((state) => state.register);
 
 	const [username, setUsername] = useState("");

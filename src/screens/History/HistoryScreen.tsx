@@ -3,26 +3,27 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import useSWR from "swr";
-import { deleteWorkoutSession, getWorkoutSessionsByMonth } from "../../api/workoutSession";
-import type { RootStackParamList } from "../../types/navigation";
-import type { WorkoutSession } from "../../types/workoutSession";
-import BackButton from "../components/BackButton";
+import { deleteWorkoutSession, getWorkoutSessionsByMonth } from "../../api/workoutSession.api";
+import type { RootStackParamList } from "../../types/navigation.types";
+import type { WorkoutSession } from "../../types/workoutSession.types";
+import { BackButton } from "../components/BackButton";
 import { FadeIn } from "../components/FadeIn";
 import { StarBackground } from "../components/StarBackground";
-import SwipeableRow from "../components/SwipeableRow";
-import UndoBubble from "../components/UndoBubble";
-import CalendarDisplay from "./Calendar";
+import { SwipeableRow } from "../components/SwipeableRow";
+import { UndoBubble } from "../components/UndoBubble";
+import { CalendarDisplay } from "./Calendar";
 import { CreationModal } from "./CreationModal";
-import InsertButton from "./InsertButton";
+import { InsertButton } from "./InsertButton";
 import { styles } from "./styles";
 
 type Props = NativeStackScreenProps<RootStackParamList, "History">;
 
-export default function HistoryScreen({ navigation }: Props) {
+export function HistoryScreen({ navigation }: Props) {
 	const [selected, setSelected] = useState<string>("");
 	const [pendingDelete, setPendingDelete] = useState<WorkoutSession | null>(null);
 	const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const [modalVisible, setModalVisible] = useState(false);
+	const [fadeKey, setFadeKey] = useState(0);
 
 	const [currentMonth, setCurrentMonth] = useState(() => {
 		const now = new Date();
@@ -49,6 +50,15 @@ export default function HistoryScreen({ navigation }: Props) {
 
 	const selectedSessions = sessionsByDay[selected] ?? [];
 
+	const isFutureSelected = useMemo(() => {
+		if (!selected) return false;
+
+		const today = new Date();
+		const todayStr = today.toLocaleDateString("en-CA");
+
+		return selected > todayStr;
+	}, [selected]);
+
 	const handleNavSession = () => {
 		return;
 	};
@@ -71,13 +81,9 @@ export default function HistoryScreen({ navigation }: Props) {
 		setPendingDelete(session);
 
 		undoTimeoutRef.current = setTimeout(async () => {
-			console.log("Deleting", id);
-
 			try {
 				await deleteWorkoutSession(id, session.workout.id);
-				console.log("Delete finished");
-			} catch (e) {
-				console.error(e);
+			} catch {
 				mutate();
 			} finally {
 				setPendingDelete(null);
@@ -130,8 +136,8 @@ export default function HistoryScreen({ navigation }: Props) {
 						/>
 					</View>
 				</FadeIn>
-				<View>{selected.length === 0 && <StarBackground />}</View>
-				<FadeIn visible={selected.length > 0} key={selected}>
+				<View>{(selected.length === 0 || isFutureSelected) && <StarBackground />}</View>
+				<FadeIn visible={selected.length > 0 && !isFutureSelected} key={`${selected}-${fadeKey}`}>
 					<FlatList
 						style={styles.flatListBuffer}
 						data={selectedSessions}
@@ -156,7 +162,15 @@ export default function HistoryScreen({ navigation }: Props) {
 					/>
 				</FadeIn>
 			</KeyboardAwareScrollView>
-			<CreationModal visible={modalVisible} onExit={() => setModalVisible(false)} />
+			<CreationModal
+				visible={modalVisible}
+				onExit={() => setModalVisible(false)}
+				selectedDate={selected}
+				onCreated={() => {
+					mutate();
+					setFadeKey((k) => k + 1);
+				}}
+			/>
 			{pendingDelete && <UndoBubble name={pendingDelete.workout.name} onUndo={handleUndo} />}
 		</>
 	);

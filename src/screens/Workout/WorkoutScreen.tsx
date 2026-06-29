@@ -2,23 +2,28 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
-import { createExercise, deleteExercise, getExercises, updateExercise } from "../../api/exercises";
-import { getWorkout, updateWorkout } from "../../api/workouts";
+import {
+	createExercise,
+	deleteExercise,
+	getExercises,
+	updateExercise,
+} from "../../api/exercises.api";
+import { getWorkout, updateWorkout } from "../../api/workouts.api";
 import { colors } from "../../css/color";
-import type { Exercise } from "../../types/exercise";
-import type { RootStackParamList } from "../../types/navigation";
-import type { Workout } from "../../types/workout";
-import AddButton from "../components/AddButton";
-import BackButton from "../components/BackButton";
+import type { Exercise } from "../../types/exercise.types";
+import type { RootStackParamList } from "../../types/navigation.types";
+import type { Workout } from "../../types/workout.types";
+import { AddButton } from "../components/AddButton";
+import { BackButton } from "../components/BackButton";
 import { FadeIn } from "../components/FadeIn";
-import MoveableRow from "../components/MoveableRow";
+import { MoveableRow } from "../components/MoveableRow";
 import { StarBackground } from "../components/StarBackground";
-import UndoBubble from "../components/UndoBubble";
+import { UndoBubble } from "../components/UndoBubble";
 import { styles } from "./styles";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Workout">;
 
-export default function WorkoutScreen({ navigation, route }: Props) {
+export function WorkoutScreen({ navigation, route }: Props) {
 	const { workoutId } = route.params;
 
 	const [workout, setWorkout] = useState<Workout | null>(null);

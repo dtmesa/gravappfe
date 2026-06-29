@@ -3,17 +3,14 @@ import type { DateData } from "react-native-calendars";
 import { colors } from "../../css/color";
 import { useScaleAnimation } from "../components/scaleAnim";
 
-export function CalendarDay({
-	date,
-	state,
-	marking,
-	onPress,
-}: {
+type Props = {
 	date?: DateData;
 	state?: string;
 	marking?: any;
 	onPress: (dateString: string) => void;
-}) {
+};
+
+export function CalendarDay({ date, state, marking, onPress }: Props) {
 	const { scale, pressIn, pressOut } = useScaleAnimation(0.9);
 
 	return (

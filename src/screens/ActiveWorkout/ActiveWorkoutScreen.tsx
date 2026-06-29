@@ -2,28 +2,28 @@ import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Animated, BackHandler, FlatList, ScrollView, Text, View } from "react-native";
-import { createExerciseSession } from "../../api/exerciseSession";
-import { getExercises } from "../../api/exercises";
-import { deleteWorkoutSession, getWorkoutSession } from "../../api/workoutSession";
-import { getWorkout } from "../../api/workouts";
+import { createExerciseSession } from "../../api/exerciseSession.api";
+import { getExercises } from "../../api/exercises.api";
+import { deleteWorkoutSession, getWorkoutSession } from "../../api/workoutSession.api";
+import { getWorkout } from "../../api/workouts.api";
 import { colors } from "../../css/color";
 import { useWorkoutTimerStore } from "../../store/activeWorkout.store";
-import type { Exercise } from "../../types/exercise";
-import type { ExerciseSession } from "../../types/exerciseSession";
-import type { RootStackParamList } from "../../types/navigation";
-import type { Workout } from "../../types/workout";
-import type { WorkoutSession } from "../../types/workoutSession";
-import BackButton from "../components/BackButton";
-import ClickableRow from "../components/ClickableRow";
+import type { Exercise } from "../../types/exercise.types";
+import type { ExerciseSession } from "../../types/exerciseSession.types";
+import type { RootStackParamList } from "../../types/navigation.types";
+import type { Workout } from "../../types/workout.types";
+import type { WorkoutSession } from "../../types/workoutSession.types";
+import { BackButton } from "../components/BackButton";
 import { FadeIn } from "../components/FadeIn";
+import { PressableRow } from "../components/PressableRow";
 import { StarBackground } from "../components/StarBackground";
-import TimerRow from "../components/TimerRow";
+import { TimerRow } from "../components/TimerRow";
 import { LeaveAlertModal } from "./LeaveAlertModal";
 import { styles } from "./styles";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ActiveWorkout">;
 
-export default function ActiveWorkoutScreen({ navigation, route }: Props) {
+export function ActiveWorkoutScreen({ navigation, route }: Props) {
 	const { workoutId, sessionId } = route.params;
 	const { running, elapsed, start, stop, reset } = useWorkoutTimerStore();
 	const [workout, setWorkout] = useState<Workout | null>(null);
@@ -191,7 +191,7 @@ export default function ActiveWorkoutScreen({ navigation, route }: Props) {
 							keyExtractor={(item) => item.id.toString()}
 							renderItem={({ item }) => (
 								<FadeIn key={item.id} visible={true}>
-									<ClickableRow
+									<PressableRow
 										val={item}
 										onPress={() => handleExercisePress(item.id)}
 										isVisited={exerciseSessions.some((s) => s.exerciseId === item.id)}

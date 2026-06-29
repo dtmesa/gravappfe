@@ -72,8 +72,6 @@ export const styles = StyleSheet.create({
 	modalBackground: {
 		flex: 1,
 		backgroundColor: colors.bg.darken,
-		justifyContent: "center",
-		alignItems: "center",
 	},
 	modalContainer: {
 		backgroundColor: colors.bg.input,
@@ -82,6 +80,11 @@ export const styles = StyleSheet.create({
 		height: "60%",
 		elevation: 8,
 		shadowColor: colors.shadow.primary,
+	},
+	modalWrapper: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
 	},
 	modalTitle: {
 		marginTop: 20,
@@ -128,29 +131,5 @@ export const styles = StyleSheet.create({
 		position: "absolute",
 		left: 18,
 		includeFontPadding: false,
-	},
-	rowContainer: {
-		paddingHorizontal: "4%",
-		marginBottom: 8,
-	},
-	rowWrapper: {
-		paddingHorizontal: "5%",
-		paddingVertical: "5%",
-		backgroundColor: colors.bg.input,
-		alignItems: "center",
-		flexDirection: "row",
-		borderRadius: 18,
-	},
-	rowWrapperPressed: {
-		backgroundColor: colors.bg.inputHighlight,
-	},
-	rowText: {
-		fontFamily: "Play_700Bold",
-		color: colors.text.muted,
-		fontSize: 18,
-		includeFontPadding: false,
-	},
-	rowTextPressed: {
-		color: colors.text.accent,
 	},
 });

@@ -1,11 +1,11 @@
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { colors } from "../../css/color";
-import DrawerContent from "./DrawerContent";
-import HomeScreen from "./HomeScreen";
+import { DrawerContent } from "./DrawerContent";
+import { HomeScreen } from "./HomeScreen";
 
 const Drawer = createDrawerNavigator();
 
-export default function HomeDrawer() {
+export function HomeDrawer() {
 	return (
 		<Drawer.Navigator
 			drawerContent={(props) => <DrawerContent {...props} />}

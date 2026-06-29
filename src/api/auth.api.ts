@@ -1,5 +1,5 @@
-import type { User } from "../types/user";
-import { api } from "./client";
+import type { User } from "../types/user.types";
+import { api } from "./client.api";
 
 export const register = async (username: string, password: string): Promise<User> => {
 	const res = await api.post("/auth/register", { username, password });

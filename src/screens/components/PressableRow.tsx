@@ -1,6 +1,6 @@
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { colors } from "../../css/color";
-import { useScaleAnimation } from "../components/scaleAnim";
+import { useScaleAnimation } from "./scaleAnim";
 
 type Props = {
 	val: { id: number; name: string };
@@ -8,7 +8,7 @@ type Props = {
 	isVisited?: boolean;
 };
 
-export default function MoveableRow({ val, onPress, isVisited }: Props) {
+export function PressableRow({ val, onPress, isVisited }: Props) {
 	const { scale, pressIn, pressOut } = useScaleAnimation();
 
 	return (

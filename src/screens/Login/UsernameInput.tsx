@@ -10,7 +10,7 @@ type Props = TextInputProps & {
 	onBlur: () => void;
 };
 
-export default function UsernameInput({
+export function UsernameInput({
 	value,
 	placeholder,
 	focused,

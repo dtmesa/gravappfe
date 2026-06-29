@@ -1,5 +1,5 @@
 import { Text, TextInput, type TextInputProps, View } from "react-native";
-import PasswordToggleButton from "../components/PasswordToggleButton";
+import { PasswordToggleButton } from "../components/PasswordToggleButton";
 import { styles } from "./styles";
 
 type Props = TextInputProps & {

@@ -1,6 +1,6 @@
 import type { Averages } from "../screens/ActiveExercise/AverageRow";
-import type { Exercise } from "../types/exercise";
-import { api } from "./client";
+import type { Exercise } from "../types/exercise.types";
+import { api } from "./client.api";
 
 export const getExercises = async (workoutId: number): Promise<Exercise[]> => {
 	const res = await api.get<Exercise[]>(`/workouts/${workoutId}/exercises`);

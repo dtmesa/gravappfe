@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Text, TextInput, View } from "react-native";
-import PasswordToggleButton from "../components/PasswordToggleButton";
+import { PasswordToggleButton } from "../components/PasswordToggleButton";
 import { styles } from "./styles";
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
 	showToggle?: boolean;
 };
 
-export default function SettingsInput({
+export function SettingsInput({
 	placeholder,
 	value,
 	onChangeText,

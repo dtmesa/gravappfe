@@ -11,7 +11,7 @@ type Props = {
 	onReset: () => void;
 };
 
-export default function TimerRow({ running, elapsed, onPress, onReset }: Props) {
+export function TimerRow({ running, elapsed, onPress, onReset }: Props) {
 	const { scale, pressIn, pressOut } = useScaleAnimation();
 
 	const rotation = useRef(new Animated.Value(0)).current;

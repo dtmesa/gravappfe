@@ -1,5 +1,5 @@
-import type { SetSession, SetSessionDTO } from "../types/setSession";
-import { api } from "./client";
+import type { SetSession, SetSessionDTO } from "../types/setSession.types";
+import { api } from "./client.api";
 
 const mapSetSession = (dto: SetSessionDTO): SetSession => ({
 	...dto,

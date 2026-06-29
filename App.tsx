@@ -6,18 +6,18 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SWRConfig } from "swr";
 import { colors } from "./src/css/color";
 import { useAppFonts } from "./src/css/fonts";
-import ActiveExerciseScreen from "./src/screens/ActiveExercise/ActiveExerciseScreen";
-import ActiveWorkoutScreen from "./src/screens/ActiveWorkout/ActiveWorkoutScreen";
+import { ActiveExerciseScreen } from "./src/screens/ActiveExercise/ActiveExerciseScreen";
+import { ActiveWorkoutScreen } from "./src/screens/ActiveWorkout/ActiveWorkoutScreen";
 import { NavigationBar, TopBar } from "./src/screens/components/NavigationBars";
-import ExerciseScreen from "./src/screens/Exercise/ExerciseScreen";
-import HistoryScreen from "./src/screens/History/HistoryScreen";
-import HomeDrawer from "./src/screens/Home/HomeDrawer";
-import LoginScreen from "./src/screens/Login/LoginScreen";
-import RegisterScreen from "./src/screens/Register/RegisterScreen";
-import SettingsScreen from "./src/screens/Settings/SettingsScreen";
-import WorkoutScreen from "./src/screens/Workout/WorkoutScreen";
+import { ExerciseScreen } from "./src/screens/Exercise/ExerciseScreen";
+import { HistoryScreen } from "./src/screens/History/HistoryScreen";
+import { HomeDrawer } from "./src/screens/Home/HomeDrawer";
+import { LoginScreen } from "./src/screens/Login/LoginScreen";
+import { RegisterScreen } from "./src/screens/Register/RegisterScreen";
+import { SettingsScreen } from "./src/screens/Settings/SettingsScreen";
+import { WorkoutScreen } from "./src/screens/Workout/WorkoutScreen";
 import { useAuthStore } from "./src/store/auth.store";
-import type { RootStackParamList } from "./src/types/navigation";
+import type { RootStackParamList } from "./src/types/navigation.types";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 

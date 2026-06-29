@@ -8,7 +8,7 @@ type Props = {
 	color?: string;
 };
 
-export default function ModifyButton({ onEdit }: Props) {
+export function ModifyButton({ onEdit }: Props) {
 	const { scale, pressIn, pressOut } = useScaleAnimation(0.9);
 
 	return (

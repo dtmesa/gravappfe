@@ -1,5 +1,5 @@
-import type { WorkoutSession, WorkoutSessionDTO } from "../types/workoutSession";
-import { api } from "./client";
+import type { WorkoutSession, WorkoutSessionDTO } from "../types/workoutSession.types";
+import { api } from "./client.api";
 
 const mapWorkoutSession = (dto: WorkoutSessionDTO): WorkoutSession => ({
 	...dto,
@@ -12,8 +12,14 @@ export async function getWorkoutSession(id: number, workoutId: number): Promise<
 	return mapWorkoutSession(res.data);
 }
 
-export async function createWorkoutSession(workoutId: number): Promise<WorkoutSession> {
-	const res = await api.post<WorkoutSessionDTO>(`/workouts/${workoutId}/sessions`);
+export async function createWorkoutSession(
+	workoutId: number,
+	date?: Date,
+): Promise<WorkoutSession> {
+	const res = await api.post<WorkoutSessionDTO>(`/workouts/${workoutId}/sessions`, {
+		date: date?.toISOString(),
+	});
+
 	return mapWorkoutSession(res.data);
 }
 

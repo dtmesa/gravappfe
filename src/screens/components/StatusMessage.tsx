@@ -11,12 +11,7 @@ type Props = {
 	onClear?: () => void;
 };
 
-export default function StatusMessage({
-	message,
-	type = "error",
-	duration = 3000,
-	onClear,
-}: Props) {
+export function StatusMessage({ message, type = "error", duration = 3000, onClear }: Props) {
 	const timeoutRef = useRef<number | null>(null);
 
 	const style = type === "success" ? styles.successText : styles.errorText;

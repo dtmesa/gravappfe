@@ -8,7 +8,7 @@ type Props = {
 	color?: string;
 };
 
-export default function AddButton({ onAdd, color = colors.button.muted }: Props) {
+export function AddButton({ onAdd, color = colors.button.muted }: Props) {
 	const { scale, pressIn, pressOut } = useScaleAnimation(0.9);
 
 	return (

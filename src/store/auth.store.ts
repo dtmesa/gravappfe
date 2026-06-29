@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import { login as apiLogin, register as apiRegister } from "../api/auth";
-import { api } from "../api/client";
-import { deleteToken, getToken, saveToken } from "../api/token";
+import { login as apiLogin, register as apiRegister } from "../api/auth.api";
+import { api } from "../api/client.api";
+import { deleteToken, getToken, saveToken } from "../api/token.api";
 
 type AuthState = {
 	loading: boolean;

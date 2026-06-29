@@ -2,22 +2,22 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { Animated, LayoutAnimation, Pressable, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { getApiError } from "../../api/apiError";
-import { deleteAccount, updatePassword, updateUsername } from "../../api/auth";
+import { deleteAccount, updatePassword, updateUsername } from "../../api/auth.api";
+import { getApiError } from "../../api/error.api";
 import { useAuthStore } from "../../store/auth.store";
-import type { RootStackParamList } from "../../types/navigation";
-import { validatePassword, validateUsername } from "../../util/inputValidation";
-import BackButton from "../components/BackButton";
+import type { RootStackParamList } from "../../types/navigation.types";
+import { validatePassword, validateUsername } from "../../util/inputValidation.util";
+import { BackButton } from "../components/BackButton";
 import { FadeIn } from "../components/FadeIn";
 import { StarBackground } from "../components/StarBackground";
 import { useScaleAnimation } from "../components/scaleAnim";
-import SettingsCard from "./SettingsCard";
-import SettingsInput from "./SettingsInput";
+import { SettingsCard } from "./SettingsCard";
+import { SettingsInput } from "./SettingsInput";
 import { styles } from "./styles";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
 
-export default function SettingsScreen({ navigation }: Props) {
+export function SettingsScreen({ navigation }: Props) {
 	const username = useAuthStore((t) => t.username);
 
 	const [expandedCard, setExpandedCard] = useState<"username" | "password" | "account" | null>(

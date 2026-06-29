@@ -1,9 +1,9 @@
 import { Funnel } from "lucide-react-native";
 import type { Dispatch, SetStateAction } from "react";
-import { FlatList, Keyboard, Pressable, Text, TextInput, View } from "react-native";
+import { FlatList, Text, TextInput, View } from "react-native";
 import { colors } from "../../css/color";
-import type { Workout } from "../../types/workout";
-import ClickableRow from "./ClickableRow";
+import type { Workout } from "../../types/workout.types";
+import { PressableRow } from "./PressableRow";
 import { styles } from "./styles";
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
 	onWorkoutSelect: (workout: Workout) => void;
 };
 
-export default function Selector({
+export function Selector({
 	filter,
 	setFilter,
 	focusedField,
@@ -24,14 +24,7 @@ export default function Selector({
 	onWorkoutSelect,
 }: Props) {
 	return (
-		<Pressable
-			style={styles.modalContainer}
-			onPress={(e) => {
-				e.stopPropagation();
-				Keyboard.dismiss();
-				setFocusedField(false);
-			}}
-		>
+		<View style={styles.modalContainer}>
 			<Text style={styles.modalTitle}>Select a workout</Text>
 			<View style={styles.modalInputContainer}>
 				<View style={[styles.modalInputWrapper, focusedField && styles.modalInputFocused]}>
@@ -62,8 +55,8 @@ export default function Selector({
 				style={styles.modalListBuffer}
 				data={workouts.filter((w) => w.name.toLowerCase().includes(filter.toLowerCase()))}
 				keyExtractor={(item) => item.id.toString()}
-				renderItem={({ item }) => <ClickableRow val={item} onPress={() => onWorkoutSelect(item)} />}
+				renderItem={({ item }) => <PressableRow val={item} onPress={() => onWorkoutSelect(item)} />}
 			/>
-		</Pressable>
+		</View>
 	);
 }

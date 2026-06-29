@@ -3,20 +3,20 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
-import { createWorkoutSession } from "../../api/workoutSession";
-import { createWorkout, deleteWorkout, getWorkouts, updateWorkout } from "../../api/workouts";
+import { createWorkoutSession } from "../../api/workoutSession.api";
+import { createWorkout, deleteWorkout, getWorkouts, updateWorkout } from "../../api/workouts.api";
 import { colors } from "../../css/color";
-import type { RootStackParamList } from "../../types/navigation";
-import type { Workout } from "../../types/workout";
-import AddButton from "../components/AddButton";
+import type { RootStackParamList } from "../../types/navigation.types";
+import type { Workout } from "../../types/workout.types";
+import { AddButton } from "../components/AddButton";
 import { FadeIn } from "../components/FadeIn";
-import MoveableRow from "../components/MoveableRow";
+import { MoveableRow } from "../components/MoveableRow";
 import { StarBackground } from "../components/StarBackground";
-import UndoBubble from "../components/UndoBubble";
+import { UndoBubble } from "../components/UndoBubble";
 import { HeaderMenu } from "./HeaderMenu";
 import { styles } from "./styles";
 
-export default function HomeScreen() {
+export function HomeScreen() {
 	const rootNav = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
 	const [workouts, setWorkouts] = useState<Workout[]>([]);

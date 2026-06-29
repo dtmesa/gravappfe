@@ -1,11 +1,11 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
-import { getExercise, updateExercise } from "../../api/exercises";
+import { getExercise, updateExercise } from "../../api/exercises.api";
 import { colors } from "../../css/color";
-import type { Exercise } from "../../types/exercise";
-import type { RootStackParamList } from "../../types/navigation";
-import BackButton from "../components/BackButton";
+import type { Exercise } from "../../types/exercise.types";
+import type { RootStackParamList } from "../../types/navigation.types";
+import { BackButton } from "../components/BackButton";
 import { FadeIn } from "../components/FadeIn";
 import { StarBackground } from "../components/StarBackground";
 import { ExerciseChecks } from "./CheckRow";
@@ -13,7 +13,7 @@ import { styles } from "./styles";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Exercise">;
 
-export default function ExerciseScreen({ navigation, route }: Props) {
+export function ExerciseScreen({ navigation, route }: Props) {
 	const { exerciseId, workoutId } = route.params;
 
 	const [exercise, setExercise] = useState<Exercise | null>(null);

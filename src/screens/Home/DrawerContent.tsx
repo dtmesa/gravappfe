@@ -6,7 +6,7 @@ import { useAuthStore } from "../../store/auth.store";
 import { useScaleAnimation } from "../components/scaleAnim";
 import { styles } from "./styles";
 
-export default function DrawerContent({ navigation }: DrawerContentComponentProps) {
+export function DrawerContent({ navigation }: DrawerContentComponentProps) {
 	const logout = useAuthStore((state) => state.logout);
 	const username = useAuthStore((state) => state.username);
 	const historyAnim = useScaleAnimation();

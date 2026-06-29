@@ -1,5 +1,5 @@
-import type { ExerciseSession, ExerciseSessionDTO } from "../types/exerciseSession";
-import { api } from "./client";
+import type { ExerciseSession, ExerciseSessionDTO } from "../types/exerciseSession.types";
+import { api } from "./client.api";
 
 const mapExerciseSession = (dto: ExerciseSessionDTO): ExerciseSession => ({
 	...dto,

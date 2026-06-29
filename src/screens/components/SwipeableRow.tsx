@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { colors } from "../../css/color";
-import ModifyButton from "./ModifyButton";
+import { ModifyButton } from "./ModifyButton";
 
 type Props = {
 	val: { id: number; name: string };
@@ -14,7 +14,7 @@ type Props = {
 	disabled?: boolean;
 };
 
-export default function SwipeableRow({ val, disabled, onDelete, onPress, onEdit }: Props) {
+export function SwipeableRow({ val, disabled, onDelete, onPress, onEdit }: Props) {
 	const [swiping, setSwiping] = useState(false);
 	const scale = useSharedValue(1);
 	const translateX = useSharedValue(0);

@@ -8,7 +8,7 @@ type Props = {
 	onUndo: () => void;
 };
 
-export default function UndoBubble({ name, onUndo }: Props) {
+export function UndoBubble({ name, onUndo }: Props) {
 	const { scale, pressIn, pressOut } = useScaleAnimation(0.9);
 
 	return (
