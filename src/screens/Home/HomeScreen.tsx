@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
@@ -34,6 +34,12 @@ export function HomeScreen() {
 	useEffect(() => {
 		fetchWorkouts();
 	}, [fetchWorkouts]);
+
+	useFocusEffect(
+		useCallback(() => {
+			fetchWorkouts();
+		}, [fetchWorkouts]),
+	);
 
 	useEffect(() => {
 		return () => {

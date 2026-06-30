@@ -1,11 +1,12 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import { getExercise, updateExercise } from "../../api/exercises.api";
 import { colors } from "../../css/color";
 import type { Exercise } from "../../types/exercise.types";
 import type { RootStackParamList } from "../../types/navigation.types";
 import { BackButton } from "../components/BackButton";
+import { EditButton } from "../components/EditButton";
 import { FadeIn } from "../components/FadeIn";
 import { StarBackground } from "../components/StarBackground";
 import { ExerciseChecks } from "./CheckRow";
@@ -18,6 +19,9 @@ export function ExerciseScreen({ navigation, route }: Props) {
 
 	const [exercise, setExercise] = useState<Exercise | null>(null);
 	const [focusedField, setFocusedField] = useState(false);
+	const [title, setTitle] = useState(exercise?.name ?? "");
+	const [isEditingTitle, setIsEditingTitle] = useState(false);
+	const titleInputRef = useRef<TextInput>(null);
 	const [description, setDescription] = useState(exercise?.description ?? "");
 	const [loading, setLoading] = useState(false);
 
@@ -63,12 +67,39 @@ export function ExerciseScreen({ navigation, route }: Props) {
 		}
 	}, [exercise, description, workoutId, exerciseId]);
 
+	const handleUpdateTitle = async () => {
+		if (!exercise) return;
+
+		const trimmed = title.trim();
+		setIsEditingTitle(false);
+		Keyboard.dismiss();
+
+		if (!trimmed || trimmed === exercise.name.trim()) {
+			setTitle(exercise.name);
+			return;
+		}
+
+		try {
+			await updateExercise(workoutId, exerciseId, "name", trimmed);
+			setExercise((prev) => (prev ? { ...prev, name: trimmed } : prev));
+		} catch {
+			setTitle(exercise.name);
+		}
+	};
+
+	useEffect(() => {
+		if (isEditingTitle) titleInputRef.current?.focus();
+	}, [isEditingTitle]);
+
 	useEffect(() => {
 		fetchExercise();
 	}, [fetchExercise]);
 
 	useEffect(() => {
-		if (exercise) setDescription(exercise.description ?? "");
+		if (exercise) {
+			setDescription(exercise.description ?? "");
+			setTitle(exercise.name);
+		}
 	}, [exercise]);
 
 	if (!exercise) {
@@ -88,11 +119,31 @@ export function ExerciseScreen({ navigation, route }: Props) {
 							<BackButton onBack={() => navigation.goBack()} />
 						</View>
 						<View style={styles.titleContainer}>
-							<Text numberOfLines={1} style={styles.title}>
-								{exercise.name}
-							</Text>
+							{isEditingTitle ? (
+								<TextInput
+									autoFocus
+									ref={titleInputRef}
+									style={styles.title}
+									value={title}
+									onChangeText={setTitle}
+									onSubmitEditing={handleUpdateTitle}
+									onBlur={handleUpdateTitle}
+									maxLength={75}
+									returnKeyType="done"
+								/>
+							) : (
+								<Text numberOfLines={1} style={styles.title}>
+									{exercise.name}
+								</Text>
+							)}
 						</View>
-						<View style={styles.titleRowRight} />
+						<View style={styles.titleRowRight}>
+							<EditButton
+								onEdit={() => {
+									setIsEditingTitle(true);
+								}}
+							/>
+						</View>
 					</View>
 				</View>
 				<FadeIn visible={true}>

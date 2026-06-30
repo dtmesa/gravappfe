@@ -45,6 +45,8 @@ export const styles = StyleSheet.create({
 	},
 	titleRowRight: {
 		width: 40,
+		marginTop: 6,
+		alignItems: "center",
 	},
 	infoText: {
 		fontFamily: "Play_400Regular",

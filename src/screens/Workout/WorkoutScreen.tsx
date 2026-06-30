@@ -1,3 +1,4 @@
+import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
@@ -15,6 +16,7 @@ import type { RootStackParamList } from "../../types/navigation.types";
 import type { Workout } from "../../types/workout.types";
 import { AddButton } from "../components/AddButton";
 import { BackButton } from "../components/BackButton";
+import { EditButton } from "../components/EditButton";
 import { FadeIn } from "../components/FadeIn";
 import { MoveableRow } from "../components/MoveableRow";
 import { StarBackground } from "../components/StarBackground";
@@ -30,9 +32,12 @@ export function WorkoutScreen({ navigation, route }: Props) {
 	const [exercises, setExercises] = useState<Exercise[]>([]);
 	const [name, setName] = useState("");
 	const [focusedField, setFocusedField] = useState<string | null>(null);
+	const [description, setDescription] = useState(workout?.description ?? "");
+	const [title, setTitle] = useState(workout?.name ?? "");
+	const [isEditingTitle, setIsEditingTitle] = useState(false);
+	const titleInputRef = useRef<TextInput>(null);
 	const [pendingDelete, setPendingDelete] = useState<Exercise | null>(null);
 	const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-	const [description, setDescription] = useState(workout?.description ?? "");
 
 	const fetchWorkout = useCallback(async () => {
 		const data = await getWorkout(workoutId);
@@ -125,13 +130,46 @@ export function WorkoutScreen({ navigation, route }: Props) {
 		}
 	};
 
+	const handleUpdateTitle = async () => {
+		if (!workout) return;
+
+		const trimmed = title.trim();
+		setIsEditingTitle(false);
+		Keyboard.dismiss();
+
+		if (!trimmed || trimmed === workout.name.trim()) {
+			setTitle(workout.name);
+			return;
+		}
+
+		try {
+			await updateWorkout(workoutId, "name", trimmed);
+			setWorkout((prev) => (prev ? { ...prev, name: trimmed } : prev));
+		} catch {
+			setTitle(workout.name);
+		}
+	};
+
+	useEffect(() => {
+		if (isEditingTitle) titleInputRef.current?.focus();
+	}, [isEditingTitle]);
+
 	useEffect(() => {
 		fetchWorkout();
 		fetchExercises();
 	}, [fetchWorkout, fetchExercises]);
 
+	useFocusEffect(
+		useCallback(() => {
+			fetchExercises();
+		}, [fetchExercises]),
+	);
+
 	useEffect(() => {
-		if (workout) setDescription(workout.description ?? "");
+		if (workout) {
+			setDescription(workout.description ?? "");
+			setTitle(workout.name);
+		}
 	}, [workout]);
 
 	if (!workout) {
@@ -151,11 +189,31 @@ export function WorkoutScreen({ navigation, route }: Props) {
 							<BackButton onBack={() => navigation.goBack()} />
 						</View>
 						<View style={styles.titleContainer}>
-							<Text numberOfLines={1} style={styles.title}>
-								{workout.name}
-							</Text>
+							{isEditingTitle ? (
+								<TextInput
+									autoFocus
+									ref={titleInputRef}
+									style={styles.title}
+									value={title}
+									onChangeText={setTitle}
+									onSubmitEditing={handleUpdateTitle}
+									onBlur={handleUpdateTitle}
+									maxLength={75}
+									returnKeyType="done"
+								/>
+							) : (
+								<Text numberOfLines={1} style={styles.title}>
+									{workout.name}
+								</Text>
+							)}
 						</View>
-						<View style={styles.titleRowRight} />
+						<View style={styles.titleRowRight}>
+							<EditButton
+								onEdit={() => {
+									setIsEditingTitle(true);
+								}}
+							/>
+						</View>
 					</View>
 				</View>
 				<FadeIn visible={true}>
