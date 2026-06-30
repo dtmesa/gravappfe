@@ -8,6 +8,8 @@ export type RootStackParamList = {
 	Exercise: { workoutId: number; exerciseId: number };
 	ActiveWorkout: { workoutId: number; sessionId: number };
 	ActiveExercise: { workoutId: number; sessionId: number; exerciseSessionId: number };
+	EditWorkoutSession: { workoutId: number; sessionId: number };
+	EditExerciseSession: { workoutId: number; sessionId: number; exerciseSessionId: number };
 };
 
 export type DrawerParamList = {

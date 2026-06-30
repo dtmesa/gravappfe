@@ -1,9 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import { Animated, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import { createWorkoutSession } from "../../api/workoutSession.api";
+import { useEffect, useRef } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+import { updateWorkoutSession } from "../../api/workoutSession.api";
 import { colors } from "../../css/color";
 import type { Workout } from "../../types/workout.types";
-import { useScaleAnimation } from "../components/scaleAnim";
 
 const ITEM_HEIGHT = 48;
 const VISIBLE_ITEMS = 5;
@@ -82,9 +81,8 @@ type Props = {
 	onChange: (val: TimeValue) => void;
 	selectedWorkout: Workout;
 	selectedDate: string;
-	onExit: () => void;
-	onCreated: () => void;
-	opacity: Animated.Value;
+	onSet: () => void;
+	sessionId: number;
 };
 
 export function TimePicker({
@@ -92,89 +90,57 @@ export function TimePicker({
 	onChange,
 	selectedWorkout,
 	selectedDate,
-	onExit,
-	onCreated,
-	opacity,
+	onSet,
+	sessionId,
 }: Props) {
-	const [loading, setLoading] = useState(false);
-
 	const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
 	const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"));
 	const periods: ("AM" | "PM")[] = ["AM", "PM"];
-	const anim = useScaleAnimation();
 
-	const handleCreate = async () => {
-		setLoading(true);
-
-		try {
-			const date = buildDate(selectedDate, value);
-			await createWorkoutSession(selectedWorkout.id, date);
-			onCreated();
-			onExit();
-		} finally {
-			setLoading(false);
-		}
+	const handleSet = async (newValue: TimeValue) => {
+		onChange(newValue);
+		const date = buildDate(selectedDate, newValue);
+		await updateWorkoutSession(sessionId, selectedWorkout.id, "date", date);
+		onSet();
 	};
 
 	return (
-		<View style={styles.modalContainer}>
-			<Animated.View style={{ opacity, flex: 1 }}>
-				<Text style={styles.modalTitle}>Set a time</Text>
-				<View style={styles.pickerContainer}>
-					<View style={styles.selectionBand} />
-					<WheelColumn
-						items={hours}
-						selectedIndex={value.hours - 1}
-						onChange={(i) => onChange({ ...value, hours: i + 1 })}
-					/>
-					<Text style={styles.colon}>:</Text>
-					<WheelColumn
-						items={minutes}
-						selectedIndex={value.minutes}
-						onChange={(i) => onChange({ ...value, minutes: i })}
-					/>
+		<View style={styles.innerContainer}>
+			<View style={styles.pickerContainer}>
+				<View style={styles.selectionBand} />
+				<WheelColumn
+					items={hours}
+					selectedIndex={value.hours - 1}
+					onChange={(i) => handleSet({ ...value, hours: i + 1 })}
+				/>
+				<Text style={styles.colon}>:</Text>
+				<WheelColumn
+					items={minutes}
+					selectedIndex={value.minutes}
+					onChange={(i) => handleSet({ ...value, minutes: i })}
+				/>
 
-					<WheelColumn
-						items={periods}
-						selectedIndex={periods.indexOf(value.period)}
-						onChange={(i) => onChange({ ...value, period: periods[i] })}
-					/>
-				</View>
-				<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
-					<Pressable
-						style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-						onPress={() => handleCreate()}
-						disabled={loading}
-						onPressIn={anim.pressIn}
-						onPressOut={anim.pressOut}
-					>
-						<Text style={styles.buttonText}>Create</Text>
-					</Pressable>
-				</Animated.View>
-			</Animated.View>
+				<WheelColumn
+					items={periods}
+					selectedIndex={periods.indexOf(value.period)}
+					onChange={(i) => handleSet({ ...value, period: periods[i] })}
+				/>
+			</View>
 		</View>
 	);
 }
 
 const styles = StyleSheet.create({
-	modalTitle: {
-		marginTop: 20,
-		fontFamily: "Syncopate_700Bold",
-		color: colors.text.accentDark,
-		fontSize: 20,
-		textAlign: "center",
-	},
-	modalContainer: {
+	innerContainer: {
 		backgroundColor: colors.bg.input,
+		marginTop: 30,
+		marginHorizontal: 40,
+		marginVertical: 20,
 		borderRadius: 18,
-		width: "86%",
-		height: "60%",
-		elevation: 8,
-		shadowColor: colors.shadow.primary,
 	},
 	pickerContainer: {
-		marginTop: 45,
-		marginBottom: 45,
+		marginTop: 10,
+		marginBottom: 10,
 		flexDirection: "row",
 		alignItems: "center",
 		height: COLUMN_HEIGHT,
@@ -213,23 +179,5 @@ const styles = StyleSheet.create({
 		color: colors.text.accentLight,
 		marginBottom: 2,
 		includeFontPadding: false,
-	},
-	button: {
-		backgroundColor: colors.button.accent,
-		padding: 10,
-		borderRadius: 18,
-		marginRight: 75,
-		marginLeft: 75,
-	},
-	buttonPressed: {
-		backgroundColor: colors.button.accentHighlight,
-		elevation: 8,
-		shadowColor: colors.shadow.primary,
-	},
-	buttonText: {
-		fontFamily: "Play_400Regular",
-		fontSize: 18,
-		color: colors.text.contrast,
-		textAlign: "center",
 	},
 });

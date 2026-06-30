@@ -173,39 +173,43 @@ export function SettingsScreen({ navigation }: Props) {
 						expanded={expandedCard === "username"}
 						onToggle={() => toggle("username")}
 					>
-						<SettingsInput
-							placeholder="New username"
-							value={newUsername}
-							onChangeText={setNewUsername}
-						/>
-						<SettingsInput
-							placeholder="Current password"
-							value={authPassForName}
-							onChangeText={setAuthPassForName}
-							secureTextEntry
-							showToggle={true}
-						/>
-						{nameError ? (
-							<Text
-								style={[
-									styles.statusText,
-									nameError === "Username updated" ? styles.success : styles.error,
-								]}
-							>
-								{nameError}
-							</Text>
-						) : null}
-						<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
-							<Pressable
-								style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-								onPress={handleUsernameChange}
-								disabled={loading}
-								onPressIn={anim.pressIn}
-								onPressOut={anim.pressOut}
-							>
-								<Text style={styles.buttonText}>Update</Text>
-							</Pressable>
-						</Animated.View>
+						<FadeIn visible={expandedCard === "username"}>
+							<View style={styles.cardBodyGap}>
+								<SettingsInput
+									placeholder="New username"
+									value={newUsername}
+									onChangeText={setNewUsername}
+								/>
+								<SettingsInput
+									placeholder="Current password"
+									value={authPassForName}
+									onChangeText={setAuthPassForName}
+									secureTextEntry
+									showToggle={true}
+								/>
+								{nameError ? (
+									<Text
+										style={[
+											styles.statusText,
+											nameError === "Username updated" ? styles.success : styles.error,
+										]}
+									>
+										{nameError}
+									</Text>
+								) : null}
+								<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
+									<Pressable
+										style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+										onPress={handleUsernameChange}
+										disabled={loading}
+										onPressIn={anim.pressIn}
+										onPressOut={anim.pressOut}
+									>
+										<Text style={styles.buttonText}>Update</Text>
+									</Pressable>
+								</Animated.View>
+							</View>
+						</FadeIn>
 					</SettingsCard>
 
 					<SettingsCard
@@ -213,48 +217,52 @@ export function SettingsScreen({ navigation }: Props) {
 						expanded={expandedCard === "password"}
 						onToggle={() => toggle("password")}
 					>
-						<SettingsInput
-							placeholder="Current password"
-							value={authPassForPass}
-							onChangeText={setAuthPassForPass}
-							secureTextEntry
-							showToggle={true}
-						/>
-						<SettingsInput
-							placeholder="New password"
-							value={newPassword}
-							onChangeText={setNewPassword}
-							secureTextEntry
-							showToggle={true}
-						/>
-						<SettingsInput
-							placeholder="Confirm new password"
-							value={confirmPassword}
-							onChangeText={setConfirmPassword}
-							secureTextEntry
-							showToggle={true}
-						/>
-						{passwordError ? (
-							<Text
-								style={[
-									styles.statusText,
-									passwordError === "Password updated" ? styles.success : styles.error,
-								]}
-							>
-								{passwordError}
-							</Text>
-						) : null}
-						<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
-							<Pressable
-								style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
-								onPress={handlePasswordChange}
-								disabled={loading}
-								onPressIn={anim.pressIn}
-								onPressOut={anim.pressOut}
-							>
-								<Text style={styles.buttonText}>Update</Text>
-							</Pressable>
-						</Animated.View>
+						<FadeIn visible={expandedCard === "password"}>
+							<View style={styles.cardBodyGap}>
+								<SettingsInput
+									placeholder="Current password"
+									value={authPassForPass}
+									onChangeText={setAuthPassForPass}
+									secureTextEntry
+									showToggle={true}
+								/>
+								<SettingsInput
+									placeholder="New password"
+									value={newPassword}
+									onChangeText={setNewPassword}
+									secureTextEntry
+									showToggle={true}
+								/>
+								<SettingsInput
+									placeholder="Confirm new password"
+									value={confirmPassword}
+									onChangeText={setConfirmPassword}
+									secureTextEntry
+									showToggle={true}
+								/>
+								{passwordError ? (
+									<Text
+										style={[
+											styles.statusText,
+											passwordError === "Password updated" ? styles.success : styles.error,
+										]}
+									>
+										{passwordError}
+									</Text>
+								) : null}
+								<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
+									<Pressable
+										style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+										onPress={handlePasswordChange}
+										disabled={loading}
+										onPressIn={anim.pressIn}
+										onPressOut={anim.pressOut}
+									>
+										<Text style={styles.buttonText}>Update</Text>
+									</Pressable>
+								</Animated.View>
+							</View>
+						</FadeIn>
 					</SettingsCard>
 
 					<SettingsCard
@@ -262,44 +270,48 @@ export function SettingsScreen({ navigation }: Props) {
 						expanded={expandedCard === "account"}
 						onToggle={() => toggle("account")}
 					>
-						<SettingsInput
-							placeholder="Password"
-							value={deletionPassword}
-							onChangeText={setDeletionPassword}
-							secureTextEntry
-							showToggle={true}
-						/>
-						<SettingsInput
-							placeholder="Confirm password"
-							value={deletionAuthPassword}
-							onChangeText={setDeletionAuthPassword}
-							secureTextEntry
-							showToggle={true}
-						/>
-						{deletionError ? (
-							<Text
-								style={[
-									styles.statusText,
-									deletionError === "Account deleted" ? styles.success : styles.error,
-								]}
-							>
-								{deletionError}
-							</Text>
-						) : null}
-						<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
-							<Pressable
-								style={({ pressed }) => [
-									styles.buttonDanger,
-									pressed && styles.buttonDangerPressed,
-								]}
-								onPress={handleDeleteAccount}
-								disabled={loading}
-								onPressIn={anim.pressIn}
-								onPressOut={anim.pressOut}
-							>
-								<Text style={styles.buttonText}>Confirm</Text>
-							</Pressable>
-						</Animated.View>
+						<FadeIn visible={expandedCard === "account"}>
+							<View style={styles.cardBodyGap}>
+								<SettingsInput
+									placeholder="Password"
+									value={deletionPassword}
+									onChangeText={setDeletionPassword}
+									secureTextEntry
+									showToggle={true}
+								/>
+								<SettingsInput
+									placeholder="Confirm password"
+									value={deletionAuthPassword}
+									onChangeText={setDeletionAuthPassword}
+									secureTextEntry
+									showToggle={true}
+								/>
+								{deletionError ? (
+									<Text
+										style={[
+											styles.statusText,
+											deletionError === "Account deleted" ? styles.success : styles.error,
+										]}
+									>
+										{deletionError}
+									</Text>
+								) : null}
+								<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
+									<Pressable
+										style={({ pressed }) => [
+											styles.buttonDanger,
+											pressed && styles.buttonDangerPressed,
+										]}
+										onPress={handleDeleteAccount}
+										disabled={loading}
+										onPressIn={anim.pressIn}
+										onPressOut={anim.pressOut}
+									>
+										<Text style={styles.buttonText}>Confirm</Text>
+									</Pressable>
+								</Animated.View>
+							</View>
+						</FadeIn>
 					</SettingsCard>
 				</View>
 			</FadeIn>

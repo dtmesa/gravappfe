@@ -59,11 +59,13 @@ export const styles = StyleSheet.create({
 		color: colors.text.accentLight,
 	},
 	cardBody: {
-		gap: 10,
 		paddingLeft: 30,
 		paddingRight: 30,
-		paddingTop: 25,
-		paddingBottom: 15,
+		paddingTop: 20,
+		paddingBottom: 10,
+	},
+	cardBodyGap: {
+		gap: 10,
 	},
 	inputWrapper: {
 		flexDirection: "row",

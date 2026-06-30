@@ -6,6 +6,16 @@ const mapExerciseSession = (dto: ExerciseSessionDTO): ExerciseSession => ({
 	createdAt: new Date(dto.createdAt),
 });
 
+export async function getExerciseSessions(
+	sessionId: number,
+	workoutId: number,
+): Promise<ExerciseSession[]> {
+	const res = await api.get<ExerciseSessionDTO[]>(
+		`/workouts/${workoutId}/sessions/${sessionId}/exerciseSessions`,
+	);
+	return res.data.map(mapExerciseSession);
+}
+
 export async function getExerciseSession(
 	id: number,
 	sessionId: number,
@@ -37,13 +47,13 @@ export async function deleteExerciseSession(
 	await api.delete(`/workouts/${workoutId}/sessions/${sessionId}/exerciseSessions/${id}`);
 }
 
-export async function getPreviousSetCount(
-	id: number,
-	sessionId: number,
-	workoutId: number,
-): Promise<number> {
-	const res = await api.get<{ count: number }>(
-		`/workouts/${workoutId}/sessions/${sessionId}/exerciseSessions/${id}/previous-set-count`,
-	);
-	return res.data.count;
-}
+// export async function getPreviousSetCount(
+// 	id: number,
+// 	sessionId: number,
+// 	workoutId: number,
+// ): Promise<number> {
+// 	const res = await api.get<{ count: number }>(
+// 		`/workouts/${workoutId}/sessions/${sessionId}/exerciseSessions/${id}/previous-set-count`,
+// 	);
+// 	return res.data.count;
+// }

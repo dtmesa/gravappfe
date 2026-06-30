@@ -1,81 +1,35 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Animated, Keyboard, ScrollView, Text, View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { Keyboard, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { getExerciseSession } from "../../api/exerciseSession.api";
-import { getAllAverages, getExercise, getWeeklyAverages } from "../../api/exercises.api";
+import { getExercise } from "../../api/exercises.api";
 import {
 	createSetSession,
 	deleteSetSession,
 	getSetSessions,
 	updateSetSession,
 } from "../../api/setSession.api";
-import { colors } from "../../css/color";
 import type { Exercise } from "../../types/exercise.types";
 import type { ExerciseSession } from "../../types/exerciseSession.types";
 import type { RootStackParamList } from "../../types/navigation.types";
 import type { SetSession } from "../../types/setSession.types";
+import { PlusRow } from "../ActiveExercise/PlusRow";
+import { SwipeableSetRow } from "../ActiveExercise/SetRow";
 import { BackButton } from "../components/BackButton";
 import { FadeIn } from "../components/FadeIn";
 import { StarBackground } from "../components/StarBackground";
-import { TimerRow } from "../components/TimerRow";
-import type { Averages } from "./AverageRow";
-import { AverageRow } from "./AverageRow";
-import { PlusRow } from "./PlusRow";
-import { SwipeableSetRow } from "./SetRow";
 import { styles } from "./styles";
 
-type Props = NativeStackScreenProps<RootStackParamList, "ActiveExercise">;
+type Props = NativeStackScreenProps<RootStackParamList, "EditExerciseSession">;
 
-export function ActiveExerciseScreen({ navigation, route }: Props) {
+export function EditExerciseSessionScreen({ navigation, route }: Props) {
 	const { workoutId, sessionId, exerciseSessionId } = route.params;
 
 	const [exerciseSession, setExerciseSession] = useState<ExerciseSession | null>(null);
 	const [exercise, setExercise] = useState<Exercise | null>(null);
 	const [sets, setSets] = useState<SetSession[] | null>(null);
-	const [weeklyAverages, setWeeklyAverages] = useState<Averages | null>(null);
-	const [allAverages, setAllAverages] = useState<Averages | null>(null);
-	const [running, setRunning] = useState<boolean>(false);
-	const [elapsed, setElapsed] = useState<number>(0);
 	const [loading, setLoading] = useState(false);
-	const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-	const glowAnim = useRef(new Animated.Value(0)).current;
-
-	useEffect(() => {
-		Animated.loop(
-			Animated.sequence([
-				Animated.timing(glowAnim, { toValue: 1, duration: 2500, useNativeDriver: false }),
-				Animated.timing(glowAnim, { toValue: 0, duration: 2500, useNativeDriver: false }),
-			]),
-		).start();
-	}, [glowAnim]);
-
-	const textShadowRadius = glowAnim.interpolate({
-		inputRange: [0, 1],
-		outputRange: [0, 20],
-	});
-
-	const onReset = () => {
-		if (intervalRef.current) clearInterval(intervalRef.current);
-		intervalRef.current = null;
-		setRunning(false);
-		setElapsed(0);
-	};
-
-	const onStart = () => {
-		if (running) return;
-		setRunning(true);
-		intervalRef.current = setInterval(() => {
-			setElapsed((prev) => prev + 10);
-		}, 10);
-	};
-
-	const onStop = () => {
-		if (intervalRef.current) clearInterval(intervalRef.current);
-		intervalRef.current = null;
-		setRunning(false);
-	};
 
 	const fetchSets = useCallback(async () => {
 		const data = await getSetSessions(exerciseSessionId, sessionId, workoutId);
@@ -151,24 +105,12 @@ export function ActiveExerciseScreen({ navigation, route }: Props) {
 	useEffect(() => {
 		const load = async () => {
 			const session = await fetchExerciseSession();
-			const exercise = await fetchExercise(session.exerciseId);
-			const [weekAverage, allAverage] = await Promise.all([
-				getWeeklyAverages(workoutId, exercise.id, sessionId),
-				getAllAverages(workoutId, exercise.id, sessionId),
-			]);
-			setWeeklyAverages(weekAverage);
-			setAllAverages(allAverage);
+			await fetchExercise(session.exerciseId);
 			const currSets = await getSetSessions(exerciseSessionId, sessionId, workoutId);
 			setSets(currSets);
 		};
 		load();
-	}, [fetchExerciseSession, fetchExercise, fetchSets, workoutId, sessionId, exerciseSessionId]);
-
-	useEffect(() => {
-		return () => {
-			if (intervalRef.current) clearInterval(intervalRef.current);
-		};
-	}, []);
+	}, [fetchExerciseSession, fetchExercise, workoutId, sessionId, exerciseSessionId]);
 
 	if (!exerciseSession || !exercise || !sets) {
 		return (
@@ -186,33 +128,12 @@ export function ActiveExerciseScreen({ navigation, route }: Props) {
 						<BackButton onBack={() => navigation.goBack()} />
 					</View>
 					<View style={styles.titleContainer}>
-						<Animated.Text
-							numberOfLines={1}
-							style={[
-								styles.title,
-								{
-									textShadowColor: colors.button.accent,
-									textShadowOffset: { width: 0, height: 0 },
-									textShadowRadius,
-								},
-							]}
-						>
+						<Text numberOfLines={1} style={styles.title}>
 							{exercise.name}
-						</Animated.Text>
+						</Text>
 					</View>
 					<View style={styles.titleRowRight} />
 				</View>
-			</View>
-			<View style={styles.innerContainer}>
-				{exercise.description && (
-					<FadeIn visible={true}>
-						<View style={styles.descriptionWrapper}>
-							<ScrollView nestedScrollEnabled>
-								<Text style={styles.descriptionText}>{exercise.description}</Text>
-							</ScrollView>
-						</View>
-					</FadeIn>
-				)}
 			</View>
 			<KeyboardAwareScrollView
 				contentContainerStyle={styles.scrollContainer}
@@ -225,26 +146,6 @@ export function ActiveExerciseScreen({ navigation, route }: Props) {
 			>
 				{!exercise.isWeight && !exercise.isReps && !exercise.isDuration && !exercise.isDistance && (
 					<StarBackground />
-				)}
-				{(exercise.isWeight || exercise.isReps || exercise.isDuration || exercise.isDistance) && (
-					<FadeIn visible={true}>
-						<TimerRow
-							running={running}
-							elapsed={elapsed}
-							onPress={running ? onStop : onStart}
-							onReset={onReset}
-						/>
-					</FadeIn>
-				)}
-				{weeklyAverages && (
-					<FadeIn visible={true}>
-						<AverageRow title={"Weekly Avg"} {...weeklyAverages} />
-					</FadeIn>
-				)}
-				{allAverages && (
-					<FadeIn visible={true}>
-						<AverageRow title={"Total Avg     "} {...allAverages} />
-					</FadeIn>
 				)}
 				{sets.map((set, index) => (
 					<FadeIn key={set.id} visible={true}>

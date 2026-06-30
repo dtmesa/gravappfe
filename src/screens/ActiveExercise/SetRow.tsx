@@ -1,8 +1,12 @@
+import { ChevronRight } from "lucide-react-native";
 import { useState } from "react";
 import { Text, TextInput, View } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import { colors } from "../../css/color";
 import { styles } from "./styles";
 
-type Props = {
+type RowProps = {
 	title: string;
 	weight: string | null;
 	reps: string | null;
@@ -22,7 +26,7 @@ type MetricRow = {
 	showUnit: boolean;
 };
 
-export function SetRow({
+function SetRow({
 	title,
 	weight,
 	reps,
@@ -32,7 +36,7 @@ export function SetRow({
 	onChangeReps,
 	onChangeDuration,
 	onChangeDistance,
-}: Props) {
+}: RowProps) {
 	const [focusedMetric, setFocusedMetric] = useState<string | null>(null);
 
 	const metrics = [
@@ -81,11 +85,12 @@ export function SetRow({
 								keyboardType="decimal-pad"
 								onFocus={() => {
 									setFocusedMetric(metric);
+									if (value === "0" || value === null || value === undefined) onChange("");
 								}}
 								onBlur={() => {
 									setFocusedMetric(null);
 
-									let cleaned = value;
+									let cleaned = value ?? "";
 
 									if (metric === "Reps") {
 										cleaned = cleaned.replace(/[^0-9]/g, "");
@@ -93,7 +98,7 @@ export function SetRow({
 										cleaned = cleaned.replace(/[^0-9.]/g, "").replace(/(\..*)\./g, "$1");
 									}
 
-									onChange(cleaned);
+									onChange(cleaned === "" ? "0" : cleaned);
 								}}
 							/>
 						</View>
@@ -101,5 +106,80 @@ export function SetRow({
 				</View>
 			</View>
 		</View>
+	);
+}
+
+type SwipeableProps = {
+	index: number;
+	weight: string | null;
+	reps: string | null;
+	duration: string | null;
+	distance: string | null;
+	onDelete: () => void;
+	onChangeWeight?: (val: string) => void;
+	onChangeReps?: (val: string) => void;
+	onChangeDuration?: (val: string) => void;
+	onChangeDistance?: (val: string) => void;
+};
+
+export function SwipeableSetRow({
+	index,
+	onDelete,
+	weight,
+	reps,
+	duration,
+	distance,
+	onChangeWeight,
+	onChangeReps,
+	onChangeDuration,
+	onChangeDistance,
+}: SwipeableProps) {
+	const [swiping, setSwiping] = useState(false);
+	const translateX = useSharedValue(0);
+
+	const panGesture = Gesture.Pan()
+		.activeOffsetX([-10, 10])
+		.runOnJS(true)
+		.onUpdate((event) => {
+			if (event.translationX > 0) {
+				translateX.value = event.translationX;
+				setSwiping(true);
+			}
+		})
+		.onEnd(() => {
+			if (translateX.value > 120) {
+				onDelete();
+			}
+			translateX.value = withSpring(0);
+			setSwiping(false);
+		});
+
+	const animatedStyle = useAnimatedStyle(() => ({
+		transform: [{ translateX: translateX.value }],
+	}));
+
+	return (
+		<GestureDetector gesture={panGesture}>
+			<Animated.View style={animatedStyle}>
+				<SetRow
+					title={`Set ${index}`}
+					weight={weight}
+					reps={reps}
+					duration={duration}
+					distance={distance}
+					onChangeWeight={onChangeWeight}
+					onChangeReps={onChangeReps}
+					onChangeDuration={onChangeDuration}
+					onChangeDistance={onChangeDistance}
+				/>
+				<View style={styles.setChevronContainer}>
+					<ChevronRight
+						size={22}
+						color={swiping ? colors.text.accent : colors.button.muted}
+						strokeWidth={1.75}
+					/>
+				</View>
+			</Animated.View>
+		</GestureDetector>
 	);
 }

@@ -27,6 +27,16 @@ export async function deleteWorkoutSession(id: number, workoutId: number): Promi
 	await api.delete(`/workouts/${workoutId}/sessions/${id}`);
 }
 
+export async function updateWorkoutSession(
+	id: number,
+	workoutId: number,
+	field: string,
+	value: unknown,
+): Promise<WorkoutSession> {
+	const res = await api.patch(`/workouts/${workoutId}/sessions/${id}/${field}`, { [field]: value });
+	return res.data;
+}
+
 export async function getWorkoutSessionsByMonth(month: string): Promise<WorkoutSession[]> {
 	const res = await api.get<WorkoutSessionDTO[]>(`/history/sessions`, {
 		params: { month },

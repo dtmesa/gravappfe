@@ -9,6 +9,8 @@ import { useAppFonts } from "./src/css/fonts";
 import { ActiveExerciseScreen } from "./src/screens/ActiveExercise/ActiveExerciseScreen";
 import { ActiveWorkoutScreen } from "./src/screens/ActiveWorkout/ActiveWorkoutScreen";
 import { NavigationBar, TopBar } from "./src/screens/components/NavigationBars";
+import { EditExerciseSessionScreen } from "./src/screens/EditExerciseSession/EditExerciseSessionScreen";
+import { EditWorkoutSessionScreen } from "./src/screens/EditWorkoutSession/EditWorkoutSessionScreen";
 import { ExerciseScreen } from "./src/screens/Exercise/ExerciseScreen";
 import { HistoryScreen } from "./src/screens/History/HistoryScreen";
 import { HomeDrawer } from "./src/screens/Home/HomeDrawer";
@@ -50,6 +52,8 @@ export default function App() {
 								<Stack.Screen name="Exercise" component={ExerciseScreen} />
 								<Stack.Screen name="ActiveWorkout" component={ActiveWorkoutScreen} />
 								<Stack.Screen name="ActiveExercise" component={ActiveExerciseScreen} />
+								<Stack.Screen name="EditWorkoutSession" component={EditWorkoutSessionScreen} />
+								<Stack.Screen name="EditExerciseSession" component={EditExerciseSessionScreen} />
 							</>
 						) : (
 							<>

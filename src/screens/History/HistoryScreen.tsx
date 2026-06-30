@@ -1,5 +1,6 @@
+import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import useSWR from "swr";
@@ -21,6 +22,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "History">;
 export function HistoryScreen({ navigation }: Props) {
 	const [selected, setSelected] = useState<string>("");
 	const [pendingDelete, setPendingDelete] = useState<WorkoutSession | null>(null);
+	const pendingDeleteRef = useRef(pendingDelete);
 	const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const [modalVisible, setModalVisible] = useState(false);
 	const [fadeKey, setFadeKey] = useState(0);
@@ -59,8 +61,11 @@ export function HistoryScreen({ navigation }: Props) {
 		return selected > todayStr;
 	}, [selected]);
 
-	const handleNavSession = () => {
-		return;
+	const handleNav = (session: WorkoutSession) => {
+		navigation.navigate("EditWorkoutSession", {
+			workoutId: session.workoutId,
+			sessionId: session.id,
+		});
 	};
 
 	const handleDelete = async (id: number) => {
@@ -104,9 +109,27 @@ export function HistoryScreen({ navigation }: Props) {
 		mutate();
 	};
 
+	useFocusEffect(
+		useCallback(() => {
+			mutate();
+		}, [mutate]),
+	);
+
+	useEffect(() => {
+		pendingDeleteRef.current = pendingDelete;
+	}, [pendingDelete]);
+
 	useEffect(() => {
 		return () => {
-			if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
+			if (undoTimeoutRef.current) {
+				clearTimeout(undoTimeoutRef.current);
+				if (pendingDeleteRef.current) {
+					deleteWorkoutSession(
+						pendingDeleteRef.current.id,
+						pendingDeleteRef.current.workout.id,
+					).catch(() => {});
+				}
+			}
 		};
 	}, []);
 
@@ -150,7 +173,7 @@ export function HistoryScreen({ navigation }: Props) {
 									name: `${new Date(item.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} · ${item.workout.name}`,
 								}}
 								onDelete={() => handleDelete(item.id)}
-								onPress={() => handleNavSession()}
+								onPress={() => handleNav(item)}
 							/>
 						)}
 						ListHeaderComponent={
