@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getToken } from "./token.api";
 
-export const api = axios.create({ baseURL: "http://10.0.0.34:3000" });
+export const api = axios.create({ baseURL: process.env.EXPO_PUBLIC_API_URL });
 
 api.interceptors.request.use(async (config) => {
 	const token = await getToken();

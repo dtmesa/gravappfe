@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { enableScreens } from "react-native-screens";
 import { SWRConfig } from "swr";
 import { colors } from "./src/css/color";
 import { useAppFonts } from "./src/css/fonts";
@@ -23,6 +24,7 @@ import type { RootStackParamList } from "./src/types/navigation.types";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+enableScreens();
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
