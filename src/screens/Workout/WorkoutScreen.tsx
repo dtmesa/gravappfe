@@ -304,7 +304,9 @@ export function WorkoutScreen({ navigation, route }: Props) {
 					)}
 				</View>
 
-				{pendingDelete && <UndoBubble name={pendingDelete.name} onUndo={handleUndo} />}
+				{pendingDelete && (
+					<UndoBubble key={pendingDelete.id} name={pendingDelete.name} onUndo={handleUndo} />
+				)}
 			</View>
 		</TouchableWithoutFeedback>
 	);

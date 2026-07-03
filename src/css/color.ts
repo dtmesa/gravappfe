@@ -10,7 +10,7 @@ export const colors = {
 
 	button: {
 		primary: "#9A98AD",
-		muted: "#46427A",
+		muted: "#403B73",
 		mutedSecondary: "#5A54A1",
 		mutedLight: "#6D68B0",
 		accentDark: "#6d28d9",

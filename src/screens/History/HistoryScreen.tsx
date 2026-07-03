@@ -194,7 +194,9 @@ export function HistoryScreen({ navigation }: Props) {
 					setFadeKey((k) => k + 1);
 				}}
 			/>
-			{pendingDelete && <UndoBubble name={pendingDelete.workout.name} onUndo={handleUndo} />}
+			{pendingDelete && (
+				<UndoBubble key={pendingDelete.id} name={pendingDelete.workout.name} onUndo={handleUndo} />
+			)}
 		</>
 	);
 }

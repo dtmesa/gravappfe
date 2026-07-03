@@ -15,7 +15,7 @@ export const login = async (
 };
 
 export const updateUsername = async (newUsername: string, password: string): Promise<User> => {
-	const res = await api.put("/auth/username", { newUsername, password });
+	const res = await api.patch("/auth/username", { newUsername, password });
 	return res.data;
 };
 
@@ -23,7 +23,7 @@ export const updatePassword = async (
 	currentPassword: string,
 	newPassword: string,
 ): Promise<void> => {
-	const res = await api.put("/auth/password", { currentPassword, newPassword });
+	const res = await api.patch("/auth/password", { currentPassword, newPassword });
 	return res.data;
 };
 

@@ -3,12 +3,12 @@ import { useState } from "react";
 import { Pressable, Animated as RNAnimated, StyleSheet, Text } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
-	runOnJS,
 	useAnimatedStyle,
 	useSharedValue,
 	withSpring,
 	withTiming,
 } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
 import { colors } from "../../css/color";
 import { useScaleAnimation } from "./scaleAnim";
 
@@ -26,6 +26,8 @@ export function UndoBubble({ name, onUndo }: Props) {
 	const translateX = useSharedValue(0);
 	const opacity = useSharedValue(1);
 
+	const dismiss = () => setHidden(true);
+
 	const panGesture = Gesture.Pan()
 		.activeOffsetX([-10, 10])
 		.onUpdate((event) => {
@@ -40,7 +42,9 @@ export function UndoBubble({ name, onUndo }: Props) {
 				const direction = translateX.value > 0 ? 1 : -1;
 				translateX.value = withTiming(direction * 500, { duration: 200 });
 				opacity.value = withTiming(0, { duration: 200 }, (finished) => {
-					if (finished) runOnJS(() => setHidden(true))();
+					if (finished) {
+						scheduleOnRN(dismiss);
+					}
 				});
 			} else {
 				translateX.value = withSpring(0);
@@ -105,6 +109,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		paddingRight: 16,
 		paddingLeft: 5,
+		includeFontPadding: false,
 	},
 	button: {
 		paddingRight: 5,

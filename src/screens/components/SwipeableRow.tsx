@@ -81,7 +81,8 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 	},
 	row: {
-		paddingHorizontal: "7%",
+		paddingLeft: "7%",
+		paddingRight: "4.5%",
 		paddingVertical: "7%",
 		backgroundColor: colors.bg.input,
 		alignItems: "center",

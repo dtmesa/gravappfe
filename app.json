@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Galaxy Tracker",
-    "slug": "galaxy-tracker",
+    "name": "Gravity Tracker",
+    "slug": "gravity-tracker",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "galaxytracker",
+    "scheme": "gravitytracker",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"
@@ -18,7 +18,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.dtmesa.galaxytracker"
+      "package": "com.dtmesa.gravitytracker"
     },
     "web": {
       "output": "static",

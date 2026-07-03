@@ -128,7 +128,8 @@ export const styles = StyleSheet.create({
 		includeFontPadding: false,
 	},
 	setRow: {
-		paddingHorizontal: "5%",
+		paddingLeft: "7%",
+		paddingRight: "4.5%",
 		paddingVertical: "2%",
 		backgroundColor: colors.bg.input,
 		flexDirection: "row",
