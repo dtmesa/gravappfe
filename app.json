@@ -1,24 +1,24 @@
 {
 	"expo": {
-		"name": "workout-app",
-		"slug": "workout-app",
+		"name": "Galaxy Tracker",
+		"slug": "galaxy-tracker",
 		"version": "1.0.0",
 		"orientation": "portrait",
 		"icon": "./assets/images/icon.png",
-		"scheme": "workoutapp",
+		"scheme": "galaxytracker",
 		"userInterfaceStyle": "automatic",
 		"ios": {
 			"icon": "./assets/expo.icon"
 		},
 		"android": {
 			"adaptiveIcon": {
-				"backgroundColor": "#121212",
+				"backgroundColor": "#000000",
 				"foregroundImage": "./assets/images/android-icon-foreground.png",
 				"backgroundImage": "./assets/images/android-icon-background.png",
 				"monochromeImage": "./assets/images/android-icon-monochrome.png"
 			},
 			"predictiveBackGestureEnabled": false,
-			"package": "com.anonymous.workoutapp"
+			"package": "com.dtmesa.galaxytracker"
 		},
 		"web": {
 			"output": "static",
@@ -29,7 +29,7 @@
 			[
 				"expo-splash-screen",
 				{
-					"backgroundColor": "#121212",
+					"backgroundColor": "#000000",
 					"android": {
 						"image": "./assets/images/splash-icon.png",
 						"imageWidth": 76

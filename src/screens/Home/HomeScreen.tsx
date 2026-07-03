@@ -197,7 +197,9 @@ export function HomeScreen() {
 					)}
 				</View>
 
-				{pendingDelete && <UndoBubble name={pendingDelete.name} onUndo={handleUndo} />}
+				{pendingDelete && (
+					<UndoBubble key={pendingDelete.id} name={pendingDelete.name} onUndo={handleUndo} />
+				)}
 			</View>
 		</TouchableWithoutFeedback>
 	);
