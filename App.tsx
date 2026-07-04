@@ -1,7 +1,9 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import * as NavigationBar from "expo-navigation-bar";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { enableScreens } from "react-native-screens";
 import { SWRConfig } from "swr";
@@ -9,7 +11,7 @@ import { colors } from "./src/css/color";
 import { useAppFonts } from "./src/css/fonts";
 import { ActiveExerciseScreen } from "./src/screens/ActiveExercise/ActiveExerciseScreen";
 import { ActiveWorkoutScreen } from "./src/screens/ActiveWorkout/ActiveWorkoutScreen";
-import { NavigationBar, TopBar } from "./src/screens/components/NavigationBars";
+import { TopBar } from "./src/screens/components/NavigationBars";
 import { EditExerciseSessionScreen } from "./src/screens/EditExerciseSession/EditExerciseSessionScreen";
 import { EditWorkoutSessionScreen } from "./src/screens/EditWorkoutSession/EditWorkoutSessionScreen";
 import { ExerciseScreen } from "./src/screens/Exercise/ExerciseScreen";
@@ -40,6 +42,13 @@ export default function App() {
 		if (fontsLoaded && !loading) SplashScreen.hideAsync();
 	}, [fontsLoaded, loading]);
 
+	useEffect(() => {
+		if (Platform.OS === "android") {
+			NavigationBar.setPositionAsync("absolute");
+			NavigationBar.setBackgroundColorAsync("#00000000");
+		}
+	}, []);
+
 	return (
 		<SWRConfig value={{ revalidateOnFocus: false }}>
 			<GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg.primary }}>
@@ -66,7 +75,6 @@ export default function App() {
 					</Stack.Navigator>
 				</NavigationContainer>
 				<TopBar />
-				<NavigationBar />
 			</GestureHandlerRootView>
 		</SWRConfig>
 	);
