@@ -46,8 +46,7 @@
 						"usesCleartextTraffic": true
 					}
 				}
-			],
-			["expo-navigation-bar", { "enforceContrast": false }]
+			]
 		],
 		"experiments": {
 			"typedRoutes": true,
