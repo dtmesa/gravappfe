@@ -132,7 +132,7 @@ export function ActiveWorkoutScreen({ navigation, route }: Props) {
 				<View style={styles.titleRow}>
 					<View style={styles.titleRowLeft}>
 						<BackButton
-							onBack={() => (hasStartedExercises ? setAlertVisible(true) : navigation.goBack())}
+							onBack={() => (hasStartedExercises ? setAlertVisible(true) : handleBack())}
 						/>
 					</View>
 					<View style={styles.titleContainer}>

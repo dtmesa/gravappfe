@@ -118,7 +118,7 @@ export function TimePicker({
 
 	return (
 		<View style={styles.modalContainer}>
-			<Animated.View style={{ opacity, flex: 1 }}>
+			<Animated.View style={{ opacity, flex: 1, justifyContent: "space-evenly" }}>
 				<Text style={styles.modalTitle}>Set a time</Text>
 				<View style={styles.pickerContainer}>
 					<View style={styles.selectionBand} />
@@ -173,8 +173,6 @@ const styles = StyleSheet.create({
 		shadowColor: colors.shadow.primary,
 	},
 	pickerContainer: {
-		marginTop: 45,
-		marginBottom: 45,
 		flexDirection: "row",
 		alignItems: "center",
 		height: COLUMN_HEIGHT,
