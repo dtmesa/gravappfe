@@ -1,4 +1,5 @@
 import { Text, TextInput, type TextInputProps, View } from "react-native";
+import { colors } from "../../css/color";
 import { PasswordToggleButton } from "../components/PasswordToggleButton";
 import { styles } from "./styles";
 
@@ -40,7 +41,11 @@ export default function PasswordInput({
 
 			{value.length === 0 && !focused && <Text style={styles.placeholderText}>{placeholder}</Text>}
 
-			<PasswordToggleButton visible={visible} onToggle={onToggleVisibility} />
+			<PasswordToggleButton
+				visible={visible}
+				onToggle={onToggleVisibility}
+				color={focused ? colors.button.mutedLight : colors.button.mutedSecondary}
+			/>
 		</View>
 	);
 }

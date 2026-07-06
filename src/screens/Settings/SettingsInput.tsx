@@ -1,3 +1,4 @@
+import { colors } from "@/css/color";
 import { useState } from "react";
 import { Text, TextInput, View } from "react-native";
 import { PasswordToggleButton } from "../components/PasswordToggleButton";
@@ -35,7 +36,11 @@ export function SettingsInput({
 				onBlur={() => setFocused(false)}
 			/>
 			{showToggle && secureTextEntry && (
-				<PasswordToggleButton visible={showPassword} onToggle={() => setShowPassword((v) => !v)} />
+				<PasswordToggleButton
+					visible={showPassword}
+					onToggle={() => setShowPassword((v) => !v)}
+					color={focused ? colors.button.mutedLight : colors.button.mutedSecondary}
+				/>
 			)}
 		</View>
 	);
