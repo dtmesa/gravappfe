@@ -1,18 +1,19 @@
 export const colors = {
 	bg: {
 		primary: "#000000",
-		input: "#171526",
-		inputHighlight: "#2B274D",
-		inputSecondaryHighlight: "#3F3F74",
+		input: "#191228",
+		inputHighlight: "#281d40",
+		inputSecondaryHighlight: "#402e66",
 		darken: "rgba(0,0,0,0.85)",
 		transparent: "transparent",
 	},
 
 	button: {
 		primary: "#9A98AD",
-		muted: "#403B73",
-		mutedSecondary: "#5A54A1",
-		mutedLight: "#6D68B0",
+		muted: "#281d40",
+		mutedSecondary: "#38295a",
+		mutedLight: "#4e397e",
+		mutedHighlight: "#6d50b0",
 		accentDark: "#6d28d9",
 		accent: "#7c3aed",
 		accentLight: "#8b5cf6",
@@ -22,8 +23,10 @@ export const colors = {
 	},
 
 	border: {
-		primary: "#2A2433",
+		primary: "#281d40",
+		primaryHighlight: "#38295a",
 		accent: "#6d28d9",
+		accentHighlight: "#7c3aed",
 	},
 
 	star: {
@@ -37,8 +40,8 @@ export const colors = {
 	text: {
 		input: "#CFCFCF",
 		static: "#9A98AD",
-		muted: "#6D68B0",
-		mutedSecondary: "#817AD7",
+		muted: "#664aa3",
+		mutedSecondary: "#a376ff",
 		contrast: "#000000",
 		accentDark: "#6d28d9",
 		accent: "#7c3aed",

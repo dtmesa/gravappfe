@@ -23,6 +23,7 @@ export function MoveableRow({ val, drag, isActive, disabled, onDelete, onPress, 
 	const [swiping, setSwiping] = useState(false);
 	const [gripPressed, setGripPressed] = useState(false);
 	const scale = useSharedValue(1);
+	const gripScale = useSharedValue(1);
 	const translateX = useSharedValue(0);
 
 	const panGesture = Gesture.Pan()
@@ -50,6 +51,10 @@ export function MoveableRow({ val, drag, isActive, disabled, onDelete, onPress, 
 		opacity: isActive ? OPACITY_ACTIVE : OPACITY,
 	}));
 
+	const gripAnimatedStyle = useAnimatedStyle(() => ({
+		transform: [{ scale: gripScale.value }],
+	}));
+
 	return (
 		<View style={styles.container}>
 			<GestureDetector gesture={panGesture}>
@@ -74,26 +79,32 @@ export function MoveableRow({ val, drag, isActive, disabled, onDelete, onPress, 
 						>
 							<Pressable
 								onLongPress={drag}
-								onPressIn={() => setGripPressed(true)}
-								onPressOut={() => setGripPressed(false)}
+								onPressIn={() => {
+									setGripPressed(true);
+									gripScale.value = withSpring(0.9, { stiffness: 500, damping: 20, mass: 1 });
+								}}
+								onPressOut={() => {
+									setGripPressed(false);
+									gripScale.value = withSpring(1, { stiffness: 500, damping: 20, mass: 1 });
+								}}
 								hitSlop={16}
 							>
-								{({ pressed }) => (
-									<Animated.View style={{ transform: [{ scale: pressed ? 0.9 : 1 }] }}>
-										<GripVertical
-											size={24}
-											color={
-												gripPressed
-													? colors.button.accent
-													: isActive
-														? colors.text.accent
+								<Animated.View style={gripAnimatedStyle}>
+									<GripVertical
+										size={24}
+										color={
+											gripPressed
+												? colors.button.accent
+												: isActive
+													? colors.text.accent
+													: pressed
+														? colors.button.mutedLight
 														: colors.button.muted
-											}
-											strokeWidth={1.75}
-											style={styles.gripBuffer}
-										/>
-									</Animated.View>
-								)}
+										}
+										strokeWidth={1.75}
+										style={styles.gripBuffer}
+									/>
+								</Animated.View>
 							</Pressable>
 							<View style={styles.textWrapper}>
 								<Text
@@ -103,10 +114,21 @@ export function MoveableRow({ val, drag, isActive, disabled, onDelete, onPress, 
 									{val.name}
 								</Text>
 							</View>
-							{onEdit && <ModifyButton onEdit={onEdit} />}
+							{onEdit && (
+								<ModifyButton
+									color={pressed ? colors.button.mutedHighlight : colors.button.mutedLight}
+									onEdit={onEdit}
+								/>
+							)}
 							<ChevronRight
 								size={24}
-								color={swiping ? colors.text.accent : colors.button.muted}
+								color={
+									swiping
+										? colors.text.accent
+										: pressed
+											? colors.button.mutedLight
+											: colors.button.muted
+								}
 								style={styles.chevronBuffer}
 							/>
 						</Animated.View>

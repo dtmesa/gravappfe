@@ -109,4 +109,11 @@ export const styles = StyleSheet.create({
 		backgroundColor: colors.bg.inputHighlight,
 		borderColor: colors.border.accent,
 	},
+	checkboxPressed: {
+		borderColor: colors.border.primaryHighlight,
+	},
+	checkboxCheckedAndPressed: {
+		backgroundColor: colors.bg.inputSecondaryHighlight,
+		borderColor: colors.border.accentHighlight,
+	},
 });

@@ -8,7 +8,7 @@ type Props = {
 	color?: string;
 };
 
-export function ModifyButton({ onEdit }: Props) {
+export function ModifyButton({ onEdit, color }: Props) {
 	const { scale, pressIn, pressOut } = useScaleAnimation(0.9);
 
 	return (
@@ -17,7 +17,7 @@ export function ModifyButton({ onEdit }: Props) {
 				<Animated.View style={{ transform: [{ scale }] }}>
 					<SquarePen
 						size={24}
-						color={pressed ? colors.button.accentLight : colors.button.mutedLight}
+						color={color ?? (pressed ? colors.button.accentLight : colors.button.mutedLight)}
 						strokeWidth={1.75}
 					/>
 				</Animated.View>

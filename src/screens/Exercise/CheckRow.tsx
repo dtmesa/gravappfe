@@ -13,14 +13,14 @@ const FIELD_LABELS: Record<CheckField, string> = {
 	isDistance: "Distance",
 };
 
-type CheckRowProps = {
+type RowProps = {
 	field: CheckField;
 	checked: boolean;
 	disabled: boolean;
 	onPress: (field: CheckField) => void;
 };
 
-function CheckRow({ field, checked, disabled, onPress }: CheckRowProps) {
+function CheckRow({ field, checked, disabled, onPress }: RowProps) {
 	const { scale, pressIn, pressOut } = useScaleAnimation();
 
 	return (
@@ -37,7 +37,14 @@ function CheckRow({ field, checked, disabled, onPress }: CheckRowProps) {
 					<Text style={[styles.checkLabel, pressed && styles.checkLabelPressed]}>
 						{FIELD_LABELS[field]}
 					</Text>
-					<View style={[styles.checkbox, checked && styles.checkboxChecked]}>
+					<View
+						style={[
+							styles.checkbox,
+							checked && styles.checkboxChecked,
+							pressed && !checked && styles.checkboxPressed,
+							pressed && checked && styles.checkboxCheckedAndPressed,
+						]}
+					>
 						{checked && <Check size={16} color={colors.text.static} strokeWidth={2.5} />}
 					</View>
 				</Animated.View>
@@ -48,13 +55,13 @@ function CheckRow({ field, checked, disabled, onPress }: CheckRowProps) {
 
 const FIELDS = ["isWeight", "isReps", "isDuration", "isDistance"] as const;
 
-type ChecksProps = {
+type Props = {
 	exercise: Record<CheckField, boolean>;
 	loading: boolean;
 	onToggle: (field: CheckField) => void;
 };
 
-export function ExerciseChecks({ exercise, loading, onToggle }: ChecksProps) {
+export function ExerciseChecks({ exercise, loading, onToggle }: Props) {
 	return (
 		<View style={styles.checksWrapper}>
 			{FIELDS.map((field) => (

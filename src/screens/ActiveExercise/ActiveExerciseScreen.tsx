@@ -1,7 +1,8 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Animated, Keyboard, ScrollView, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import useSWR from "swr";
 import { getExerciseSession } from "../../api/exerciseSession.api";
 import { getAllAverages, getExercise, getWeeklyAverages } from "../../api/exercises.api";
 import {
@@ -17,6 +18,7 @@ import type { RootStackParamList } from "../../types/navigation.types";
 import type { SetSession } from "../../types/setSession.types";
 import { BackButton } from "../components/BackButton";
 import { FadeIn } from "../components/FadeIn";
+import { useGlow } from "../components/glowAnim";
 import { StarBackground } from "../components/StarBackground";
 import { TimerRow } from "../components/TimerRow";
 import type { Averages } from "./AverageRow";
@@ -24,6 +26,7 @@ import { AverageRow } from "./AverageRow";
 import { PlusRow } from "./PlusRow";
 import { SwipeableSetRow } from "./SetRow";
 import { styles } from "./styles";
+import { useTimer } from "./useTimer";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ActiveExercise">;
 
@@ -33,49 +36,27 @@ export function ActiveExerciseScreen({ navigation, route }: Props) {
 	const [exerciseSession, setExerciseSession] = useState<ExerciseSession | null>(null);
 	const [exercise, setExercise] = useState<Exercise | null>(null);
 	const [sets, setSets] = useState<SetSession[] | null>(null);
-	const [weeklyAverages, setWeeklyAverages] = useState<Averages | null>(null);
-	const [allAverages, setAllAverages] = useState<Averages | null>(null);
-	const [running, setRunning] = useState<boolean>(false);
-	const [elapsed, setElapsed] = useState<number>(0);
 	const [loading, setLoading] = useState(false);
-	const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+	const { running, elapsed, start: onStart, stop: onStop, reset: onReset } = useTimer();
+	const { textShadowRadius } = useGlow();
 
-	const glowAnim = useRef(new Animated.Value(0)).current;
+	const exerciseId = exercise?.id;
 
-	useEffect(() => {
-		Animated.loop(
-			Animated.sequence([
-				Animated.timing(glowAnim, { toValue: 1, duration: 2500, useNativeDriver: false }),
-				Animated.timing(glowAnim, { toValue: 0, duration: 2500, useNativeDriver: false }),
-			]),
-		).start();
-	}, [glowAnim]);
+	const { data: weeklyAverages } = useSWR<Averages | null>(
+		exercise ? ["weeklyAverages", workoutId, exerciseId, sessionId] : null,
+		() => {
+			if (!exerciseId) throw new Error("Missing exerciseId");
+			return getWeeklyAverages(workoutId, exerciseId, sessionId);
+		},
+	);
 
-	const textShadowRadius = glowAnim.interpolate({
-		inputRange: [0, 1],
-		outputRange: [0, 20],
-	});
-
-	const onReset = () => {
-		if (intervalRef.current) clearInterval(intervalRef.current);
-		intervalRef.current = null;
-		setRunning(false);
-		setElapsed(0);
-	};
-
-	const onStart = () => {
-		if (running) return;
-		setRunning(true);
-		intervalRef.current = setInterval(() => {
-			setElapsed((prev) => prev + 10);
-		}, 10);
-	};
-
-	const onStop = () => {
-		if (intervalRef.current) clearInterval(intervalRef.current);
-		intervalRef.current = null;
-		setRunning(false);
-	};
+	const { data: allAverages } = useSWR<Averages | null>(
+		exercise ? ["allAverages", workoutId, exerciseId, sessionId] : null,
+		() => {
+			if (!exerciseId) throw new Error("Missing exerciseId");
+			return getAllAverages(workoutId, exerciseId, sessionId);
+		},
+	);
 
 	const fetchSets = useCallback(async () => {
 		const data = await getSetSessions(exerciseSessionId, sessionId, workoutId);
@@ -151,24 +132,12 @@ export function ActiveExerciseScreen({ navigation, route }: Props) {
 	useEffect(() => {
 		const load = async () => {
 			const session = await fetchExerciseSession();
-			const exercise = await fetchExercise(session.exerciseId);
-			const [weekAverage, allAverage] = await Promise.all([
-				getWeeklyAverages(workoutId, exercise.id, sessionId),
-				getAllAverages(workoutId, exercise.id, sessionId),
-			]);
-			setWeeklyAverages(weekAverage);
-			setAllAverages(allAverage);
+			await fetchExercise(session.exerciseId);
 			const currSets = await getSetSessions(exerciseSessionId, sessionId, workoutId);
 			setSets(currSets);
 		};
 		load();
-	}, [fetchExerciseSession, fetchExercise, fetchSets, workoutId, sessionId, exerciseSessionId]);
-
-	useEffect(() => {
-		return () => {
-			if (intervalRef.current) clearInterval(intervalRef.current);
-		};
-	}, []);
+	}, [fetchExerciseSession, fetchExercise, workoutId, sessionId, exerciseSessionId]);
 
 	if (!exerciseSession || !exercise || !sets) {
 		return (
@@ -233,6 +202,7 @@ export function ActiveExerciseScreen({ navigation, route }: Props) {
 							elapsed={elapsed}
 							onPress={running ? onStop : onStart}
 							onReset={onReset}
+							timerType={"cs"}
 						/>
 					</FadeIn>
 				)}

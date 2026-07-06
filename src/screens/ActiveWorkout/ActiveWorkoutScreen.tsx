@@ -1,6 +1,6 @@
 import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Animated, BackHandler, FlatList, ScrollView, Text, View } from "react-native";
 import { createExerciseSession } from "../../api/exerciseSession.api";
 import { getExercises } from "../../api/exercises.api";
@@ -15,6 +15,7 @@ import type { Workout } from "../../types/workout.types";
 import type { WorkoutSession } from "../../types/workoutSession.types";
 import { BackButton } from "../components/BackButton";
 import { FadeIn } from "../components/FadeIn";
+import { useGlow } from "../components/glowAnim";
 import { PressableRow } from "../components/PressableRow";
 import { StarBackground } from "../components/StarBackground";
 import { TimerRow } from "../components/TimerRow";
@@ -31,23 +32,8 @@ export function ActiveWorkoutScreen({ navigation, route }: Props) {
 	const [workoutSession, setWorkoutSession] = useState<WorkoutSession | null>(null);
 	const [exerciseSessions, setExerciseSessions] = useState<ExerciseSession[]>([]);
 	const [alertVisible, setAlertVisible] = useState(false);
-
 	const hasStartedExercises = exerciseSessions.length > 0;
-	const glowAnim = useRef(new Animated.Value(0)).current;
-
-	useEffect(() => {
-		Animated.loop(
-			Animated.sequence([
-				Animated.timing(glowAnim, { toValue: 1, duration: 2500, useNativeDriver: false }),
-				Animated.timing(glowAnim, { toValue: 0, duration: 2500, useNativeDriver: false }),
-			]),
-		).start();
-	}, [glowAnim]);
-
-	const textShadowRadius = glowAnim.interpolate({
-		inputRange: [0, 1],
-		outputRange: [0, 20],
-	});
+	const { textShadowRadius } = useGlow();
 
 	const fetchWorkout = useCallback(async () => {
 		const data = await getWorkout(workoutId);
@@ -179,6 +165,7 @@ export function ActiveWorkoutScreen({ navigation, route }: Props) {
 						elapsed={elapsed}
 						onPress={() => (running ? stop() : start())}
 						onReset={reset}
+						timerType={"s"}
 					/>
 				</FadeIn>
 				<View style={styles.container}>

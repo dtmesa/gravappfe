@@ -8,7 +8,11 @@ type Props = {
 	color?: string;
 };
 
-export function PasswordToggleButton({ visible, onToggle, color = colors.button.muted }: Props) {
+export function PasswordToggleButton({
+	visible,
+	onToggle,
+	color = colors.button.mutedSecondary,
+}: Props) {
 	return (
 		<TouchableOpacity onPress={onToggle} hitSlop={10}>
 			{visible ? (

@@ -16,7 +16,7 @@ type ButtonProps = {
 	color?: string;
 };
 
-function TrashButton({ onAction, color = colors.button.muted }: ButtonProps) {
+function TrashButton({ onAction, color = colors.button.mutedLight }: ButtonProps) {
 	const { scale, pressIn, pressOut } = useScaleAnimation(0.9);
 
 	return (
@@ -34,7 +34,7 @@ function TrashButton({ onAction, color = colors.button.muted }: ButtonProps) {
 	);
 }
 
-function CancelButton({ onAction, color = colors.button.muted }: ButtonProps) {
+function CancelButton({ onAction, color = colors.button.mutedLight }: ButtonProps) {
 	const { scale, pressIn, pressOut } = useScaleAnimation(0.9);
 
 	return (
@@ -48,7 +48,7 @@ function CancelButton({ onAction, color = colors.button.muted }: ButtonProps) {
 	);
 }
 
-function ConfirmButton({ onAction, color = colors.button.muted }: ButtonProps) {
+function ConfirmButton({ onAction, color = colors.button.mutedLight }: ButtonProps) {
 	const { scale, pressIn, pressOut } = useScaleAnimation(0.9);
 
 	return (

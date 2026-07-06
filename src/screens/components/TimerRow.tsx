@@ -1,6 +1,13 @@
 import { Hourglass, RotateCcw } from "lucide-react-native";
 import { useEffect, useRef } from "react";
-import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+	Animated,
+	type GestureResponderEvent,
+	Pressable,
+	StyleSheet,
+	Text,
+	View,
+} from "react-native";
 import { colors } from "../../css/color";
 import { useScaleAnimation } from "../components/scaleAnim";
 
@@ -9,9 +16,10 @@ type Props = {
 	elapsed: number;
 	onPress: () => void;
 	onReset: () => void;
+	timerType: "cs" | "s";
 };
 
-export function TimerRow({ running, elapsed, onPress, onReset }: Props) {
+export function TimerRow({ running, elapsed, onPress, onReset, timerType }: Props) {
 	const { scale, pressIn, pressOut } = useScaleAnimation();
 
 	const rotation = useRef(new Animated.Value(0)).current;
@@ -28,7 +36,7 @@ export function TimerRow({ running, elapsed, onPress, onReset }: Props) {
 		outputRange: ["-12deg", "0deg", "12deg"],
 	});
 
-	const handleReset = (e: any) => {
+	const handleReset = (e: GestureResponderEvent) => {
 		e.stopPropagation();
 		Animated.sequence([
 			Animated.timing(rotation, {
@@ -45,7 +53,7 @@ export function TimerRow({ running, elapsed, onPress, onReset }: Props) {
 		onReset();
 	};
 
-	const formatTime = (ms: number) => {
+	const formatTimeCS = (ms: number) => {
 		const totalSeconds = Math.floor(ms / 1000);
 		const m = Math.floor(totalSeconds / 60)
 			.toString()
@@ -55,6 +63,14 @@ export function TimerRow({ running, elapsed, onPress, onReset }: Props) {
 			.toString()
 			.padStart(2, "0");
 		return `${m}:${s}.${centiseconds}`;
+	};
+
+	const formatTimeS = (totalSeconds: number) => {
+		const m = Math.floor(totalSeconds / 60)
+			.toString()
+			.padStart(2, "0");
+		const s = (totalSeconds % 60).toString().padStart(2, "0");
+		return `${m}:${s}`;
 	};
 
 	useEffect(() => {
@@ -107,7 +123,7 @@ export function TimerRow({ running, elapsed, onPress, onReset }: Props) {
 									running && pressed && styles.textPressedRunning,
 								]}
 							>
-								{formatTime(elapsed)}
+								{timerType === "cs" ? formatTimeCS(elapsed) : formatTimeS(elapsed)}
 							</Text>
 						</View>
 						<Pressable onPress={handleReset} hitSlop={12}>
@@ -120,7 +136,9 @@ export function TimerRow({ running, elapsed, onPress, onReset }: Props) {
 												? colors.button.accentHighlight
 												: running
 													? colors.button.accent
-													: colors.button.muted
+													: pressed
+														? colors.button.mutedSecondary
+														: colors.button.muted
 										}
 										strokeWidth={1.75}
 									/>

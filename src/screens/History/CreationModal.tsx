@@ -58,7 +58,7 @@ export function CreationModal({ visible, onExit, selectedDate, onCreated }: Prop
 	}, [fetchWorkouts]);
 
 	return (
-		<Modal transparent visible={visible} animationType="fade">
+		<Modal transparent visible={visible} animationType="fade" onRequestClose={handleClose}>
 			<View style={styles.modalBackground}>
 				<Pressable style={StyleSheet.absoluteFill} onPress={handleClose} />
 				<View style={styles.modalWrapper}>

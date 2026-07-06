@@ -3,6 +3,7 @@ import { create } from "zustand";
 type TimerStore = {
 	running: boolean;
 	elapsed: number;
+	startTime: number | null;
 	intervalRef: ReturnType<typeof setInterval> | null;
 	start: () => void;
 	stop: () => void;
@@ -13,15 +14,18 @@ export const useWorkoutTimerStore = create<TimerStore>((set, get) => ({
 	running: false,
 	elapsed: 0,
 	intervalRef: null,
+	startTime: null,
 
 	start: () => {
 		if (get().running) return;
 
-		const interval = setInterval(() => {
-			set((state) => ({ elapsed: state.elapsed + 10 }));
-		}, 10);
+		const startTime = Date.now() - get().elapsed * 1000;
 
-		set({ running: true, intervalRef: interval });
+		const interval = setInterval(() => {
+			set({ elapsed: Math.floor((Date.now() - startTime) / 1000) });
+		}, 1000);
+
+		set({ running: true, intervalRef: interval, startTime });
 	},
 
 	stop: () => {

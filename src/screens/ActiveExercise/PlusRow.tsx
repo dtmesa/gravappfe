@@ -21,7 +21,7 @@ export function PlusRow({ onPress, disabled }: Props) {
 					>
 						<Plus
 							size={32}
-							color={pressed ? colors.button.accentLight : colors.button.muted}
+							color={pressed ? colors.button.accentLight : colors.button.mutedSecondary}
 							strokeWidth={1.75}
 						/>
 					</Animated.View>

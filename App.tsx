@@ -41,7 +41,7 @@ export default function App() {
 	}, [fontsLoaded, loading]);
 
 	return (
-		<SWRConfig value={{ revalidateOnFocus: false }}>
+		<SWRConfig value={{ revalidateOnFocus: false, revalidateIfStale: false }}>
 			<GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.bg.primary }}>
 				<NavigationContainer>
 					<Stack.Navigator screenOptions={{ headerShown: false }}>
