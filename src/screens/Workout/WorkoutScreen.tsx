@@ -20,10 +20,14 @@ import { EditButton } from "../components/EditButton";
 import { FadeIn } from "../components/FadeIn";
 import { MoveableRow } from "../components/MoveableRow";
 import { StarBackground } from "../components/StarBackground";
+import { StatusMessage } from "../components/StatusMessage";
 import { UndoBubble } from "../components/UndoBubble";
 import { styles } from "./styles";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Workout">;
+
+const MAX_NAME_LENGTH = 75;
+const MAX_DESCRIPTION_LENGTH = 500;
 
 export function WorkoutScreen({ navigation, route }: Props) {
 	const { workoutId } = route.params;
@@ -38,6 +42,8 @@ export function WorkoutScreen({ navigation, route }: Props) {
 	const titleInputRef = useRef<TextInput>(null);
 	const [pendingDelete, setPendingDelete] = useState<Exercise | null>(null);
 	const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const [nameError, setNameError] = useState<string | null>(null);
+	const [descriptionError, setDescriptionError] = useState<string | null>(null);
 
 	const fetchWorkout = useCallback(async () => {
 		const data = await getWorkout(workoutId);
@@ -103,8 +109,15 @@ export function WorkoutScreen({ navigation, route }: Props) {
 	);
 
 	const handleCreateExercise = async () => {
-		if (!name.trim()) return;
+		const trimmed = name.trim();
+		if (!trimmed) return;
 
+		if (trimmed.length > MAX_NAME_LENGTH) {
+			setNameError(`Exercise name must be ${MAX_NAME_LENGTH} characters or fewer`);
+			return;
+		}
+
+		setNameError(null);
 		const newExercise = await createExercise(workoutId, name.trim());
 		setExercises((prev) => [...prev, newExercise]);
 
@@ -116,37 +129,64 @@ export function WorkoutScreen({ navigation, route }: Props) {
 	const handleUpdateDescription = async () => {
 		if (!workout) return;
 
-		const trimmed = description.trim();
+		const rawTrimmed = description.trim();
+		const trimmed = rawTrimmed.slice(0, MAX_DESCRIPTION_LENGTH);
 		setFocusedField(null);
 		Keyboard.dismiss();
 
-		if (trimmed === (workout.description ?? "").trim()) return;
+		if (rawTrimmed.length > MAX_DESCRIPTION_LENGTH) {
+			setDescriptionError(`Description was trimmed to ${MAX_DESCRIPTION_LENGTH} characters`);
+		} else {
+			setDescriptionError(null);
+		}
+
+		if (trimmed === (workout.description ?? "").trim()) {
+			setDescription(trimmed);
+			return;
+		}
 
 		try {
 			await updateWorkout(workoutId, "description", trimmed);
 			setWorkout((prev) => (prev ? { ...prev, description: trimmed } : prev));
+			setDescription(trimmed);
 		} catch {
 			setDescription(workout.description ?? "");
+			setDescriptionError("Failed to update description");
 		}
 	};
 
 	const handleUpdateTitle = async () => {
 		if (!workout) return;
 
-		const trimmed = title.trim();
+		const rawTrimmed = title.trim();
+		const trimmed = rawTrimmed.slice(0, MAX_NAME_LENGTH);
 		setIsEditingTitle(false);
 		Keyboard.dismiss();
 
-		if (!trimmed || trimmed === workout.name.trim()) {
+		if (!rawTrimmed) {
+			setDescriptionError("Workout name cannot be empty");
 			setTitle(workout.name);
+			return;
+		}
+
+		if (rawTrimmed.length > MAX_NAME_LENGTH) {
+			setDescriptionError(`Workout name was trimmed to ${MAX_NAME_LENGTH} characters`);
+		} else {
+			setDescriptionError(null);
+		}
+
+		if (trimmed === workout.name.trim()) {
+			setTitle(trimmed);
 			return;
 		}
 
 		try {
 			await updateWorkout(workoutId, "name", trimmed);
 			setWorkout((prev) => (prev ? { ...prev, name: trimmed } : prev));
+			setTitle(trimmed);
 		} catch {
 			setTitle(workout.name);
+			setDescriptionError("Failed to update workout name");
 		}
 	};
 
@@ -218,6 +258,11 @@ export function WorkoutScreen({ navigation, route }: Props) {
 				</View>
 				<FadeIn visible={true}>
 					<View style={styles.innerContainer}>
+						<StatusMessage
+							message={descriptionError}
+							type="error"
+							onClear={() => setDescriptionError(null)}
+						/>
 						<View
 							style={[
 								styles.descriptionWrapper,
@@ -241,7 +286,7 @@ export function WorkoutScreen({ navigation, route }: Props) {
 								<Text style={styles.descriptionPlaceholder}>Add a description...</Text>
 							)}
 						</View>
-
+						<StatusMessage message={nameError} type="error" onClear={() => setNameError(null)} />
 						<View style={[styles.inputWrapper, focusedField === "name" && styles.inputFocused]}>
 							<TextInput
 								value={name}

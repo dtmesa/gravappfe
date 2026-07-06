@@ -8,10 +8,10 @@ export const styles = StyleSheet.create({
 	},
 	innerContainer: {
 		backgroundColor: colors.bg.primary,
-		marginTop: 30,
-		paddingHorizontal: 40,
-		paddingVertical: 20,
-		gap: 20,
+		marginTop: 35,
+		marginHorizontal: 40,
+		marginBottom: 20,
+		gap: 15,
 	},
 	headerContainer: {
 		backgroundColor: colors.bg.primary,

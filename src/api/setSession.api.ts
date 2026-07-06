@@ -1,7 +1,7 @@
 import type { SetSession, SetSessionDTO } from "../types/setSession.types";
 import { api } from "./client.api";
 
-const mapSetSession = (dto: SetSessionDTO): SetSession => ({
+export const mapSetSession = (dto: SetSessionDTO): SetSession => ({
 	...dto,
 	weight: dto.weight?.toString() ?? null,
 	reps: dto.reps?.toString() ?? null,

@@ -106,7 +106,7 @@ export const styles = StyleSheet.create({
 		textAlign: "center",
 	},
 	buttonDanger: {
-		backgroundColor: colors.button.danger,
+		backgroundColor: colors.button.warning,
 		padding: 10,
 		borderRadius: 18,
 		marginRight: 75,
@@ -114,8 +114,16 @@ export const styles = StyleSheet.create({
 		elevation: 8,
 	},
 	buttonDangerPressed: {
-		backgroundColor: colors.button.dangerHighlight,
-		shadowColor: colors.shadow.primary,
+		backgroundColor: colors.button.warningHighlight,
+		shadowColor: colors.shadow.warning,
+	},
+	placeholder: {
+		fontFamily: "Play_400Regular",
+		position: "absolute",
+		left: 18,
+		top: 13,
+		color: colors.text.muted,
+		fontSize: 16,
 	},
 	statusText: {
 		fontFamily: "Play_400Regular",
@@ -127,13 +135,5 @@ export const styles = StyleSheet.create({
 	},
 	success: {
 		color: colors.text.accentLight,
-	},
-	placeholder: {
-		fontFamily: "Play_400Regular",
-		position: "absolute",
-		left: 18,
-		top: 13,
-		color: colors.text.muted,
-		fontSize: 16,
 	},
 });

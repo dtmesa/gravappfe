@@ -2,7 +2,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useState } from "react";
 import { Animated, BackHandler, FlatList, ScrollView, Text, View } from "react-native";
-import { createExerciseSession } from "../../api/exerciseSession.api";
+import { createExerciseSession, getExerciseSessions } from "../../api/exerciseSession.api";
 import { getExercises } from "../../api/exercises.api";
 import { deleteWorkoutSession, getWorkoutSession } from "../../api/workoutSession.api";
 import { getWorkout } from "../../api/workouts.api";
@@ -50,24 +50,21 @@ export function ActiveWorkoutScreen({ navigation, route }: Props) {
 		setWorkoutSession(data);
 	}, [workoutId, sessionId]);
 
-	const handleExercisePress = async (exerciseId: number) => {
+	const fetchExerciseSessions = useCallback(async () => {
+		const data = await getExerciseSessions(sessionId, workoutId);
+		setExerciseSessions(data);
+	}, [sessionId, workoutId]);
+
+	const handleExercisePress = (exerciseId: number) => {
 		const exerciseSession = exerciseSessions.find((s) => s.exerciseId === exerciseId);
 
-		if (!exerciseSession) {
-			const newSession = await createExerciseSession(sessionId, exerciseId, workoutId);
-			setExerciseSessions((prev) => [...prev, newSession]);
-			navigation.navigate("ActiveExercise", {
-				workoutId,
-				sessionId,
-				exerciseSessionId: newSession.id,
-			});
-		} else {
-			navigation.navigate("ActiveExercise", {
-				workoutId,
-				sessionId,
-				exerciseSessionId: exerciseSession.id,
-			});
-		}
+		if (!exerciseSession) return;
+
+		navigation.navigate("ActiveExercise", {
+			workoutId,
+			sessionId,
+			exerciseSessionId: exerciseSession.id,
+		});
 	};
 
 	const handleBack = useCallback(async () => {
@@ -84,14 +81,38 @@ export function ActiveWorkoutScreen({ navigation, route }: Props) {
 		navigation.goBack();
 	};
 
+	const initializeExerciseSessions = useCallback(async () => {
+		const existing = await getExerciseSessions(sessionId, workoutId);
+
+		if (existing.length > 0) {
+			setExerciseSessions(existing);
+			return;
+		}
+
+		const workoutExercises = await getExercises(workoutId);
+
+		const sessions = await Promise.all(
+			workoutExercises.map((exercise) => createExerciseSession(sessionId, exercise.id, workoutId)),
+		);
+
+		setExerciseSessions(sessions);
+	}, [sessionId, workoutId]);
+
 	useEffect(() => {
-		fetchWorkout();
-		fetchWorkoutSession();
-		fetchExercises();
-	}, [fetchWorkout, fetchWorkoutSession, fetchExercises]);
+		const load = async () => {
+			await fetchWorkout();
+			await fetchWorkoutSession();
+			await fetchExercises();
+			await initializeExerciseSessions();
+		};
+
+		load();
+	}, [fetchWorkout, fetchWorkoutSession, fetchExercises, initializeExerciseSessions]);
 
 	useFocusEffect(
 		useCallback(() => {
+			fetchExerciseSessions();
+
 			const handler = BackHandler.addEventListener("hardwareBackPress", () => {
 				if (hasStartedExercises) {
 					setAlertVisible(true);
@@ -101,7 +122,7 @@ export function ActiveWorkoutScreen({ navigation, route }: Props) {
 				return true;
 			});
 			return () => handler.remove();
-		}, [handleBack, hasStartedExercises]),
+		}, [handleBack, hasStartedExercises, fetchExerciseSessions]),
 	);
 
 	if (!workoutSession || !workout) {
@@ -180,8 +201,10 @@ export function ActiveWorkoutScreen({ navigation, route }: Props) {
 								<FadeIn key={item.id} visible={true}>
 									<PressableRow
 										val={item}
+										hasNoSets={exerciseSessions.some(
+											(s) => s.exerciseId === item.id && (s.sets?.length ?? 0) === 0,
+										)}
 										onPress={() => handleExercisePress(item.id)}
-										isVisited={exerciseSessions.some((s) => s.exerciseId === item.id)}
 									/>
 								</FadeIn>
 							)}

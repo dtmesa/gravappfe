@@ -4,6 +4,7 @@ export const colors = {
 		input: "#191228",
 		inputHighlight: "#281d40",
 		inputSecondaryHighlight: "#402e66",
+		// warning: "#402222",
 		darken: "rgba(0,0,0,0.85)",
 		transparent: "transparent",
 	},
@@ -18,8 +19,8 @@ export const colors = {
 		accent: "#7c3aed",
 		accentLight: "#8b5cf6",
 		accentHighlight: "#9a6bff",
-		danger: "#B91C1C",
-		dangerHighlight: "#DC2626",
+		warning: "#B91C1C",
+		warningHighlight: "#DC2626",
 	},
 
 	border: {
@@ -27,6 +28,7 @@ export const colors = {
 		primaryHighlight: "#38295a",
 		accent: "#6d28d9",
 		accentHighlight: "#7c3aed",
+		// warning: "#d94b4b",
 	},
 
 	star: {
@@ -35,6 +37,7 @@ export const colors = {
 
 	shadow: {
 		primary: "#9a6bff",
+		warning: "#ff8282",
 	},
 
 	text: {
@@ -47,6 +50,6 @@ export const colors = {
 		accent: "#7c3aed",
 		accentLight: "#8b5cf6",
 		accentHighlight: "#9a6bff",
-		warning: "#facc15",
+		warning: "#B91C1C",
 	},
 } as const;

@@ -141,7 +141,13 @@ export function EditWorkoutSessionScreen({ navigation, route }: Props) {
 					keyExtractor={(item) => item.id.toString()}
 					renderItem={({ item }) => (
 						<FadeIn key={item.id} visible={true}>
-							<PressableRow val={item} onPress={() => handleNav(item.id)} />
+							<PressableRow
+								val={item}
+								hasNoSets={exerciseSessions.some(
+									(s) => s.exerciseId === item.id && (s.sets?.length ?? 0),
+								)}
+								onPress={() => handleNav(item.id)}
+							/>
 						</FadeIn>
 					)}
 				/>

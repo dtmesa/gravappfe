@@ -1,9 +1,11 @@
 import type { ExerciseSession, ExerciseSessionDTO } from "../types/exerciseSession.types";
 import { api } from "./client.api";
+import { mapSetSession } from "./setSession.api";
 
 const mapExerciseSession = (dto: ExerciseSessionDTO): ExerciseSession => ({
 	...dto,
 	createdAt: new Date(dto.createdAt),
+	sets: dto.sets.map(mapSetSession),
 });
 
 export async function getExerciseSessions(

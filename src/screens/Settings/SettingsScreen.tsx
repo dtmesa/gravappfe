@@ -1,5 +1,5 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Animated, LayoutAnimation, Pressable, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { deleteAccount, updatePassword, updateUsername } from "../../api/auth.api";
@@ -10,6 +10,7 @@ import { validatePassword, validateUsername } from "../../util/inputValidation.u
 import { BackButton } from "../components/BackButton";
 import { FadeIn } from "../components/FadeIn";
 import { StarBackground } from "../components/StarBackground";
+import { StatusMessage } from "../components/StatusMessage";
 import { useScaleAnimation } from "../components/scaleAnim";
 import { SettingsCard } from "./SettingsCard";
 import { SettingsInput } from "./SettingsInput";
@@ -30,23 +31,20 @@ export function SettingsScreen({ navigation }: Props) {
 	const [authPassForPass, setAuthPassForPass] = useState("");
 	const [deletionPassword, setDeletionPassword] = useState("");
 	const [deletionAuthPassword, setDeletionAuthPassword] = useState("");
-	const [passwordError, setPasswordError] = useState("");
-	const [nameError, setNameError] = useState("");
-	const [deletionError, setDeletionError] = useState("");
+	const [nameStatus, setNameStatus] = useState<{
+		message: string;
+		type: "success" | "error";
+	} | null>(null);
+	const [passwordStatus, setPasswordStatus] = useState<{
+		message: string;
+		type: "success" | "error";
+	} | null>(null);
+	const [deletionStatus, setDeletionStatus] = useState<{
+		message: string;
+		type: "success" | "error";
+	} | null>(null);
 	const [loading, setLoading] = useState(false);
 	const anim = useScaleAnimation();
-
-	React.useEffect(() => {
-		if (!nameError) return;
-		const t = setTimeout(() => setNameError(""), 3000);
-		return () => clearTimeout(t);
-	}, [nameError]);
-
-	React.useEffect(() => {
-		if (!passwordError) return;
-		const t = setTimeout(() => setPasswordError(""), 3000);
-		return () => clearTimeout(t);
-	}, [passwordError]);
 
 	const toggle = (card: "username" | "password" | "account") => {
 		LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -57,21 +55,21 @@ export function SettingsScreen({ navigation }: Props) {
 		if (loading) return;
 
 		if (deletionPassword === "" || deletionAuthPassword === "") {
-			setDeletionError("One or more required fields are missing");
+			setDeletionStatus({ message: "One or more required fields are missing", type: "error" });
 			return;
 		} else if (deletionPassword !== deletionAuthPassword) {
-			setDeletionError("Passwords do not match");
+			setDeletionStatus({ message: "Passwords do not match", type: "error" });
 			return;
 		}
 
 		setLoading(true);
 
 		try {
-			setDeletionError("");
+			setDeletionStatus(null);
 			await deleteAccount(deletionPassword);
 			useAuthStore.setState({ token: null, username: null });
 		} catch {
-			setDeletionError("Account deletion failed");
+			setDeletionStatus({ message: "Account deletion failed", type: "error" });
 		} finally {
 			setLoading(false);
 		}
@@ -83,29 +81,34 @@ export function SettingsScreen({ navigation }: Props) {
 		const isInvalidUsername = validateUsername(newUsername);
 
 		if (newUsername === username) {
-			setNameError("New username must be different from your current username");
+			setNameStatus({
+				message: "New username must be different from your current username",
+				type: "error",
+			});
 			return;
 		} else if (newUsername === "" || authPassForName === "") {
-			setNameError("One or more required fields are missing");
+			setNameStatus({ message: "One or more required fields are missing", type: "error" });
 			return;
 		} else if (isInvalidUsername) {
-			setNameError(isInvalidUsername);
+			setNameStatus({ message: isInvalidUsername, type: "error" });
 			return;
 		}
 
 		setLoading(true);
 
 		try {
-			setNameError("");
+			setNameStatus(null);
 			await updateUsername(newUsername, authPassForName);
 			useAuthStore.setState({ username: newUsername });
-			setNameError("Username updated");
+			setNameStatus({ message: "Username updated", type: "success" });
 			setNewUsername("");
 			setAuthPassForName("");
 		} catch (err: unknown) {
 			const code = getApiError(err);
-			setNameError(
-				code === "USERNAME_TAKEN" ? "Username already exists" : "Username change failed",
+			setNameStatus(
+				code === "USERNAME_TAKEN"
+					? { message: "Username already exists", type: "error" }
+					: { message: "Username change failed", type: "error" },
 			);
 		} finally {
 			setLoading(false);
@@ -117,31 +120,34 @@ export function SettingsScreen({ navigation }: Props) {
 
 		const isInvalidPassword = validatePassword(newPassword);
 
-		if (newPassword === authPassForPass) {
-			setPasswordError("New password must be different from your current password");
+		if (newPassword === "" || confirmPassword === "" || authPassForPass === "") {
+			setPasswordStatus({ message: "One or more required fields are missing", type: "error" });
 			return;
-		} else if (newPassword === "" || confirmPassword === "" || authPassForPass === "") {
-			setPasswordError("One or more required fields are missing");
+		} else if (newPassword === authPassForPass) {
+			setPasswordStatus({
+				message: "Your new password must be different from your current password",
+				type: "error",
+			});
 			return;
 		} else if (isInvalidPassword) {
-			setPasswordError(isInvalidPassword);
+			setPasswordStatus({ message: isInvalidPassword, type: "error" });
 			return;
 		} else if (newPassword !== confirmPassword) {
-			setPasswordError("Passwords do not match");
+			setPasswordStatus({ message: "Passwords do not match", type: "error" });
 			return;
 		}
 
 		setLoading(true);
 
 		try {
-			setPasswordError("");
+			setPasswordStatus(null);
 			await updatePassword(authPassForPass, newPassword);
-			setPasswordError("Password updated");
+			setPasswordStatus({ message: "Password updated", type: "success" });
 			setNewPassword("");
 			setConfirmPassword("");
 			setAuthPassForPass("");
 		} catch {
-			setPasswordError("Password update failed");
+			setPasswordStatus({ message: "Password update failed", type: "error" });
 		} finally {
 			setLoading(false);
 		}
@@ -187,16 +193,11 @@ export function SettingsScreen({ navigation }: Props) {
 									secureTextEntry
 									showToggle={true}
 								/>
-								{nameError ? (
-									<Text
-										style={[
-											styles.statusText,
-											nameError === "Username updated" ? styles.success : styles.error,
-										]}
-									>
-										{nameError}
-									</Text>
-								) : null}
+								<StatusMessage
+									message={nameStatus?.message ?? null}
+									type={nameStatus?.type ?? "error"}
+									onClear={() => setNameStatus(null)}
+								/>
 								<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
 									<Pressable
 										style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
@@ -240,16 +241,11 @@ export function SettingsScreen({ navigation }: Props) {
 									secureTextEntry
 									showToggle={true}
 								/>
-								{passwordError ? (
-									<Text
-										style={[
-											styles.statusText,
-											passwordError === "Password updated" ? styles.success : styles.error,
-										]}
-									>
-										{passwordError}
-									</Text>
-								) : null}
+								<StatusMessage
+									message={passwordStatus?.message ?? null}
+									type={passwordStatus?.type ?? "error"}
+									onClear={() => setPasswordStatus(null)}
+								/>
 								<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
 									<Pressable
 										style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
@@ -286,16 +282,11 @@ export function SettingsScreen({ navigation }: Props) {
 									secureTextEntry
 									showToggle={true}
 								/>
-								{deletionError ? (
-									<Text
-										style={[
-											styles.statusText,
-											deletionError === "Account deleted" ? styles.success : styles.error,
-										]}
-									>
-										{deletionError}
-									</Text>
-								) : null}
+								<StatusMessage
+									message={deletionStatus?.message ?? null}
+									type={deletionStatus?.type ?? "error"}
+									onClear={() => setDeletionStatus(null)}
+								/>
 								<Animated.View style={{ transform: [{ scale: anim.scale }] }}>
 									<Pressable
 										style={({ pressed }) => [

@@ -1,6 +1,6 @@
-import { colors } from "@/css/color";
 import { useState } from "react";
 import { Text, TextInput, View } from "react-native";
+import { colors } from "@/css/color";
 import { PasswordToggleButton } from "../components/PasswordToggleButton";
 import { styles } from "./styles";
 

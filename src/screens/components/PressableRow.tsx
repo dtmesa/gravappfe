@@ -5,10 +5,10 @@ import { useScaleAnimation } from "./scaleAnim";
 type Props = {
 	val: { id: number; name: string };
 	onPress: () => void;
-	isVisited?: boolean;
+	hasNoSets?: boolean;
 };
 
-export function PressableRow({ val, onPress, isVisited }: Props) {
+export function PressableRow({ val, onPress, hasNoSets }: Props) {
 	const { scale, pressIn, pressOut } = useScaleAnimation();
 
 	return (
@@ -16,20 +16,15 @@ export function PressableRow({ val, onPress, isVisited }: Props) {
 			<Pressable onPress={onPress} onPressIn={pressIn} onPressOut={pressOut}>
 				{({ pressed }) => (
 					<Animated.View
-						style={[
-							styles.row,
-							isVisited && styles.rowVisited,
-							pressed && styles.rowPressed,
-							{ transform: [{ scale }] },
-						]}
+						style={[styles.row, pressed && styles.rowPressed, { transform: [{ scale }] }]}
 					>
 						<Text
 							numberOfLines={1}
 							style={[
 								styles.text,
-								isVisited && styles.textVisited,
 								pressed && styles.textPressed,
-								isVisited && pressed && styles.textPressedVisited,
+								hasNoSets && styles.textEmpty,
+								pressed && hasNoSets && styles.textEmptyPressed,
 							]}
 						>
 							{val.name}
@@ -65,17 +60,17 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		fontFamily: "Play_700Bold",
-		color: colors.text.muted,
+		color: colors.text.static,
 		fontSize: 20,
 		includeFontPadding: false,
 	},
-	textVisited: {
-		color: colors.text.static,
-	},
 	textPressed: {
-		color: colors.text.accent,
-	},
-	textPressedVisited: {
 		color: colors.text.accentHighlight,
+	},
+	textEmpty: {
+		color: colors.text.muted,
+	},
+	textEmptyPressed: {
+		color: colors.text.accent,
 	},
 });

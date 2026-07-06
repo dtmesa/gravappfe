@@ -9,13 +9,13 @@ export const styles = StyleSheet.create({
 	innerContainer: {
 		backgroundColor: colors.bg.primary,
 		paddingHorizontal: 40,
-		gap: 30,
+		gap: 20,
+		marginBottom: 30,
 	},
 	headerContainer: {
 		backgroundColor: colors.bg.primary,
 		paddingHorizontal: 18,
 		paddingTop: 50,
-		paddingBottom: 30,
 	},
 	titleContainer: {
 		flex: 1,
@@ -57,6 +57,7 @@ export const styles = StyleSheet.create({
 		minHeight: 50,
 		maxHeight: 150,
 		elevation: 8,
+		marginBottom: 15,
 	},
 	descriptionText: {
 		color: colors.text.input,

@@ -46,11 +46,11 @@ const styles = StyleSheet.create({
 	},
 	rowText: {
 		fontFamily: "Play_700Bold",
-		color: colors.text.muted,
+		color: colors.text.static,
 		fontSize: 18,
 		includeFontPadding: false,
 	},
 	rowTextPressed: {
-		color: colors.text.accent,
+		color: colors.text.accentLight,
 	},
 });

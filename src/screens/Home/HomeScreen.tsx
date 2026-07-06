@@ -12,9 +12,12 @@ import { AddButton } from "../components/AddButton";
 import { FadeIn } from "../components/FadeIn";
 import { MoveableRow } from "../components/MoveableRow";
 import { StarBackground } from "../components/StarBackground";
+import { StatusMessage } from "../components/StatusMessage";
 import { UndoBubble } from "../components/UndoBubble";
 import { HeaderMenu } from "./HeaderMenu";
 import { styles } from "./styles";
+
+const MAX_NAME_LENGTH = 75;
 
 export function HomeScreen() {
 	const rootNav = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -25,6 +28,7 @@ export function HomeScreen() {
 	const [pendingDelete, setPendingDelete] = useState<Workout | null>(null);
 	const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const [loading, setLoading] = useState(false);
+	const [nameError, setNameError] = useState<string | null>(null);
 
 	const fetchWorkouts = useCallback(async () => {
 		const data = await getWorkouts();
@@ -48,9 +52,16 @@ export function HomeScreen() {
 	}, []);
 
 	const handleCreateWorkout = async () => {
-		if (!name.trim()) return;
+		const trimmed = name.trim();
+		if (!trimmed) return;
 
-		const newWorkout = await createWorkout(name.trim());
+		if (trimmed.length > MAX_NAME_LENGTH) {
+			setNameError(`Workout name must be at most ${MAX_NAME_LENGTH} characters`);
+			return;
+		}
+
+		setNameError(null);
+		const newWorkout = await createWorkout(trimmed);
 		setWorkouts((prev) => [newWorkout, ...prev]);
 
 		setName("");
@@ -134,6 +145,7 @@ export function HomeScreen() {
 					</View>
 				</View>
 				<FadeIn visible={true}>
+					<StatusMessage message={nameError} type="error" onClear={() => setNameError(null)} />
 					<View style={styles.inputContainer}>
 						<View style={[styles.inputWrapper, focusedField && styles.inputFocused]}>
 							<TextInput
