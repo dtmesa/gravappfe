@@ -94,7 +94,7 @@ export const styles = StyleSheet.create({
 	drawerUserText: {
 		fontFamily: "Syncopate_700Bold",
 		fontSize: 25,
-		color: colors.text.muted,
+		color: colors.text.accentDark,
 		marginBottom: 25,
 		marginTop: 50,
 		marginHorizontal: 20,
