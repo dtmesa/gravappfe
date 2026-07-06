@@ -201,8 +201,8 @@ export function ActiveWorkoutScreen({ navigation, route }: Props) {
 								<FadeIn key={item.id} visible={true}>
 									<PressableRow
 										val={item}
-										hasNoSets={exerciseSessions.some(
-											(s) => s.exerciseId === item.id && (s.sets?.length ?? 0) === 0,
+										hasSets={exerciseSessions.some(
+											(s) => s.exerciseId === item.id && (s.sets?.length ?? 0) > 0,
 										)}
 										onPress={() => handleExercisePress(item.id)}
 									/>

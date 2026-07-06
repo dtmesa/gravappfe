@@ -5,10 +5,10 @@ import { useScaleAnimation } from "./scaleAnim";
 type Props = {
 	val: { id: number; name: string };
 	onPress: () => void;
-	hasNoSets?: boolean;
+	hasSets?: boolean;
 };
 
-export function PressableRow({ val, onPress, hasNoSets }: Props) {
+export function PressableRow({ val, onPress, hasSets }: Props) {
 	const { scale, pressIn, pressOut } = useScaleAnimation();
 
 	return (
@@ -23,8 +23,8 @@ export function PressableRow({ val, onPress, hasNoSets }: Props) {
 							style={[
 								styles.text,
 								pressed && styles.textPressed,
-								hasNoSets && styles.textEmpty,
-								pressed && hasNoSets && styles.textEmptyPressed,
+								hasSets && styles.textNotEmpty,
+								pressed && hasSets && styles.textNotEmptyPressed,
 							]}
 						>
 							{val.name}
@@ -60,17 +60,17 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		fontFamily: "Play_700Bold",
-		color: colors.text.static,
+		color: colors.text.muted,
 		fontSize: 20,
 		includeFontPadding: false,
 	},
 	textPressed: {
-		color: colors.text.accentHighlight,
-	},
-	textEmpty: {
-		color: colors.text.muted,
-	},
-	textEmptyPressed: {
 		color: colors.text.accent,
+	},
+	textNotEmpty: {
+		color: colors.text.static,
+	},
+	textNotEmptyPressed: {
+		color: colors.text.accentHighlight,
 	},
 });

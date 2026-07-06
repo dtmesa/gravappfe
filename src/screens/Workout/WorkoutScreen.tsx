@@ -35,14 +35,22 @@ export function WorkoutScreen({ navigation, route }: Props) {
 	const [workout, setWorkout] = useState<Workout | null>(null);
 	const [exercises, setExercises] = useState<Exercise[]>([]);
 	const [name, setName] = useState("");
+
 	const [focusedField, setFocusedField] = useState<string | null>(null);
 	const [description, setDescription] = useState(workout?.description ?? "");
+
 	const [title, setTitle] = useState(workout?.name ?? "");
 	const [isEditingTitle, setIsEditingTitle] = useState(false);
 	const titleInputRef = useRef<TextInput>(null);
+
 	const [pendingDelete, setPendingDelete] = useState<Exercise | null>(null);
+	const pendingDeleteRef = useRef(pendingDelete);
 	const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-	const [nameError, setNameError] = useState<string | null>(null);
+
+	const [nameStatus, setNameStatus] = useState<{
+		message: string;
+		type: "success" | "error";
+	} | null>(null);
 	const [descriptionError, setDescriptionError] = useState<string | null>(null);
 
 	const fetchWorkout = useCallback(async () => {
@@ -113,13 +121,20 @@ export function WorkoutScreen({ navigation, route }: Props) {
 		if (!trimmed) return;
 
 		if (trimmed.length > MAX_NAME_LENGTH) {
-			setNameError(`Exercise name must be ${MAX_NAME_LENGTH} characters or fewer`);
+			setNameStatus({
+				message: `Exercise name must be ${MAX_NAME_LENGTH} characters or fewer`,
+				type: "error",
+			});
 			return;
 		}
 
-		setNameError(null);
+		setNameStatus(null);
 		const newExercise = await createExercise(workoutId, name.trim());
 		setExercises((prev) => [...prev, newExercise]);
+		setNameStatus({
+			message: `${trimmed} created`,
+			type: "success",
+		});
 
 		setName("");
 		setFocusedField(null);
@@ -193,6 +208,25 @@ export function WorkoutScreen({ navigation, route }: Props) {
 	useEffect(() => {
 		if (isEditingTitle) titleInputRef.current?.focus();
 	}, [isEditingTitle]);
+
+	useEffect(() => {
+		pendingDeleteRef.current = pendingDelete;
+	}, [pendingDelete]);
+
+	useFocusEffect(
+		useCallback(() => {
+			return () => {
+				if (undoTimeoutRef.current) {
+					clearTimeout(undoTimeoutRef.current);
+					if (pendingDeleteRef.current) {
+						deleteExercise(workoutId, pendingDeleteRef.current.id).catch(() => {});
+					}
+					undoTimeoutRef.current = null;
+					setPendingDelete(null);
+				}
+			};
+		}, [workoutId]),
+	);
 
 	useEffect(() => {
 		fetchWorkout();
@@ -286,7 +320,11 @@ export function WorkoutScreen({ navigation, route }: Props) {
 								<Text style={styles.descriptionPlaceholder}>Add a description...</Text>
 							)}
 						</View>
-						<StatusMessage message={nameError} type="error" onClear={() => setNameError(null)} />
+						<StatusMessage
+							message={nameStatus?.message ?? null}
+							type={nameStatus?.type ?? "error"}
+							onClear={() => setNameStatus(null)}
+						/>
 						<View style={[styles.inputWrapper, focusedField === "name" && styles.inputFocused]}>
 							<TextInput
 								value={name}

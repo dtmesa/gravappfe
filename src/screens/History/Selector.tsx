@@ -47,7 +47,7 @@ export function Selector({
 						)}
 
 						<Funnel
-							size={24}
+							size={focusedField ? 26 : 24}
 							color={focusedField ? colors.button.accentHighlight : colors.button.mutedSecondary}
 							style={styles.modalFilterBuffer}
 							strokeWidth={1.75}

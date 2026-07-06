@@ -4,7 +4,6 @@ export const colors = {
 		input: "#191228",
 		inputHighlight: "#281d40",
 		inputSecondaryHighlight: "#402e66",
-		// warning: "#402222",
 		darken: "rgba(0,0,0,0.85)",
 		transparent: "transparent",
 	},
@@ -28,7 +27,6 @@ export const colors = {
 		primaryHighlight: "#38295a",
 		accent: "#6d28d9",
 		accentHighlight: "#7c3aed",
-		// warning: "#d94b4b",
 	},
 
 	star: {

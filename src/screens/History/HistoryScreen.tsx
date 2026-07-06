@@ -21,9 +21,11 @@ type Props = NativeStackScreenProps<RootStackParamList, "History">;
 
 export function HistoryScreen({ navigation }: Props) {
 	const [selected, setSelected] = useState<string>("");
+
 	const [pendingDelete, setPendingDelete] = useState<WorkoutSession | null>(null);
 	const pendingDeleteRef = useRef(pendingDelete);
 	const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
 	const [modalVisible, setModalVisible] = useState(false);
 	const [fadeKey, setFadeKey] = useState(0);
 
@@ -195,7 +197,11 @@ export function HistoryScreen({ navigation }: Props) {
 				}}
 			/>
 			{pendingDelete && (
-				<UndoBubble key={pendingDelete.id} name={pendingDelete.workout.name} onUndo={handleUndo} />
+				<UndoBubble
+					key={pendingDelete.id}
+					name={`${new Date(pendingDelete.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} · ${pendingDelete.workout.name}`}
+					onUndo={handleUndo}
+				/>
 			)}
 		</>
 	);

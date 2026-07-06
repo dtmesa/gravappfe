@@ -18,8 +18,9 @@ export function StatusMessage({ message, type = "error", duration = 3000, onClea
 	const opacity = useRef(new Animated.Value(0)).current;
 	const height = useRef(new Animated.Value(0)).current;
 	const [displayText, setDisplayText] = useState("");
+	const [displayType, setDisplayType] = useState(type);
 	const [measuredHeight, setMeasuredHeight] = useState(LINE_HEIGHT);
-	const style = type === "success" ? styles.successText : styles.errorText;
+	const style = displayType === "success" ? styles.successText : styles.errorText;
 
 	useEffect(() => {
 		onClearRef.current = onClear;
@@ -28,8 +29,9 @@ export function StatusMessage({ message, type = "error", duration = 3000, onClea
 	useEffect(() => {
 		if (message) {
 			setDisplayText(message);
+			setDisplayType(type);
 		}
-	}, [message]);
+	}, [message, type]);
 
 	useEffect(() => {
 		if (message) {

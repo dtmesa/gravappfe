@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
 		marginTop: 35,
 		marginHorizontal: 40,
 		marginBottom: 20,
-		gap: 15,
+		gap: 10,
 	},
 	headerContainer: {
 		backgroundColor: colors.bg.primary,

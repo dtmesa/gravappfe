@@ -21,14 +21,20 @@ const MAX_NAME_LENGTH = 75;
 
 export function HomeScreen() {
 	const rootNav = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
 	const [workouts, setWorkouts] = useState<Workout[]>([]);
 	const [name, setName] = useState("");
+
 	const [focusedField, setFocusedField] = useState(false);
-	const [pendingDelete, setPendingDelete] = useState<Workout | null>(null);
-	const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const [loading, setLoading] = useState(false);
-	const [nameError, setNameError] = useState<string | null>(null);
+
+	const [pendingDelete, setPendingDelete] = useState<Workout | null>(null);
+	const pendingDeleteRef = useRef(pendingDelete);
+	const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+	const [nameStatus, setNameStatus] = useState<{
+		message: string;
+		type: "success" | "error";
+	} | null>(null);
 
 	const fetchWorkouts = useCallback(async () => {
 		const data = await getWorkouts();
@@ -42,27 +48,43 @@ export function HomeScreen() {
 	useFocusEffect(
 		useCallback(() => {
 			fetchWorkouts();
+
+			return () => {
+				if (undoTimeoutRef.current) {
+					clearTimeout(undoTimeoutRef.current);
+					if (pendingDeleteRef.current) {
+						deleteWorkout(pendingDeleteRef.current.id).catch(() => {});
+					}
+					undoTimeoutRef.current = null;
+					setPendingDelete(null);
+				}
+			};
 		}, [fetchWorkouts]),
 	);
 
 	useEffect(() => {
-		return () => {
-			if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
-		};
-	}, []);
+		pendingDeleteRef.current = pendingDelete;
+	}, [pendingDelete]);
 
 	const handleCreateWorkout = async () => {
 		const trimmed = name.trim();
 		if (!trimmed) return;
 
 		if (trimmed.length > MAX_NAME_LENGTH) {
-			setNameError(`Workout name must be at most ${MAX_NAME_LENGTH} characters`);
+			setNameStatus({
+				message: `Workout name must be at most ${MAX_NAME_LENGTH} characters`,
+				type: "error",
+			});
 			return;
 		}
 
-		setNameError(null);
+		setNameStatus(null);
 		const newWorkout = await createWorkout(trimmed);
 		setWorkouts((prev) => [newWorkout, ...prev]);
+		setNameStatus({
+			message: `${trimmed} created`,
+			type: "success",
+		});
 
 		setName("");
 		setFocusedField(false);
@@ -145,7 +167,11 @@ export function HomeScreen() {
 					</View>
 				</View>
 				<FadeIn visible={true}>
-					<StatusMessage message={nameError} type="error" onClear={() => setNameError(null)} />
+					<StatusMessage
+						message={nameStatus?.message ?? null}
+						type={nameStatus?.type ?? "error"}
+						onClear={() => setNameStatus(null)}
+					/>
 					<View style={styles.inputContainer}>
 						<View style={[styles.inputWrapper, focusedField && styles.inputFocused]}>
 							<TextInput
