@@ -116,7 +116,7 @@ export function MoveableRow({ val, drag, isActive, disabled, onDelete, onPress, 
 							</View>
 							{onEdit && (
 								<ModifyButton
-									color={pressed ? colors.button.mutedHighlight : colors.button.mutedLight}
+									active={pressed && !swiping && !isActive && !gripPressed}
 									onEdit={onEdit}
 								/>
 							)}
