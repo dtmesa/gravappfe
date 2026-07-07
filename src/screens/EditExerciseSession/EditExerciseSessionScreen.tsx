@@ -29,7 +29,9 @@ export function EditExerciseSessionScreen({ navigation, route }: Props) {
 	const [exerciseSession, setExerciseSession] = useState<ExerciseSession | null>(null);
 	const [exercise, setExercise] = useState<Exercise | null>(null);
 	const [sets, setSets] = useState<SetSession[] | null>(null);
+
 	const [loading, setLoading] = useState(false);
+	const [fadeKey, setFadeKey] = useState(0);
 
 	const fetchSets = useCallback(async () => {
 		const data = await getSetSessions(exerciseSessionId, sessionId, workoutId);
@@ -57,6 +59,7 @@ export function EditExerciseSessionScreen({ navigation, route }: Props) {
 					);
 				}
 			}
+			setFadeKey((k) => k + 1);
 			await fetchSets();
 		} finally {
 			setLoading(false);
@@ -65,6 +68,7 @@ export function EditExerciseSessionScreen({ navigation, route }: Props) {
 
 	const handleDeleteSet = async (id: number) => {
 		await deleteSetSession(id, exerciseSessionId, sessionId, workoutId);
+		setFadeKey((k) => k + 1);
 		await fetchSets();
 	};
 
@@ -166,7 +170,7 @@ export function EditExerciseSessionScreen({ navigation, route }: Props) {
 				))}
 				{(exercise.isWeight || exercise.isReps || exercise.isDuration || exercise.isDistance) && (
 					<FadeIn visible={true}>
-						<PlusRow onPress={handleCreateSet} disabled={loading} />
+						<PlusRow onPress={handleCreateSet} disabled={loading} triggerFade={fadeKey} />
 					</FadeIn>
 				)}
 			</KeyboardAwareScrollView>

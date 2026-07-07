@@ -28,7 +28,10 @@ export function ExerciseScreen({ navigation, route }: Props) {
 	const titleInputRef = useRef<TextInput>(null);
 	const [description, setDescription] = useState(exercise?.description ?? "");
 	const [loading, setLoading] = useState(false);
-	const [descriptionError, setDescriptionError] = useState<string | null>(null);
+	const [descriptionStatus, setDescriptionStatus] = useState<{
+		message: string;
+		type: "success" | "error";
+	} | null>(null);
 
 	const fetchExercise = useCallback(async () => {
 		const data = await getExercise(workoutId, exerciseId);
@@ -64,9 +67,12 @@ export function ExerciseScreen({ navigation, route }: Props) {
 		Keyboard.dismiss();
 
 		if (rawTrimmed.length > MAX_DESCRIPTION_LENGTH) {
-			setDescriptionError(`Description was trimmed to ${MAX_DESCRIPTION_LENGTH} characters`);
+			setDescriptionStatus({
+				message: `Description was trimmed to ${MAX_DESCRIPTION_LENGTH} characters`,
+				type: "error",
+			});
 		} else {
-			setDescriptionError(null);
+			setDescriptionStatus(null);
 		}
 
 		if (trimmed === (exercise.description ?? "").trim()) {
@@ -78,9 +84,10 @@ export function ExerciseScreen({ navigation, route }: Props) {
 			await updateExercise(workoutId, exerciseId, "description", trimmed);
 			setExercise((prev) => (prev ? { ...prev, description: trimmed } : prev));
 			setDescription(trimmed);
+			setDescriptionStatus({ message: "Description updated", type: "success" });
 		} catch {
 			setDescription(exercise.description ?? "");
-			setDescriptionError("Failed to update description");
+			setDescriptionStatus({ message: "Failed to update description", type: "error" });
 		}
 	}, [exercise, description, workoutId, exerciseId]);
 
@@ -93,15 +100,18 @@ export function ExerciseScreen({ navigation, route }: Props) {
 		Keyboard.dismiss();
 
 		if (!rawTrimmed) {
-			setDescriptionError("Workout name cannot be empty");
+			setDescriptionStatus({ message: "Exercise name cannot be empty", type: "error" });
 			setTitle(exercise.name);
 			return;
 		}
 
 		if (rawTrimmed.length > MAX_NAME_LENGTH) {
-			setDescriptionError(`Workout name was trimmed to ${MAX_NAME_LENGTH} characters`);
+			setDescriptionStatus({
+				message: `Exercise name was trimmed to ${MAX_NAME_LENGTH} characters`,
+				type: "error",
+			});
 		} else {
-			setDescriptionError(null);
+			setDescriptionStatus(null);
 		}
 
 		if (trimmed === exercise.name.trim()) {
@@ -113,9 +123,10 @@ export function ExerciseScreen({ navigation, route }: Props) {
 			await updateExercise(workoutId, exerciseId, "name", trimmed);
 			setExercise((prev) => (prev ? { ...prev, name: trimmed } : prev));
 			setTitle(trimmed);
+			setDescriptionStatus({ message: "Exercise name updated", type: "success" });
 		} catch {
 			setTitle(exercise.name);
-			setDescriptionError("Failed to update workout name");
+			setDescriptionStatus({ message: "Failed to update exercise name", type: "error" });
 		}
 	};
 
@@ -181,9 +192,9 @@ export function ExerciseScreen({ navigation, route }: Props) {
 				<FadeIn visible={true}>
 					<View style={styles.innerContainer}>
 						<StatusMessage
-							message={descriptionError}
-							type="error"
-							onClear={() => setDescriptionError(null)}
+							message={descriptionStatus?.message ?? null}
+							type={descriptionStatus?.type ?? "error"}
+							onClear={() => setDescriptionStatus(null)}
 						/>
 						<View style={[styles.descriptionWrapper, focusedField && styles.descriptionFocused]}>
 							<TextInput

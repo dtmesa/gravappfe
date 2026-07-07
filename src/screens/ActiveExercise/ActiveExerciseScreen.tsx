@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Animated, Keyboard, ScrollView, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import useSWR from "swr";
-import { getExerciseSession } from "../../api/exerciseSession.api";
 import { getAllAverages, getExercise, getWeeklyAverages } from "../../api/exercises.api";
+import { getExerciseSession } from "../../api/exerciseSession.api";
 import {
 	createSetSession,
 	deleteSetSession,
@@ -36,13 +36,14 @@ export function ActiveExerciseScreen({ navigation, route }: Props) {
 	const [exerciseSession, setExerciseSession] = useState<ExerciseSession | null>(null);
 	const [exercise, setExercise] = useState<Exercise | null>(null);
 	const [sets, setSets] = useState<SetSession[] | null>(null);
+
 	const [loading, setLoading] = useState(false);
-	const [fadeKey, setFadeKey] = useState(0);
 	const { running, elapsed, start: onStart, stop: onStop, reset: onReset } = useTimer();
+
 	const { textShadowRadius } = useGlow();
+	const [fadeKey, setFadeKey] = useState(0);
 
 	const exerciseId = exercise?.id;
-
 	const { data: weeklyAverages } = useSWR<Averages | null>(
 		exercise ? ["weeklyAverages", workoutId, exerciseId, sessionId] : null,
 		() => {
@@ -50,7 +51,6 @@ export function ActiveExerciseScreen({ navigation, route }: Props) {
 			return getWeeklyAverages(workoutId, exerciseId, sessionId);
 		},
 	);
-
 	const { data: allAverages } = useSWR<Averages | null>(
 		exercise ? ["allAverages", workoutId, exerciseId, sessionId] : null,
 		() => {

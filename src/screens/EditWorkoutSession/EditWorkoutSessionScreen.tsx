@@ -14,8 +14,8 @@ import { BackButton } from "../components/BackButton";
 import { FadeIn } from "../components/FadeIn";
 import { PressableRow } from "../components/PressableRow";
 import { StarBackground } from "../components/StarBackground";
-import { styles } from "./styles";
 import { TimePicker, type TimeValue } from "./TimePicker";
+import { styles } from "./styles";
 
 type Props = NativeStackScreenProps<RootStackParamList, "EditWorkoutSession">;
 
