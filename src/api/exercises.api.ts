@@ -1,3 +1,4 @@
+import { mutate } from "swr";
 import type { Averages } from "../screens/ActiveExercise/AverageRow";
 import type { Exercise } from "../types/exercise.types";
 import { api } from "./client.api";
@@ -19,6 +20,10 @@ export async function createExercise(workoutId: number, name: string): Promise<E
 
 export async function deleteExercise(workoutId: number, id: number): Promise<void> {
 	await api.delete(`/workouts/${workoutId}/exercises/${id}`);
+	// Also cascades into exercise sessions/sets recorded against it, which
+	// HistoryScreen's sessions cache can display -- see deleteWorkout for why
+	// this needs to reach the cache directly rather than relying on refocus.
+	mutate((key) => Array.isArray(key) && key[0] === "sessions");
 }
 
 export async function updateExercise(
