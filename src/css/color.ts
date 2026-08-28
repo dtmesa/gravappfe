@@ -4,7 +4,7 @@ export const colors = {
 		input: "#191228",
 		inputHighlight: "#281d40",
 		inputSecondaryHighlight: "#402e66",
-		darken: "rgba(0,0,0,0.85)",
+		darken: "rgba(0,0,0,0.9)",
 		transparent: "transparent",
 	},
 
@@ -36,6 +36,7 @@ export const colors = {
 	shadow: {
 		primary: "#9a6bff",
 		warning: "#ff8282",
+		transparent: "transparent",
 	},
 
 	text: {

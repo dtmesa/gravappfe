@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
 	},
 	rowPressed: {
 		backgroundColor: colors.bg.inputHighlight,
-		elevation: 8,
+		elevation: 6,
 		shadowColor: colors.shadow.primary,
 	},
 	text: {
