@@ -78,7 +78,7 @@ export function HistoryScreen({ navigation }: Props) {
 			clearTimeout(undoTimeoutRef.current);
 
 			try {
-				await deleteWorkoutSession(pendingDelete.id, pendingDelete.workout.id);
+				await deleteWorkoutSession(pendingDelete.id, pendingDelete.workoutId);
 			} catch {
 				mutate();
 			}
@@ -89,7 +89,7 @@ export function HistoryScreen({ navigation }: Props) {
 
 		undoTimeoutRef.current = setTimeout(async () => {
 			try {
-				await deleteWorkoutSession(id, session.workout.id);
+				await deleteWorkoutSession(id, session.workoutId);
 			} catch {
 				mutate();
 			} finally {
@@ -128,7 +128,7 @@ export function HistoryScreen({ navigation }: Props) {
 				if (pendingDeleteRef.current) {
 					deleteWorkoutSession(
 						pendingDeleteRef.current.id,
-						pendingDeleteRef.current.workout.id,
+						pendingDeleteRef.current.workoutId,
 					).catch(() => {});
 				}
 			}
