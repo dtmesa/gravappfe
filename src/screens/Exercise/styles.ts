@@ -47,9 +47,11 @@ export const styles = StyleSheet.create({
 		marginTop: 6,
 		alignItems: "center",
 	},
+	// elevation stays on descriptionWrapper, never here: toggling it on
+	// Android forces a relayout that steals focus back off the TextInput the
+	// instant it's gained. iosShadow is inert on Android, so it's safe here.
 	descriptionFocused: {
 		backgroundColor: colors.bg.inputHighlight,
-		elevation: 8,
 		...iosShadow(8, colors.shadow.primary),
 	},
 	descriptionWrapper: {
@@ -59,6 +61,7 @@ export const styles = StyleSheet.create({
 		minHeight: 50,
 		maxHeight: 150,
 		marginBottom: 15,
+		elevation: 8,
 	},
 	descriptionText: {
 		color: colors.text.input,

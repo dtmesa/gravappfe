@@ -64,6 +64,7 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		height: 50,
 		marginBottom: 20,
+		elevation: 8,
 	},
 	inputText: {
 		color: colors.text.input,
@@ -71,11 +72,14 @@ export const styles = StyleSheet.create({
 		fontSize: 16,
 		flex: 1,
 	},
-	// Shared by inputWrapper and descriptionWrapper below: flat at rest, shadow
-	// only while focused.
+	// Shared by inputWrapper and descriptionWrapper below. elevation stays on
+	// the wrapper, never here: toggling elevation on Android forces a relayout
+	// that steals focus back off the TextInput the instant it's gained, so it
+	// has to be a constant, not something added when focused. iosShadow is
+	// inert on Android (returns {}), so it's safe here -- it's what makes the
+	// shadow iOS-only-appear on focus without touching Android at all.
 	inputFocused: {
 		backgroundColor: colors.bg.inputHighlight,
-		elevation: 8,
 		...iosShadow(8, colors.shadow.primary),
 	},
 	inputPlaceholder: {
@@ -92,6 +96,7 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		minHeight: 50,
 		maxHeight: 150,
+		elevation: 8,
 	},
 	descriptionInput: {
 		color: colors.text.input,

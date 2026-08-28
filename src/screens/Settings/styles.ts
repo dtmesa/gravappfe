@@ -45,15 +45,16 @@ export const styles = StyleSheet.create({
 		paddingVertical: "7%",
 		backgroundColor: colors.bg.input,
 		borderRadius: 18,
+		elevation: 8,
 	},
 	cardHeaderText: {
 		fontFamily: "Play_700Bold",
 		color: colors.text.static,
 		fontSize: 20,
 	},
+	// elevation stays on cardHeader, never here -- see inputFocused below.
 	cardHeaderPressed: {
 		backgroundColor: colors.bg.inputHighlight,
-		elevation: 8,
 		...iosShadow(8, colors.shadow.primary),
 	},
 	cardHeaderTextPressed: {
@@ -75,6 +76,7 @@ export const styles = StyleSheet.create({
 		borderRadius: 18,
 		paddingHorizontal: 16,
 		height: 50,
+		elevation: 8,
 	},
 	input: {
 		fontFamily: "Play_400Regular",
@@ -82,9 +84,11 @@ export const styles = StyleSheet.create({
 		flex: 1,
 		color: colors.text.input,
 	},
+	// elevation stays on inputWrapper, never here: toggling it on Android
+	// forces a relayout that steals focus back off the TextInput the instant
+	// it's gained. iosShadow is inert on Android, so it's safe here.
 	inputFocused: {
 		backgroundColor: colors.bg.inputHighlight,
-		elevation: 8,
 		...iosShadow(8, colors.shadow.primary),
 	},
 	button: {
@@ -94,10 +98,10 @@ export const styles = StyleSheet.create({
 		marginTop: 5,
 		marginRight: 75,
 		marginLeft: 75,
+		elevation: 8,
 	},
 	buttonPressed: {
 		backgroundColor: colors.button.accentHighlight,
-		elevation: 8,
 		...iosShadow(8, colors.shadow.primary),
 	},
 	buttonText: {
@@ -112,10 +116,10 @@ export const styles = StyleSheet.create({
 		borderRadius: 18,
 		marginRight: 75,
 		marginLeft: 75,
+		elevation: 8,
 	},
 	buttonDangerPressed: {
 		backgroundColor: colors.button.warningHighlight,
-		elevation: 8,
 		...iosShadow(8, colors.shadow.warning),
 	},
 	placeholder: {

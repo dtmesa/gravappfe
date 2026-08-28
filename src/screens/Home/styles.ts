@@ -47,9 +47,11 @@ export const styles = StyleSheet.create({
 		flex: 1,
 		color: colors.text.input,
 	},
+	// elevation stays on inputWrapper, never here: toggling it on Android
+	// forces a relayout that steals focus back off the TextInput the instant
+	// it's gained. iosShadow is inert on Android, so it's safe here.
 	inputFocused: {
 		backgroundColor: colors.bg.inputHighlight,
-		elevation: 8,
 		...iosShadow(8, colors.shadow.primary),
 	},
 	inputWrapper: {
@@ -59,6 +61,7 @@ export const styles = StyleSheet.create({
 		borderRadius: 18,
 		paddingHorizontal: 16,
 		height: 50,
+		elevation: 8,
 	},
 	infoText: {
 		fontSize: 25,

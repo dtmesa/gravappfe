@@ -48,9 +48,11 @@ export const styles = StyleSheet.create({
 		width: 50,
 		alignItems: "flex-end",
 	},
+	// elevation stays on inputWrapper, never here: toggling it on Android
+	// forces a relayout that steals focus back off the pressed row the instant
+	// it's gained. iosShadow is inert on Android, so it's safe here.
 	inputFocused: {
 		backgroundColor: colors.bg.inputHighlight,
-		elevation: 8,
 		...iosShadow(8, colors.shadow.primary),
 	},
 	inputWrapper: {
@@ -60,6 +62,7 @@ export const styles = StyleSheet.create({
 		borderRadius: 18,
 		paddingHorizontal: 16,
 		height: 50,
+		elevation: 8,
 	},
 	placeholderText: {
 		fontFamily: "Play_400Regular",
@@ -100,12 +103,11 @@ export const styles = StyleSheet.create({
 		flex: 1,
 		color: colors.text.input,
 	},
-	// Flat at rest, shadow only while focused. elevation lives here rather
-	// than on modalInputWrapper below -- Android's elevation is unconditional
-	// wherever it's set, so it has to be on the gated style, not the base.
+	// elevation stays on modalInputWrapper, never here: toggling it on Android
+	// forces a relayout that steals focus back off the TextInput the instant
+	// it's gained. iosShadow is inert on Android, so it's safe here.
 	modalInputFocused: {
 		backgroundColor: colors.bg.inputSecondaryHighlight,
-		elevation: 8,
 		...iosShadow(8, colors.shadow.primary),
 	},
 	modalInputWrapper: {
@@ -114,6 +116,7 @@ export const styles = StyleSheet.create({
 		backgroundColor: colors.bg.inputHighlight,
 		borderRadius: 18,
 		marginHorizontal: 16,
+		elevation: 8,
 		paddingHorizontal: 18,
 		height: 50,
 		marginBottom: 20,
