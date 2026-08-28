@@ -6,6 +6,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-na
 import { colors } from "../../css/color";
 import { iosShadow } from "../../css/shadow";
 import { ModifyButton } from "./ModifyButton";
+import { SPRING_CONFIG } from "./springConfig";
 
 type Props = {
 	val: { id: number; name: string };
@@ -68,11 +69,11 @@ export function MoveableRow({ val, drag, isActive, disabled, onDelete, onPress, 
 					onPress={onPress}
 					disabled={disabled}
 					onPressIn={() => {
-						scale.value = withSpring(0.975, { stiffness: 500, damping: 20, mass: 1 });
+						scale.value = withSpring(0.975, SPRING_CONFIG);
 						setIsPressed(true);
 					}}
 					onPressOut={() => {
-						scale.value = withSpring(1, { stiffness: 500, damping: 20, mass: 1 });
+						scale.value = withSpring(1, SPRING_CONFIG);
 						setIsPressed(false);
 					}}
 				>
@@ -89,11 +90,11 @@ export function MoveableRow({ val, drag, isActive, disabled, onDelete, onPress, 
 								onLongPress={drag}
 								onPressIn={() => {
 									setGripPressed(true);
-									gripScale.value = withSpring(0.9, { stiffness: 500, damping: 20, mass: 1 });
+									gripScale.value = withSpring(0.9, SPRING_CONFIG);
 								}}
 								onPressOut={() => {
 									setGripPressed(false);
-									gripScale.value = withSpring(1, { stiffness: 500, damping: 20, mass: 1 });
+									gripScale.value = withSpring(1, SPRING_CONFIG);
 								}}
 								hitSlop={16}
 							>

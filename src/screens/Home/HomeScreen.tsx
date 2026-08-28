@@ -14,7 +14,9 @@ import { FadeIn } from "../components/FadeIn";
 import { MoveableRow } from "../components/MoveableRow";
 import { StarBackground } from "../components/StarBackground";
 import { StatusMessage } from "../components/StatusMessage";
+import { SPRING_CONFIG } from "../components/springConfig";
 import { UndoBubble } from "../components/UndoBubble";
+import { useReorderMask } from "../components/useReorderMask";
 import { HeaderMenu } from "./HeaderMenu";
 import { styles } from "./styles";
 
@@ -24,6 +26,7 @@ export function HomeScreen() {
 	const rootNav = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 	const [workouts, setWorkouts] = useState<Workout[]>([]);
 	const [name, setName] = useState("");
+	const { visible: reorderMaskVisible, triggerMask } = useReorderMask();
 
 	const [focusedField, setFocusedField] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -92,7 +95,9 @@ export function HomeScreen() {
 			const code = getApiError(err);
 			setNameStatus({
 				message:
-					code === "WORKOUT_NAME_TAKEN" ? "A workout with that name already exists" : "Failed to create workout",
+					code === "WORKOUT_NAME_TAKEN"
+						? "A workout with that name already exists"
+						: "Failed to create workout",
 				type: "error",
 			});
 			return;
@@ -218,7 +223,11 @@ export function HomeScreen() {
 							contentContainerStyle={styles.flatListBuffer}
 							data={workouts}
 							keyExtractor={(item) => item.id.toString()}
+							animationConfig={SPRING_CONFIG}
+							ListFooterComponent={reorderMaskVisible ? <View style={styles.reorderMask} /> : null}
 							onDragEnd={async ({ data }) => {
+								triggerMask();
+
 								const updatedOrder = data.map((item, index) => ({
 									...item,
 									order: index,

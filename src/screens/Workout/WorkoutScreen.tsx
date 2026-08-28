@@ -3,13 +3,13 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
+import { getApiError } from "../../api/error.api";
 import {
 	createExercise,
 	deleteExercise,
 	getExercises,
 	updateExercise,
 } from "../../api/exercises.api";
-import { getApiError } from "../../api/error.api";
 import { getWorkout, updateWorkout } from "../../api/workouts.api";
 import { colors } from "../../css/color";
 import type { Exercise } from "../../types/exercise.types";
@@ -22,7 +22,9 @@ import { FadeIn } from "../components/FadeIn";
 import { MoveableRow } from "../components/MoveableRow";
 import { StarBackground } from "../components/StarBackground";
 import { StatusMessage } from "../components/StatusMessage";
+import { SPRING_CONFIG } from "../components/springConfig";
 import { UndoBubble } from "../components/UndoBubble";
+import { useReorderMask } from "../components/useReorderMask";
 import { styles } from "./styles";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Workout">;
@@ -35,6 +37,7 @@ export function WorkoutScreen({ navigation, route }: Props) {
 
 	const [workout, setWorkout] = useState<Workout | null>(null);
 	const [exercises, setExercises] = useState<Exercise[]>([]);
+	const { visible: reorderMaskVisible, triggerMask } = useReorderMask();
 	const [name, setName] = useState("");
 
 	const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -229,7 +232,9 @@ export function WorkoutScreen({ navigation, route }: Props) {
 			setTitle(workout.name);
 			setDescriptionStatus({
 				message:
-					code === "WORKOUT_NAME_TAKEN" ? "A workout with that name already exists" : "Failed to update workout name",
+					code === "WORKOUT_NAME_TAKEN"
+						? "A workout with that name already exists"
+						: "Failed to update workout name",
 				type: "error",
 			});
 		}
@@ -388,7 +393,11 @@ export function WorkoutScreen({ navigation, route }: Props) {
 							contentContainerStyle={styles.flatListBuffer}
 							data={exercises}
 							keyExtractor={(item) => item.id.toString()}
+							animationConfig={SPRING_CONFIG}
+							ListFooterComponent={reorderMaskVisible ? <View style={styles.reorderMask} /> : null}
 							onDragEnd={async ({ data }) => {
+								triggerMask();
+
 								const updatedOrder = data.map((item, index) => ({
 									...item,
 									order: index,

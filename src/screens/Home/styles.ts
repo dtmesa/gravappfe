@@ -18,6 +18,17 @@ export const styles = StyleSheet.create({
 	flatListBuffer: {
 		paddingBottom: 50,
 	},
+	// Rendered as ListFooterComponent -- part of the list's actual scrollable
+	// content, not an absolutely-positioned overlay, so it lands immediately
+	// after the real last row regardless of how much taller the surrounding
+	// flex:1 container is than the list's content. Covers
+	// DraggableFlatList's post-reorder duplicate-item glitch, which shows up
+	// right there. Solid black, same as the screen's own background, so it
+	// reads as nothing rather than a visible cover. See useReorderMask.tsx.
+	reorderMask: {
+		height: 120,
+		backgroundColor: colors.bg.primary,
+	},
 	headerContainer: {
 		backgroundColor: colors.bg.primary,
 		paddingHorizontal: 18,
