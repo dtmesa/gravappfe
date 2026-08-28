@@ -64,8 +64,6 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		height: 50,
 		marginBottom: 20,
-		elevation: 8,
-		...iosShadow(8, colors.shadow.primary),
 	},
 	inputText: {
 		color: colors.text.input,
@@ -73,8 +71,12 @@ export const styles = StyleSheet.create({
 		fontSize: 16,
 		flex: 1,
 	},
+	// Shared by inputWrapper and descriptionWrapper below: flat at rest, shadow
+	// only while focused.
 	inputFocused: {
 		backgroundColor: colors.bg.inputHighlight,
+		elevation: 8,
+		...iosShadow(8, colors.shadow.primary),
 	},
 	inputPlaceholder: {
 		fontFamily: "Play_400Regular",
@@ -90,8 +92,6 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		minHeight: 50,
 		maxHeight: 150,
-		elevation: 8,
-		...iosShadow(8, colors.shadow.primary),
 	},
 	descriptionInput: {
 		color: colors.text.input,

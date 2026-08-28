@@ -27,12 +27,7 @@ export const styles = StyleSheet.create({
 		marginHorizontal: 40,
 		marginBottom: 15,
 	},
-	// Applied via contentContainerStyle, not style: it has to expand the
-	// FlatList's actual scrollable content bounds so the first (InsertButton)
-	// and last row's shadows have room to render instead of being clipped by
-	// content edges sitting flush against them.
 	flatListBuffer: {
-		paddingTop: 10,
 		paddingBottom: 50,
 	},
 	title: {
@@ -55,6 +50,8 @@ export const styles = StyleSheet.create({
 	},
 	inputFocused: {
 		backgroundColor: colors.bg.inputHighlight,
+		elevation: 8,
+		...iosShadow(8, colors.shadow.primary),
 	},
 	inputWrapper: {
 		flexDirection: "row",
@@ -63,8 +60,6 @@ export const styles = StyleSheet.create({
 		borderRadius: 18,
 		paddingHorizontal: 16,
 		height: 50,
-		elevation: 8,
-		...iosShadow(8, colors.shadow.primary),
 	},
 	placeholderText: {
 		fontFamily: "Play_400Regular",
@@ -105,11 +100,12 @@ export const styles = StyleSheet.create({
 		flex: 1,
 		color: colors.text.input,
 	},
+	// Flat at rest, shadow only while focused. elevation lives here rather
+	// than on modalInputWrapper below -- Android's elevation is unconditional
+	// wherever it's set, so it has to be on the gated style, not the base.
 	modalInputFocused: {
 		backgroundColor: colors.bg.inputSecondaryHighlight,
-		// Overrides modalInputWrapper's transparent shadow below with a real one,
-		// visible only while focused -- the one site where the color genuinely
-		// changes between states rather than just being redundantly repeated.
+		elevation: 8,
 		...iosShadow(8, colors.shadow.primary),
 	},
 	modalInputWrapper: {
@@ -120,8 +116,6 @@ export const styles = StyleSheet.create({
 		marginHorizontal: 16,
 		paddingHorizontal: 18,
 		height: 50,
-		elevation: 8,
-		...iosShadow(8, null),
 		marginBottom: 20,
 	},
 	modalInputContainer: {

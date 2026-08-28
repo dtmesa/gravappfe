@@ -50,6 +50,8 @@ export const styles = StyleSheet.create({
 	},
 	inputFocused: {
 		backgroundColor: colors.bg.inputHighlight,
+		elevation: 8,
+		...iosShadow(8, colors.shadow.primary),
 	},
 	input: {
 		fontFamily: "Play_400Regular",
@@ -65,8 +67,6 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		height: 50,
 		marginBottom: 10,
-		elevation: 8,
-		...iosShadow(8, colors.shadow.primary),
 	},
 	placeholderText: {
 		fontFamily: "Play_400Regular",

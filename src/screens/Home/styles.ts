@@ -49,6 +49,8 @@ export const styles = StyleSheet.create({
 	},
 	inputFocused: {
 		backgroundColor: colors.bg.inputHighlight,
+		elevation: 8,
+		...iosShadow(8, colors.shadow.primary),
 	},
 	inputWrapper: {
 		flexDirection: "row",
@@ -57,8 +59,6 @@ export const styles = StyleSheet.create({
 		borderRadius: 18,
 		paddingHorizontal: 16,
 		height: 50,
-		elevation: 8,
-		...iosShadow(8, colors.shadow.primary),
 	},
 	infoText: {
 		fontSize: 25,
