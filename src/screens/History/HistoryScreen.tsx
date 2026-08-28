@@ -164,7 +164,7 @@ export function HistoryScreen({ navigation }: Props) {
 				<View>{(selected.length === 0 || isFutureSelected) && <StarBackground />}</View>
 				<FadeIn visible={selected.length > 0 && !isFutureSelected} key={`${selected}-${fadeKey}`}>
 					<FlatList
-						style={styles.flatListBuffer}
+						contentContainerStyle={styles.flatListBuffer}
 						data={selectedSessions}
 						keyExtractor={(item) => String(item.id)}
 						scrollEnabled={false}

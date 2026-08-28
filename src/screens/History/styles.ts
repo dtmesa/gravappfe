@@ -27,8 +27,13 @@ export const styles = StyleSheet.create({
 		marginHorizontal: 40,
 		marginBottom: 15,
 	},
+	// Applied via contentContainerStyle, not style: it has to expand the
+	// FlatList's actual scrollable content bounds so the first (InsertButton)
+	// and last row's shadows have room to render instead of being clipped by
+	// content edges sitting flush against them.
 	flatListBuffer: {
-		marginBottom: 50,
+		paddingTop: 10,
+		paddingBottom: 50,
 	},
 	title: {
 		fontFamily: "Syncopate_700Bold",
@@ -116,7 +121,7 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: 18,
 		height: 50,
 		elevation: 8,
-		...iosShadow(8, colors.bg.transparent),
+		...iosShadow(8, null),
 		marginBottom: 20,
 	},
 	modalInputContainer: {
