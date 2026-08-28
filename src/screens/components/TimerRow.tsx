@@ -9,6 +9,7 @@ import {
 	View,
 } from "react-native";
 import { colors } from "../../css/color";
+import { iosShadow } from "../../css/shadow";
 import { useScaleAnimation } from "../components/scaleAnim";
 
 type Props = {
@@ -171,7 +172,7 @@ const styles = StyleSheet.create({
 	},
 	rowPressed: {
 		elevation: 8,
-		shadowColor: colors.shadow.primary,
+		...iosShadow(8, colors.shadow.primary),
 		backgroundColor: colors.bg.inputHighlight,
 	},
 	text: {

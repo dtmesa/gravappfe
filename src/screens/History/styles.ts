@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { colors } from "../../css/color";
+import { iosShadow } from "../../css/shadow";
 
 export const styles = StyleSheet.create({
 	scrollContainer: {
@@ -49,7 +50,6 @@ export const styles = StyleSheet.create({
 	},
 	inputFocused: {
 		backgroundColor: colors.bg.inputHighlight,
-		shadowColor: colors.shadow.primary,
 	},
 	inputWrapper: {
 		flexDirection: "row",
@@ -59,6 +59,7 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		height: 50,
 		elevation: 8,
+		...iosShadow(8, colors.shadow.primary),
 	},
 	placeholderText: {
 		fontFamily: "Play_400Regular",
@@ -79,7 +80,7 @@ export const styles = StyleSheet.create({
 		width: "86%",
 		height: "60%",
 		elevation: 8,
-		shadowColor: colors.shadow.primary,
+		...iosShadow(8, colors.shadow.primary),
 	},
 	modalWrapper: {
 		flex: 1,
@@ -101,7 +102,10 @@ export const styles = StyleSheet.create({
 	},
 	modalInputFocused: {
 		backgroundColor: colors.bg.inputSecondaryHighlight,
-		shadowColor: colors.shadow.primary,
+		// Overrides modalInputWrapper's transparent shadow below with a real one,
+		// visible only while focused -- the one site where the color genuinely
+		// changes between states rather than just being redundantly repeated.
+		...iosShadow(8, colors.shadow.primary),
 	},
 	modalInputWrapper: {
 		flexDirection: "row",
@@ -112,7 +116,7 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: 18,
 		height: 50,
 		elevation: 8,
-		shadowColor: colors.bg.transparent,
+		...iosShadow(8, colors.bg.transparent),
 		marginBottom: 20,
 	},
 	modalInputContainer: {

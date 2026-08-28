@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { colors } from "../../css/color";
+import { iosShadow } from "../../css/shadow";
 import { ModifyButton } from "./ModifyButton";
 
 type Props = {
@@ -16,6 +17,11 @@ type Props = {
 
 export function SwipeableRow({ val, disabled, onDelete, onPress, onEdit }: Props) {
 	const [swiping, setSwiping] = useState(false);
+	// Mirrors the inner Pressable's `pressed` render-prop value, but lifted to
+	// component state: the shadow has to live on the outer, unclipped
+	// `container` view (see styles.row's overflow: "hidden" below), which sits
+	// above the render-prop's scope and can't read it directly.
+	const [isPressed, setIsPressed] = useState(false);
 	const scale = useSharedValue(1);
 	const translateX = useSharedValue(0);
 
@@ -41,16 +47,18 @@ export function SwipeableRow({ val, disabled, onDelete, onPress, onEdit }: Props
 	}));
 
 	return (
-		<View style={styles.container}>
+		<View style={[styles.container, isPressed && styles.containerShadow]}>
 			<GestureDetector gesture={panGesture}>
 				<Pressable
 					onPress={onPress}
 					disabled={disabled}
 					onPressIn={() => {
 						scale.value = withSpring(0.975, { stiffness: 500, damping: 20, mass: 1 });
+						setIsPressed(true);
 					}}
 					onPressOut={() => {
 						scale.value = withSpring(1, { stiffness: 500, damping: 20, mass: 1 });
+						setIsPressed(false);
 					}}
 				>
 					{({ pressed }) => (
@@ -79,6 +87,14 @@ const styles = StyleSheet.create({
 		width: "100%",
 		paddingHorizontal: "4%",
 		marginBottom: 10,
+	},
+	// iOS shadow lives here rather than on `row`: `row` has overflow: "hidden"
+	// (needed to clip the sliding content to its rounded corners), which would
+	// also clip the shadow itself to nothing, since it renders outside the
+	// view's bounds. `row`'s own `elevation` is untouched and still drives the
+	// Android shadow.
+	containerShadow: {
+		...iosShadow(8, colors.shadow.primary),
 	},
 	row: {
 		paddingLeft: "7%",

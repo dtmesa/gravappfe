@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { colors } from "../../css/color";
+import { iosShadow } from "../../css/shadow";
 
 export const styles = StyleSheet.create({
 	scrollContainer: {
@@ -39,7 +40,7 @@ export const styles = StyleSheet.create({
 	buttonPressed: {
 		backgroundColor: colors.button.accentHighlight,
 		elevation: 8,
-		shadowColor: colors.shadow.primary,
+		...iosShadow(8, colors.shadow.primary),
 	},
 	buttonText: {
 		fontFamily: "Play_400Regular",
@@ -49,7 +50,6 @@ export const styles = StyleSheet.create({
 	},
 	inputFocused: {
 		backgroundColor: colors.bg.inputHighlight,
-		shadowColor: colors.shadow.primary,
 	},
 	input: {
 		fontFamily: "Play_400Regular",
@@ -66,6 +66,7 @@ export const styles = StyleSheet.create({
 		height: 50,
 		marginBottom: 10,
 		elevation: 8,
+		...iosShadow(8, colors.shadow.primary),
 	},
 	placeholderText: {
 		fontFamily: "Play_400Regular",

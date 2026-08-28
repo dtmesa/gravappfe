@@ -10,6 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { colors } from "../../css/color";
+import { iosShadow } from "../../css/shadow";
 import { useScaleAnimation } from "./scaleAnim";
 
 type Props = {
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		alignItems: "center",
 		elevation: 8,
-		shadowColor: colors.shadow.primary,
+		...iosShadow(8, colors.shadow.primary),
 		borderColor: colors.border.accent,
 		borderWidth: 1,
 	},

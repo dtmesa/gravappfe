@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { colors } from "../../css/color";
+import { iosShadow } from "../../css/shadow";
 
 export const styles = StyleSheet.create({
 	container: {
@@ -75,7 +76,7 @@ export const styles = StyleSheet.create({
 	},
 	plusRowPressed: {
 		elevation: 8,
-		shadowColor: colors.shadow.primary,
+		...iosShadow(8, colors.shadow.primary),
 		backgroundColor: colors.bg.inputHighlight,
 	},
 	rowContainer: {
@@ -161,6 +162,7 @@ export const styles = StyleSheet.create({
 		borderRadius: 10,
 		paddingHorizontal: 8,
 		elevation: 4,
+		...iosShadow(4, colors.shadow.primary),
 	},
 	setChevronContainer: {
 		position: "absolute",

@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { colors } from "../../css/color";
+import { iosShadow } from "../../css/shadow";
 
 export const styles = StyleSheet.create({
 	container: {
@@ -48,7 +49,6 @@ export const styles = StyleSheet.create({
 	},
 	descriptionFocused: {
 		backgroundColor: colors.bg.inputHighlight,
-		shadowColor: colors.shadow.primary,
 	},
 	descriptionWrapper: {
 		backgroundColor: colors.bg.input,
@@ -57,6 +57,7 @@ export const styles = StyleSheet.create({
 		minHeight: 50,
 		maxHeight: 150,
 		elevation: 8,
+		...iosShadow(8, colors.shadow.primary),
 		marginBottom: 15,
 	},
 	descriptionText: {
@@ -87,7 +88,7 @@ export const styles = StyleSheet.create({
 	checkRowPressed: {
 		backgroundColor: colors.bg.inputHighlight,
 		elevation: 8,
-		shadowColor: colors.shadow.primary,
+		...iosShadow(8, colors.shadow.primary),
 	},
 	checkLabel: {
 		fontFamily: "Play_700Bold",

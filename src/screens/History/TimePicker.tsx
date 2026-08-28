@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Animated, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { createWorkoutSession } from "../../api/workoutSession.api";
 import { colors } from "../../css/color";
+import { iosShadow } from "../../css/shadow";
 import type { Workout } from "../../types/workout.types";
 import { useScaleAnimation } from "../components/scaleAnim";
 
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
 		width: "86%",
 		height: "60%",
 		elevation: 8,
-		shadowColor: colors.shadow.primary,
+		...iosShadow(8, colors.shadow.primary),
 	},
 	pickerContainer: {
 		flexDirection: "row",
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
 	buttonPressed: {
 		backgroundColor: colors.button.accentHighlight,
 		elevation: 8,
-		shadowColor: colors.shadow.primary,
+		...iosShadow(8, colors.shadow.primary),
 	},
 	buttonText: {
 		fontFamily: "Play_400Regular",

@@ -1,5 +1,6 @@
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { colors } from "../../css/color";
+import { iosShadow } from "../../css/shadow";
 import { useScaleAnimation } from "./scaleAnim";
 
 type Props = {
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
 	rowPressed: {
 		backgroundColor: colors.bg.inputHighlight,
 		elevation: 8,
-		shadowColor: colors.shadow.primary,
+		...iosShadow(8, colors.shadow.primary),
 	},
 	rowVisited: {
 		backgroundColor: colors.bg.input,

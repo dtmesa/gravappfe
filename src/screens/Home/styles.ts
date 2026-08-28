@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { colors } from "../../css/color";
+import { iosShadow } from "../../css/shadow";
 
 export const styles = StyleSheet.create({
 	container: {
@@ -48,7 +49,6 @@ export const styles = StyleSheet.create({
 	},
 	inputFocused: {
 		backgroundColor: colors.bg.inputHighlight,
-		shadowColor: colors.shadow.primary,
 	},
 	inputWrapper: {
 		flexDirection: "row",
@@ -58,6 +58,7 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		height: 50,
 		elevation: 8,
+		...iosShadow(8, colors.shadow.primary),
 	},
 	infoText: {
 		fontSize: 25,

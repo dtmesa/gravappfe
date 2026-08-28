@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { colors } from "../../css/color";
+import { iosShadow } from "../../css/shadow";
 
 export const styles = StyleSheet.create({
 	container: {
@@ -79,7 +80,7 @@ export const styles = StyleSheet.create({
 		padding: 24,
 		gap: 36,
 		elevation: 8,
-		shadowColor: colors.shadow.primary,
+		...iosShadow(8, colors.shadow.primary),
 	},
 	alertTitle: {
 		fontFamily: "Syncopate_700Bold",
