@@ -9,6 +9,7 @@ import {
 	getExercises,
 	updateExercise,
 } from "../../api/exercises.api";
+import { getApiError } from "../../api/error.api";
 import { getWorkout, updateWorkout } from "../../api/workouts.api";
 import { colors } from "../../css/color";
 import type { Exercise } from "../../types/exercise.types";
@@ -132,12 +133,25 @@ export function WorkoutScreen({ navigation, route }: Props) {
 		}
 
 		setNameStatus(null);
-		const newExercise = await createExercise(workoutId, name.trim());
-		setExercises((prev) => [...prev, newExercise]);
-		setNameStatus({
-			message: `${trimmed} created`,
-			type: "success",
-		});
+
+		try {
+			const newExercise = await createExercise(workoutId, name.trim());
+			setExercises((prev) => [...prev, newExercise]);
+			setNameStatus({
+				message: `${trimmed} created`,
+				type: "success",
+			});
+		} catch (err: unknown) {
+			const code = getApiError(err);
+			setNameStatus({
+				message:
+					code === "EXERCISE_NAME_TAKEN"
+						? "An exercise with that name already exists"
+						: "Failed to create exercise",
+				type: "error",
+			});
+			return;
+		}
 
 		setName("");
 		setFocusedField(null);
@@ -210,9 +224,14 @@ export function WorkoutScreen({ navigation, route }: Props) {
 			setWorkout((prev) => (prev ? { ...prev, name: trimmed } : prev));
 			setTitle(trimmed);
 			setDescriptionStatus({ message: "Workout name updated", type: "success" });
-		} catch {
+		} catch (err: unknown) {
+			const code = getApiError(err);
 			setTitle(workout.name);
-			setDescriptionStatus({ message: "Failed to update workout name", type: "error" });
+			setDescriptionStatus({
+				message:
+					code === "WORKOUT_NAME_TAKEN" ? "A workout with that name already exists" : "Failed to update workout name",
+				type: "error",
+			});
 		}
 	};
 

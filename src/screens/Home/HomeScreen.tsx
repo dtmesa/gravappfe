@@ -3,6 +3,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
+import { getApiError } from "../../api/error.api";
 import { createWorkoutSession } from "../../api/workoutSession.api";
 import { createWorkout, deleteWorkout, getWorkouts, updateWorkout } from "../../api/workouts.api";
 import { colors } from "../../css/color";
@@ -79,12 +80,23 @@ export function HomeScreen() {
 		}
 
 		setNameStatus(null);
-		const newWorkout = await createWorkout(trimmed);
-		setWorkouts((prev) => [newWorkout, ...prev]);
-		setNameStatus({
-			message: `${trimmed} created`,
-			type: "success",
-		});
+
+		try {
+			const newWorkout = await createWorkout(trimmed);
+			setWorkouts((prev) => [newWorkout, ...prev]);
+			setNameStatus({
+				message: `${trimmed} created`,
+				type: "success",
+			});
+		} catch (err: unknown) {
+			const code = getApiError(err);
+			setNameStatus({
+				message:
+					code === "WORKOUT_NAME_TAKEN" ? "A workout with that name already exists" : "Failed to create workout",
+				type: "error",
+			});
+			return;
+		}
 
 		setName("");
 		setFocusedField(false);

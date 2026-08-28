@@ -2,6 +2,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import { getExercise, updateExercise } from "../../api/exercises.api";
+import { getApiError } from "../../api/error.api";
 import { colors } from "../../css/color";
 import type { Exercise } from "../../types/exercise.types";
 import type { RootStackParamList } from "../../types/navigation.types";
@@ -124,9 +125,16 @@ export function ExerciseScreen({ navigation, route }: Props) {
 			setExercise((prev) => (prev ? { ...prev, name: trimmed } : prev));
 			setTitle(trimmed);
 			setDescriptionStatus({ message: "Exercise name updated", type: "success" });
-		} catch {
+		} catch (err: unknown) {
+			const code = getApiError(err);
 			setTitle(exercise.name);
-			setDescriptionStatus({ message: "Failed to update exercise name", type: "error" });
+			setDescriptionStatus({
+				message:
+					code === "EXERCISE_NAME_TAKEN"
+						? "An exercise with that name already exists"
+						: "Failed to update exercise name",
+				type: "error",
+			});
 		}
 	};
 
