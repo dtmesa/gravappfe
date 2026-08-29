@@ -48,6 +48,16 @@ export const styles = StyleSheet.create({
 		color: colors.text.contrast,
 		textAlign: "center",
 	},
+	forgotLinkText: {
+		fontFamily: "Play_400Regular",
+		fontSize: 16,
+		color: colors.text.accentDark,
+		textAlign: "center",
+		marginTop: 10,
+	},
+	forgotLinkTextPressed: {
+		color: colors.text.accentLight,
+	},
 	// elevation stays on inputWrapper, never here: toggling it on Android
 	// forces a relayout that steals focus back off the TextInput the instant
 	// it's gained. iosShadow's shadowColor tints Android's existing elevation

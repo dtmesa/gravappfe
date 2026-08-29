@@ -1,8 +1,9 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
-import { getExercise, updateExercise } from "../../api/exercises.api";
+import useSWR from "swr";
 import { getApiError } from "../../api/error.api";
+import { getExercise, updateExercise } from "../../api/exercises.api";
 import { colors } from "../../css/color";
 import type { Exercise } from "../../types/exercise.types";
 import type { RootStackParamList } from "../../types/navigation.types";
@@ -22,7 +23,10 @@ const MAX_DESCRIPTION_LENGTH = 500;
 export function ExerciseScreen({ navigation, route }: Props) {
 	const { exerciseId, workoutId } = route.params;
 
-	const [exercise, setExercise] = useState<Exercise | null>(null);
+	const { data: exercise, mutate: mutateExercise } = useSWR<Exercise>(
+		["exercise", workoutId, exerciseId],
+		() => getExercise(workoutId, exerciseId),
+	);
 	const [focusedField, setFocusedField] = useState(false);
 	const [title, setTitle] = useState(exercise?.name ?? "");
 	const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -34,32 +38,24 @@ export function ExerciseScreen({ navigation, route }: Props) {
 		type: "success" | "error";
 	} | null>(null);
 
-	const fetchExercise = useCallback(async () => {
-		const data = await getExercise(workoutId, exerciseId);
-		setExercise(data);
-	}, [workoutId, exerciseId]);
+	const handleToggleField = async (field: "isWeight" | "isReps" | "isDuration" | "isDistance") => {
+		if (loading || !exercise) return;
 
-	const handleToggleField = useCallback(
-		async (field: "isWeight" | "isReps" | "isDuration" | "isDistance") => {
-			if (loading || !exercise) return;
+		const newValue = !exercise[field];
 
-			const newValue = !exercise[field];
+		setLoading(true);
+		mutateExercise((prev) => (prev ? { ...prev, [field]: newValue } : prev), false);
 
-			setLoading(true);
-			setExercise((prev) => (prev ? { ...prev, [field]: newValue } : prev));
+		try {
+			await updateExercise(workoutId, exerciseId, field, newValue);
+		} catch {
+			mutateExercise((prev) => (prev ? { ...prev, [field]: !newValue } : prev), false);
+		} finally {
+			setLoading(false);
+		}
+	};
 
-			try {
-				await updateExercise(workoutId, exerciseId, field, newValue);
-			} catch {
-				setExercise((prev) => (prev ? { ...prev, [field]: !newValue } : prev));
-			} finally {
-				setLoading(false);
-			}
-		},
-		[exercise, loading, workoutId, exerciseId],
-	);
-
-	const handleUpdateDescription = useCallback(async () => {
+	const handleUpdateDescription = async () => {
 		if (!exercise) return;
 
 		const rawTrimmed = description.trim();
@@ -83,14 +79,14 @@ export function ExerciseScreen({ navigation, route }: Props) {
 
 		try {
 			await updateExercise(workoutId, exerciseId, "description", trimmed);
-			setExercise((prev) => (prev ? { ...prev, description: trimmed } : prev));
+			mutateExercise((prev) => (prev ? { ...prev, description: trimmed } : prev), false);
 			setDescription(trimmed);
 			setDescriptionStatus({ message: "Description updated", type: "success" });
 		} catch {
 			setDescription(exercise.description ?? "");
 			setDescriptionStatus({ message: "Failed to update description", type: "error" });
 		}
-	}, [exercise, description, workoutId, exerciseId]);
+	};
 
 	const handleUpdateTitle = async () => {
 		if (!exercise) return;
@@ -122,7 +118,7 @@ export function ExerciseScreen({ navigation, route }: Props) {
 
 		try {
 			await updateExercise(workoutId, exerciseId, "name", trimmed);
-			setExercise((prev) => (prev ? { ...prev, name: trimmed } : prev));
+			mutateExercise((prev) => (prev ? { ...prev, name: trimmed } : prev), false);
 			setTitle(trimmed);
 			setDescriptionStatus({ message: "Exercise name updated", type: "success" });
 		} catch (err: unknown) {
@@ -141,10 +137,6 @@ export function ExerciseScreen({ navigation, route }: Props) {
 	useEffect(() => {
 		if (isEditingTitle) titleInputRef.current?.focus();
 	}, [isEditingTitle]);
-
-	useEffect(() => {
-		fetchExercise();
-	}, [fetchExercise]);
 
 	useEffect(() => {
 		if (exercise) {

@@ -3,6 +3,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
+import useSWR from "swr";
 import { getApiError } from "../../api/error.api";
 import {
 	createExercise,
@@ -35,8 +36,13 @@ const MAX_DESCRIPTION_LENGTH = 500;
 export function WorkoutScreen({ navigation, route }: Props) {
 	const { workoutId } = route.params;
 
-	const [workout, setWorkout] = useState<Workout | null>(null);
-	const [exercises, setExercises] = useState<Exercise[]>([]);
+	const { data: workout, mutate: mutateWorkout } = useSWR<Workout>(["workout", workoutId], () =>
+		getWorkout(workoutId),
+	);
+	const { data: exercises = [], mutate: mutateExercises } = useSWR<Exercise[]>(
+		["exercises", workoutId],
+		() => getExercises(workoutId),
+	);
 	const { visible: reorderMaskVisible, triggerMask } = useReorderMask();
 	const [name, setName] = useState("");
 
@@ -60,16 +66,6 @@ export function WorkoutScreen({ navigation, route }: Props) {
 		type: "success" | "error";
 	} | null>(null);
 
-	const fetchWorkout = useCallback(async () => {
-		const data = await getWorkout(workoutId);
-		setWorkout(data);
-	}, [workoutId]);
-
-	const fetchExercises = useCallback(async () => {
-		const data = await getExercises(workoutId);
-		setExercises(data);
-	}, [workoutId]);
-
 	const handleNavExercise = (workoutId: number, exerciseId: number) => {
 		navigation.navigate("Exercise", { workoutId, exerciseId });
 	};
@@ -77,10 +73,10 @@ export function WorkoutScreen({ navigation, route }: Props) {
 	const handleUndo = () => {
 		if (!pendingDelete) return;
 
-		setExercises((prev) => {
+		mutateExercises((prev = []) => {
 			const restored = [pendingDelete, ...prev];
 			return restored.sort((a, b) => a.order - b.order);
-		});
+		}, false);
 
 		if (undoTimeoutRef.current) {
 			clearTimeout(undoTimeoutRef.current);
@@ -88,7 +84,7 @@ export function WorkoutScreen({ navigation, route }: Props) {
 		}
 
 		setPendingDelete(null);
-		fetchExercises();
+		mutateExercises();
 	};
 
 	const handleDelete = useCallback(
@@ -102,25 +98,25 @@ export function WorkoutScreen({ navigation, route }: Props) {
 				try {
 					await deleteExercise(workoutId, pendingDelete.id);
 				} catch {
-					fetchExercises();
+					mutateExercises();
 				}
 			}
 
-			setExercises((prev) => prev.filter((w) => w.id !== id));
+			mutateExercises((prev = []) => prev.filter((w) => w.id !== id), false);
 			setPendingDelete(exercise);
 
 			undoTimeoutRef.current = setTimeout(async () => {
 				try {
 					await deleteExercise(workoutId, id);
 				} catch {
-					fetchExercises();
+					mutateExercises();
 				} finally {
 					setPendingDelete(null);
 					undoTimeoutRef.current = null;
 				}
 			}, 3000);
 		},
-		[exercises, workoutId, fetchExercises],
+		[exercises, pendingDelete, workoutId, mutateExercises],
 	);
 
 	const handleCreateExercise = async () => {
@@ -139,7 +135,7 @@ export function WorkoutScreen({ navigation, route }: Props) {
 
 		try {
 			const newExercise = await createExercise(workoutId, name.trim());
-			setExercises((prev) => [...prev, newExercise]);
+			mutateExercises((prev = []) => [...prev, newExercise], false);
 			setNameStatus({
 				message: `${trimmed} created`,
 				type: "success",
@@ -185,7 +181,7 @@ export function WorkoutScreen({ navigation, route }: Props) {
 
 		try {
 			await updateWorkout(workoutId, "description", trimmed);
-			setWorkout((prev) => (prev ? { ...prev, description: trimmed } : prev));
+			mutateWorkout((prev) => (prev ? { ...prev, description: trimmed } : prev), false);
 			setDescription(trimmed);
 			setDescriptionStatus({ message: "Description updated", type: "success" });
 		} catch {
@@ -224,7 +220,7 @@ export function WorkoutScreen({ navigation, route }: Props) {
 
 		try {
 			await updateWorkout(workoutId, "name", trimmed);
-			setWorkout((prev) => (prev ? { ...prev, name: trimmed } : prev));
+			mutateWorkout((prev) => (prev ? { ...prev, name: trimmed } : prev), false);
 			setTitle(trimmed);
 			setDescriptionStatus({ message: "Workout name updated", type: "success" });
 		} catch (err: unknown) {
@@ -263,15 +259,10 @@ export function WorkoutScreen({ navigation, route }: Props) {
 		}, [workoutId]),
 	);
 
-	useEffect(() => {
-		fetchWorkout();
-		fetchExercises();
-	}, [fetchWorkout, fetchExercises]);
-
 	useFocusEffect(
 		useCallback(() => {
-			fetchExercises();
-		}, [fetchExercises]),
+			mutateExercises();
+		}, [mutateExercises]),
 	);
 
 	useEffect(() => {
@@ -403,7 +394,7 @@ export function WorkoutScreen({ navigation, route }: Props) {
 									order: index,
 								}));
 
-								setExercises(updatedOrder);
+								mutateExercises(updatedOrder, false);
 
 								await Promise.all(
 									updatedOrder.map((item) =>

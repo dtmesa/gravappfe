@@ -11,8 +11,8 @@ import { StarBackground } from "../components/StarBackground";
 import { StatusMessage } from "../components/StatusMessage";
 import { useScaleAnimation } from "../components/scaleAnim";
 import PasswordInput from "../Login/PasswordInput";
-import { styles } from "../Login/styles";
 import { UsernameInput } from "../Login/UsernameInput";
+import { styles } from "./styles";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Register">;
 

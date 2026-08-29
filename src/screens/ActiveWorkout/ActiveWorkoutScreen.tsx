@@ -1,7 +1,8 @@
 import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Animated, BackHandler, FlatList, ScrollView, Text, View } from "react-native";
+import useSWR from "swr";
 import { createExerciseSession, getExerciseSessions } from "../../api/exerciseSession.api";
 import { getExercises } from "../../api/exercises.api";
 import { deleteWorkoutSession, getWorkoutSession } from "../../api/workoutSession.api";
@@ -27,33 +28,39 @@ type Props = NativeStackScreenProps<RootStackParamList, "ActiveWorkout">;
 export function ActiveWorkoutScreen({ navigation, route }: Props) {
 	const { workoutId, sessionId } = route.params;
 	const { running, elapsed, start, stop, reset } = useWorkoutTimerStore();
-	const [workout, setWorkout] = useState<Workout | null>(null);
-	const [exercises, setExercises] = useState<Exercise[]>([]);
-	const [workoutSession, setWorkoutSession] = useState<WorkoutSession | null>(null);
-	const [exerciseSessions, setExerciseSessions] = useState<ExerciseSession[]>([]);
+
+	const { data: workout } = useSWR<Workout>(["workout", workoutId], () => getWorkout(workoutId));
+	const { data: exercises = [] } = useSWR<Exercise[]>(["exercises", workoutId], () =>
+		getExercises(workoutId),
+	);
+	const { data: workoutSession } = useSWR<WorkoutSession>(
+		["workoutSession", workoutId, sessionId],
+		() => getWorkoutSession(sessionId, workoutId),
+	);
+	// The fetcher itself creates a session per exercise the first time this
+	// screen loads for a fresh workout session -- re-running it once sessions
+	// already exist (e.g. on focus revalidation) is a no-op since it just
+	// returns what's already there.
+	const { data: exerciseSessions = [], mutate: mutateExerciseSessions } = useSWR<ExerciseSession[]>(
+		["exerciseSessions", workoutId, sessionId],
+		async () => {
+			const existing = await getExerciseSessions(sessionId, workoutId);
+
+			if (existing.length > 0) return existing;
+
+			const workoutExercises = await getExercises(workoutId);
+
+			return Promise.all(
+				workoutExercises.map((exercise) =>
+					createExerciseSession(sessionId, exercise.id, workoutId),
+				),
+			);
+		},
+	);
+
 	const [alertVisible, setAlertVisible] = useState(false);
 	const hasStartedExercises = exerciseSessions.length > 0;
 	const { textShadowRadius } = useGlow();
-
-	const fetchWorkout = useCallback(async () => {
-		const data = await getWorkout(workoutId);
-		setWorkout(data);
-	}, [workoutId]);
-
-	const fetchExercises = useCallback(async () => {
-		const data = await getExercises(workoutId);
-		setExercises(data);
-	}, [workoutId]);
-
-	const fetchWorkoutSession = useCallback(async () => {
-		const data = await getWorkoutSession(sessionId, workoutId);
-		setWorkoutSession(data);
-	}, [workoutId, sessionId]);
-
-	const fetchExerciseSessions = useCallback(async () => {
-		const data = await getExerciseSessions(sessionId, workoutId);
-		setExerciseSessions(data);
-	}, [sessionId, workoutId]);
 
 	const handleExercisePress = (exerciseId: number) => {
 		const exerciseSession = exerciseSessions.find((s) => s.exerciseId === exerciseId);
@@ -81,37 +88,9 @@ export function ActiveWorkoutScreen({ navigation, route }: Props) {
 		navigation.goBack();
 	};
 
-	const initializeExerciseSessions = useCallback(async () => {
-		const existing = await getExerciseSessions(sessionId, workoutId);
-
-		if (existing.length > 0) {
-			setExerciseSessions(existing);
-			return;
-		}
-
-		const workoutExercises = await getExercises(workoutId);
-
-		const sessions = await Promise.all(
-			workoutExercises.map((exercise) => createExerciseSession(sessionId, exercise.id, workoutId)),
-		);
-
-		setExerciseSessions(sessions);
-	}, [sessionId, workoutId]);
-
-	useEffect(() => {
-		const load = async () => {
-			await fetchWorkout();
-			await fetchWorkoutSession();
-			await fetchExercises();
-			await initializeExerciseSessions();
-		};
-
-		load();
-	}, [fetchWorkout, fetchWorkoutSession, fetchExercises, initializeExerciseSessions]);
-
 	useFocusEffect(
 		useCallback(() => {
-			fetchExerciseSessions();
+			mutateExerciseSessions();
 
 			const handler = BackHandler.addEventListener("hardwareBackPress", () => {
 				if (hasStartedExercises) {
@@ -122,7 +101,7 @@ export function ActiveWorkoutScreen({ navigation, route }: Props) {
 				return true;
 			});
 			return () => handler.remove();
-		}, [handleBack, hasStartedExercises, fetchExerciseSessions]),
+		}, [handleBack, hasStartedExercises, mutateExerciseSessions]),
 	);
 
 	if (!workoutSession || !workout) {

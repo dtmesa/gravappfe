@@ -4,6 +4,7 @@ import { Animated, LayoutAnimation, Pressable, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { deleteAccount, updatePassword, updateUsername } from "../../api/auth.api";
 import { getApiError } from "../../api/error.api";
+import { saveToken } from "../../api/token.api";
 import { useAuthStore } from "../../store/auth.store";
 import type { RootStackParamList } from "../../types/navigation.types";
 import { validatePassword, validateUsername } from "../../util/inputValidation.util";
@@ -12,6 +13,7 @@ import { FadeIn } from "../components/FadeIn";
 import { StarBackground } from "../components/StarBackground";
 import { StatusMessage } from "../components/StatusMessage";
 import { useScaleAnimation } from "../components/scaleAnim";
+import { EmailSettingsCard } from "./EmailSettingsCard";
 import { SettingsCard } from "./SettingsCard";
 import { SettingsInput } from "./SettingsInput";
 import { styles } from "./styles";
@@ -20,10 +22,12 @@ type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
 
 export function SettingsScreen({ navigation }: Props) {
 	const username = useAuthStore((t) => t.username);
+	const email = useAuthStore((t) => t.email);
+	const pendingEmail = useAuthStore((t) => t.pendingEmail);
 
-	const [expandedCard, setExpandedCard] = useState<"username" | "password" | "account" | null>(
-		null,
-	);
+	const [expandedCard, setExpandedCard] = useState<
+		"username" | "password" | "account" | "email" | null
+	>(null);
 	const [newUsername, setNewUsername] = useState("");
 	const [authPassForName, setAuthPassForName] = useState("");
 	const [newPassword, setNewPassword] = useState("");
@@ -46,7 +50,7 @@ export function SettingsScreen({ navigation }: Props) {
 	const [loading, setLoading] = useState(false);
 	const anim = useScaleAnimation();
 
-	const toggle = (card: "username" | "password" | "account") => {
+	const toggle = (card: "username" | "password" | "account" | "email") => {
 		LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 		setExpandedCard((prev) => (prev === card ? null : card));
 	};
@@ -67,7 +71,13 @@ export function SettingsScreen({ navigation }: Props) {
 		try {
 			setDeletionStatus(null);
 			await deleteAccount(deletionPassword);
-			useAuthStore.setState({ token: null, username: null });
+			useAuthStore.setState({
+				token: null,
+				username: null,
+				email: null,
+				emailConfirmed: false,
+				pendingEmail: null,
+			});
 		} catch {
 			setDeletionStatus({ message: "Account deletion failed", type: "error" });
 		} finally {
@@ -141,7 +151,9 @@ export function SettingsScreen({ navigation }: Props) {
 
 		try {
 			setPasswordStatus(null);
-			await updatePassword(authPassForPass, newPassword);
+			const { token } = await updatePassword(authPassForPass, newPassword);
+			await saveToken(token);
+			useAuthStore.setState({ token });
 			setPasswordStatus({ message: "Password updated", type: "success" });
 			setNewPassword("");
 			setConfirmPassword("");
@@ -260,6 +272,13 @@ export function SettingsScreen({ navigation }: Props) {
 							</View>
 						</FadeIn>
 					</SettingsCard>
+
+					<EmailSettingsCard
+						email={email}
+						pendingEmail={pendingEmail}
+						expanded={expandedCard === "email"}
+						onToggle={() => toggle("email")}
+					/>
 
 					<SettingsCard
 						title="Delete Account"

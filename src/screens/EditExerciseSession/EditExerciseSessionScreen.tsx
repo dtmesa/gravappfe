@@ -1,7 +1,8 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { Keyboard, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import useSWR from "swr";
 import { getExerciseSession } from "../../api/exerciseSession.api";
 import { getExercise } from "../../api/exercises.api";
 import {
@@ -26,17 +27,24 @@ type Props = NativeStackScreenProps<RootStackParamList, "EditExerciseSession">;
 export function EditExerciseSessionScreen({ navigation, route }: Props) {
 	const { workoutId, sessionId, exerciseSessionId } = route.params;
 
-	const [exerciseSession, setExerciseSession] = useState<ExerciseSession | null>(null);
-	const [exercise, setExercise] = useState<Exercise | null>(null);
-	const [sets, setSets] = useState<SetSession[] | null>(null);
+	const { data: exerciseSession } = useSWR<ExerciseSession>(
+		["exerciseSession", workoutId, sessionId, exerciseSessionId],
+		() => getExerciseSession(exerciseSessionId, sessionId, workoutId),
+	);
+
+	const exerciseId = exerciseSession?.exerciseId;
+	const { data: exercise } = useSWR<Exercise>(
+		exerciseId ? ["exercise", workoutId, exerciseId] : null,
+		() => getExercise(workoutId, exerciseId as number),
+	);
+
+	const { data: sets, mutate: mutateSets } = useSWR<SetSession[]>(
+		["sets", workoutId, sessionId, exerciseSessionId],
+		() => getSetSessions(exerciseSessionId, sessionId, workoutId),
+	);
 
 	const [loading, setLoading] = useState(false);
 	const [fadeKey, setFadeKey] = useState(0);
-
-	const fetchSets = useCallback(async () => {
-		const data = await getSetSessions(exerciseSessionId, sessionId, workoutId);
-		setSets(data);
-	}, [exerciseSessionId, sessionId, workoutId]);
 
 	const handleCreateSet = async () => {
 		if (loading) return;
@@ -60,7 +68,7 @@ export function EditExerciseSessionScreen({ navigation, route }: Props) {
 				}
 			}
 			setFadeKey((k) => k + 1);
-			await fetchSets();
+			await mutateSets();
 		} finally {
 			setLoading(false);
 		}
@@ -69,7 +77,7 @@ export function EditExerciseSessionScreen({ navigation, route }: Props) {
 	const handleDeleteSet = async (id: number) => {
 		await deleteSetSession(id, exerciseSessionId, sessionId, workoutId);
 		setFadeKey((k) => k + 1);
-		await fetchSets();
+		await mutateSets();
 	};
 
 	const handleUpdateSet = async (
@@ -77,7 +85,10 @@ export function EditExerciseSessionScreen({ navigation, route }: Props) {
 		field: "weight" | "reps" | "duration" | "distance",
 		val: string,
 	) => {
-		setSets((prev) => prev?.map((s) => (s.id === id ? { ...s, [field]: val } : s)) ?? null);
+		mutateSets(
+			(prev) => prev?.map((s) => (s.id === id ? { ...s, [field]: val } : s)) ?? prev,
+			false,
+		);
 
 		const parsed = val === "" || val === "." ? null : parseFloat(val);
 
@@ -90,31 +101,6 @@ export function EditExerciseSessionScreen({ navigation, route }: Props) {
 			Number.isNaN(parsed) ? null : parsed,
 		);
 	};
-
-	const fetchExercise = useCallback(
-		async (exerciseId: number) => {
-			const data = await getExercise(workoutId, exerciseId);
-			setExercise(data);
-			return data;
-		},
-		[workoutId],
-	);
-
-	const fetchExerciseSession = useCallback(async () => {
-		const data = await getExerciseSession(exerciseSessionId, sessionId, workoutId);
-		setExerciseSession(data);
-		return data;
-	}, [workoutId, sessionId, exerciseSessionId]);
-
-	useEffect(() => {
-		const load = async () => {
-			const session = await fetchExerciseSession();
-			await fetchExercise(session.exerciseId);
-			const currSets = await getSetSessions(exerciseSessionId, sessionId, workoutId);
-			setSets(currSets);
-		};
-		load();
-	}, [fetchExerciseSession, fetchExercise, workoutId, sessionId, exerciseSessionId]);
 
 	if (!exerciseSession || !exercise || !sets) {
 		return (

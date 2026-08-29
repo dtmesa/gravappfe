@@ -3,6 +3,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from "react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
+import useSWR from "swr";
 import { getApiError } from "../../api/error.api";
 import { createWorkoutSession } from "../../api/workoutSession.api";
 import { createWorkout, deleteWorkout, getWorkouts, updateWorkout } from "../../api/workouts.api";
@@ -24,7 +25,9 @@ const MAX_NAME_LENGTH = 75;
 
 export function HomeScreen() {
 	const rootNav = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-	const [workouts, setWorkouts] = useState<Workout[]>([]);
+	const { data: workouts = [], mutate: mutateWorkouts } = useSWR<Workout[]>(["workouts"], () =>
+		getWorkouts(),
+	);
 	const [name, setName] = useState("");
 	const { visible: reorderMaskVisible, triggerMask } = useReorderMask();
 
@@ -40,18 +43,9 @@ export function HomeScreen() {
 		type: "success" | "error";
 	} | null>(null);
 
-	const fetchWorkouts = useCallback(async () => {
-		const data = await getWorkouts();
-		setWorkouts(data);
-	}, []);
-
-	useEffect(() => {
-		fetchWorkouts();
-	}, [fetchWorkouts]);
-
 	useFocusEffect(
 		useCallback(() => {
-			fetchWorkouts();
+			mutateWorkouts();
 
 			return () => {
 				if (undoTimeoutRef.current) {
@@ -63,7 +57,7 @@ export function HomeScreen() {
 					setPendingDelete(null);
 				}
 			};
-		}, [fetchWorkouts]),
+		}, [mutateWorkouts]),
 	);
 
 	useEffect(() => {
@@ -86,7 +80,7 @@ export function HomeScreen() {
 
 		try {
 			const newWorkout = await createWorkout(trimmed);
-			setWorkouts((prev) => [newWorkout, ...prev]);
+			mutateWorkouts((prev = []) => [newWorkout, ...prev], false);
 			setNameStatus({
 				message: `${trimmed} created`,
 				type: "success",
@@ -135,18 +129,18 @@ export function HomeScreen() {
 			try {
 				await deleteWorkout(pendingDelete.id);
 			} catch {
-				fetchWorkouts();
+				mutateWorkouts();
 			}
 		}
 
-		setWorkouts((prev) => prev.filter((w) => w.id !== id));
+		mutateWorkouts((prev = []) => prev.filter((w) => w.id !== id), false);
 		setPendingDelete(workout);
 
 		undoTimeoutRef.current = setTimeout(async () => {
 			try {
 				await deleteWorkout(id);
 			} catch {
-				fetchWorkouts();
+				mutateWorkouts();
 			} finally {
 				setPendingDelete(null);
 				undoTimeoutRef.current = null;
@@ -157,10 +151,10 @@ export function HomeScreen() {
 	const handleUndo = () => {
 		if (!pendingDelete) return;
 
-		setWorkouts((prev) => {
+		mutateWorkouts((prev = []) => {
 			const restored = [pendingDelete, ...prev];
 			return restored.sort((a, b) => a.order - b.order);
-		});
+		}, false);
 
 		if (undoTimeoutRef.current) {
 			clearTimeout(undoTimeoutRef.current);
@@ -168,7 +162,7 @@ export function HomeScreen() {
 		}
 
 		setPendingDelete(null);
-		fetchWorkouts();
+		mutateWorkouts();
 	};
 
 	return (
@@ -233,7 +227,7 @@ export function HomeScreen() {
 									order: index,
 								}));
 
-								setWorkouts(updatedOrder);
+								mutateWorkouts(updatedOrder, false);
 
 								await Promise.all(
 									updatedOrder.map((item) => updateWorkout(item.id, "order", item.order)),

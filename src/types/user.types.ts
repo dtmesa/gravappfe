@@ -1,4 +1,6 @@
 export type User = {
 	id: number;
 	username: string;
+	email?: string | null;
+	emailConfirmed?: boolean;
 };

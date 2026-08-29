@@ -28,6 +28,7 @@ export function LoginScreen({ navigation }: Props) {
 	const breathe = useRef(new Animated.Value(0)).current;
 	const loginAnim = useScaleAnimation();
 	const registerAnim = useScaleAnimation();
+	const forgotAnim = useScaleAnimation(0.9375);
 
 	useEffect(() => {
 		Animated.loop(
@@ -129,6 +130,22 @@ export function LoginScreen({ navigation }: Props) {
 							onPressOut={registerAnim.pressOut}
 						>
 							<Text style={styles.buttonText}>Register</Text>
+						</Pressable>
+					</Animated.View>
+
+					<Animated.View style={{ transform: [{ scale: forgotAnim.scale }] }}>
+						<Pressable
+							onPress={() => navigation.navigate("ForgotLogin")}
+							disabled={loading}
+							onPressIn={forgotAnim.pressIn}
+							onPressOut={forgotAnim.pressOut}
+							hitSlop={4}
+						>
+							{({ pressed }) => (
+								<Text style={[styles.forgotLinkText, pressed && styles.forgotLinkTextPressed]}>
+									Forgot login?
+								</Text>
+							)}
 						</Pressable>
 					</Animated.View>
 				</FadeIn>

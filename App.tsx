@@ -13,6 +13,7 @@ import { NavigationBar, TopBar } from "./src/screens/components/NavigationBars";
 import { EditExerciseSessionScreen } from "./src/screens/EditExerciseSession/EditExerciseSessionScreen";
 import { EditWorkoutSessionScreen } from "./src/screens/EditWorkoutSession/EditWorkoutSessionScreen";
 import { ExerciseScreen } from "./src/screens/Exercise/ExerciseScreen";
+import { ForgotLoginScreen } from "./src/screens/ForgotLogin/ForgotLoginScreen";
 import { HistoryScreen } from "./src/screens/History/HistoryScreen";
 import { HomeDrawer } from "./src/screens/Home/HomeDrawer";
 import { LoginScreen } from "./src/screens/Login/LoginScreen";
@@ -61,6 +62,7 @@ export default function App() {
 							<>
 								<Stack.Screen name="Login" component={LoginScreen} />
 								<Stack.Screen name="Register" component={RegisterScreen} />
+								<Stack.Screen name="ForgotLogin" component={ForgotLoginScreen} />
 							</>
 						)}
 					</Stack.Navigator>

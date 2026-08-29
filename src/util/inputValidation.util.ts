@@ -18,6 +18,20 @@ export function validateUsername(username: string): string | null {
 	return null;
 }
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export function validateEmail(email: string): string | null {
+	if (email !== email.trim()) return "Email cannot start or end with spaces";
+
+	if (email === "") return "Email is required";
+
+	if (email.length > 254) return "Email is too long";
+
+	if (!EMAIL_PATTERN.test(email)) return "Enter a valid email address";
+
+	return null;
+}
+
 export function validateJoint(username: string, password: string): string | null {
 	if (username === "" || password === "") return "One or more required fields are missing";
 

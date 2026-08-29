@@ -7,22 +7,34 @@ type AuthState = {
 	loading: boolean;
 	token: string | null;
 	username: string | null;
+	email: string | null;
+	emailConfirmed: boolean;
+	pendingEmail: string | null;
 
 	login: (username: string, password: string) => Promise<void>;
 	register: (username: string, password: string) => Promise<void>;
 	logout: () => Promise<void>;
 	checkAuth: () => Promise<void>;
+	refreshUser: () => Promise<void>;
+};
+
+const loggedOutState = {
+	token: null,
+	username: null,
+	email: null,
+	emailConfirmed: false,
+	pendingEmail: null,
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({
 	loading: true,
-	token: null,
-	username: null,
+	...loggedOutState,
 
 	login: async (username, password) => {
 		const res = await apiLogin(username, password);
 		await saveToken(res.token);
-		set({ token: res.token, username });
+		set({ token: res.token });
+		await get().refreshUser();
 	},
 
 	register: async (username, password) => {
@@ -32,7 +44,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
 	logout: async () => {
 		await deleteToken();
-		set({ token: null, username: null });
+		set(loggedOutState);
+	},
+
+	refreshUser: async () => {
+		const { data } = await api.get("/auth/me");
+		set({
+			username: data.username,
+			email: data.email,
+			emailConfirmed: data.emailConfirmed,
+			pendingEmail: data.pendingEmail,
+		});
 	},
 
 	checkAuth: async () => {
@@ -40,14 +62,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 			const token = await getToken();
 
 			if (token) {
-				const { data } = await api.get("/auth/me");
-				set({ token, username: data.username });
+				set({ token });
+				await get().refreshUser();
 			} else {
-				set({ token: null, username: null });
+				set(loggedOutState);
 			}
 		} catch {
 			await deleteToken();
-			set({ token: null, username: null });
+			set(loggedOutState);
 		} finally {
 			set({ loading: false });
 		}

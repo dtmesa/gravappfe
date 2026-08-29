@@ -1,6 +1,7 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, Text, View } from "react-native";
+import useSWR from "swr";
 import { createExerciseSession, getExerciseSessions } from "../../api/exerciseSession.api";
 import { getExercises } from "../../api/exercises.api";
 import { getWorkoutSession } from "../../api/workoutSession.api";
@@ -14,17 +15,26 @@ import { BackButton } from "../components/BackButton";
 import { FadeIn } from "../components/FadeIn";
 import { PressableRow } from "../components/PressableRow";
 import { StarBackground } from "../components/StarBackground";
-import { TimePicker, type TimeValue } from "./TimePicker";
 import { styles } from "./styles";
+import { TimePicker, type TimeValue } from "./TimePicker";
 
 type Props = NativeStackScreenProps<RootStackParamList, "EditWorkoutSession">;
 
 export function EditWorkoutSessionScreen({ navigation, route }: Props) {
 	const { workoutId, sessionId } = route.params;
-	const [workout, setWorkout] = useState<Workout | null>(null);
-	const [exercises, setExercises] = useState<Exercise[]>([]);
-	const [workoutSession, setWorkoutSession] = useState<WorkoutSession | null>(null);
-	const [exerciseSessions, setExerciseSessions] = useState<ExerciseSession[]>([]);
+	const { data: workout } = useSWR<Workout>(["workout", workoutId], () => getWorkout(workoutId));
+	const { data: exercises = [] } = useSWR<Exercise[]>(["exercises", workoutId], () =>
+		getExercises(workoutId),
+	);
+	const { data: workoutSession, mutate: mutateWorkoutSession } = useSWR<WorkoutSession>(
+		["workoutSession", workoutId, sessionId],
+		() => getWorkoutSession(sessionId, workoutId),
+	);
+	const { data: exerciseSessions = [], mutate: mutateExerciseSessions } = useSWR<ExerciseSession[]>(
+		["exerciseSessions", workoutId, sessionId],
+		() => getExerciseSessions(sessionId, workoutId),
+	);
+
 	const [time, setTime] = useState<TimeValue>(() => {
 		const d = workoutSession ? new Date(workoutSession.date) : new Date();
 		const hours24 = d.getHours();
@@ -38,32 +48,12 @@ export function EditWorkoutSessionScreen({ navigation, route }: Props) {
 		? new Date(workoutSession.date).toLocaleDateString("en-CA")
 		: "";
 
-	const fetchWorkout = useCallback(async () => {
-		const data = await getWorkout(workoutId);
-		setWorkout(data);
-	}, [workoutId]);
-
-	const fetchExercises = useCallback(async () => {
-		const data = await getExercises(workoutId);
-		setExercises(data);
-	}, [workoutId]);
-
-	const fetchExerciseSessions = useCallback(async () => {
-		const data = await getExerciseSessions(sessionId, workoutId);
-		setExerciseSessions(data);
-	}, [sessionId, workoutId]);
-
-	const fetchWorkoutSession = useCallback(async () => {
-		const data = await getWorkoutSession(sessionId, workoutId);
-		setWorkoutSession(data);
-	}, [workoutId, sessionId]);
-
 	const handleNav = async (exerciseId: number) => {
 		const exerciseSession = exerciseSessions.find((s) => s.exerciseId === exerciseId);
 
 		if (!exerciseSession) {
 			const newSession = await createExerciseSession(sessionId, exerciseId, workoutId);
-			setExerciseSessions((prev) => [...prev, newSession]);
+			mutateExerciseSessions((prev = []) => [...prev, newSession], false);
 			navigation.navigate("EditExerciseSession", {
 				workoutId,
 				sessionId,
@@ -77,13 +67,6 @@ export function EditWorkoutSessionScreen({ navigation, route }: Props) {
 			});
 		}
 	};
-
-	useEffect(() => {
-		fetchWorkout();
-		fetchWorkoutSession();
-		fetchExercises();
-		fetchExerciseSessions();
-	}, [fetchWorkout, fetchWorkoutSession, fetchExercises, fetchExerciseSessions]);
 
 	useEffect(() => {
 		if (workoutSession) {
@@ -128,7 +111,7 @@ export function EditWorkoutSessionScreen({ navigation, route }: Props) {
 					selectedWorkout={workout}
 					selectedDate={selectedDate}
 					sessionId={sessionId}
-					onSet={() => fetchWorkoutSession()}
+					onSet={() => mutateWorkoutSession()}
 				/>
 			</FadeIn>
 

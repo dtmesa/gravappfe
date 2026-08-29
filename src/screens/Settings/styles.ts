@@ -95,7 +95,6 @@ export const styles = StyleSheet.create({
 		backgroundColor: colors.button.accent,
 		padding: 10,
 		borderRadius: 18,
-		marginTop: 5,
 		marginRight: 75,
 		marginLeft: 75,
 		elevation: 8,
@@ -132,13 +131,32 @@ export const styles = StyleSheet.create({
 	},
 	statusText: {
 		fontFamily: "Play_400Regular",
-		fontSize: 14,
+		fontSize: 16,
 		textAlign: "center",
+	},
+	staticText: {
+		fontFamily: "Play_400Regular",
+		fontSize: 16,
+		color: colors.text.static,
+		textAlign: "center",
+	},
+	resendLink: {
+		fontFamily: "Play_400Regular",
+		fontSize: 16,
+		color: colors.text.accentDark,
+		textAlign: "center",
+	},
+	linkContainer: {
+		marginBottom: 8,
+		gap: 3,
 	},
 	error: {
 		color: colors.text.warning,
 	},
 	success: {
 		color: colors.text.accentLight,
+	},
+	accent: {
+		color: colors.text.accentDark,
 	},
 });
