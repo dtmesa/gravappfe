@@ -28,8 +28,3 @@ Cross-platform fitness tracking application built with React Native, Expo, and T
 
 ## Demo Video
 https://github.com/user-attachments/assets/e7e51932-2f57-41d0-beb9-382045126062
-
-## Plans
-
-- Cross-platform support (Android, iOS, Web)
-- Customization setting features
