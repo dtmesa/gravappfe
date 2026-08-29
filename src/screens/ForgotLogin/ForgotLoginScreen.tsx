@@ -214,8 +214,8 @@ export function ForgotLoginScreen({ navigation }: Props) {
 					>
 						<FadeIn visible={expandedCard === "password"}>
 							<View style={styles.cardBodyGap}>
-								{codeSent ? (
-									<>
+								<FadeIn visible={codeSent}>
+									<View style={styles.cardBodyGap}>
 										<SettingsInput placeholder="Code" value={code} onChangeText={setCode} />
 										<SettingsInput
 											placeholder="New password"
@@ -250,9 +250,10 @@ export function ForgotLoginScreen({ navigation }: Props) {
 										<Pressable onPress={handleRequestReset} disabled={loading}>
 											<Text style={styles.resendLink}>Resend code</Text>
 										</Pressable>
-									</>
-								) : (
-									<>
+									</View>
+								</FadeIn>
+								<FadeIn visible={!codeSent}>
+									<View style={styles.cardBodyGap}>
 										<SettingsInput
 											placeholder="Email"
 											value={resetEmail}
@@ -274,8 +275,8 @@ export function ForgotLoginScreen({ navigation }: Props) {
 												<Text style={styles.buttonText}>Send Code</Text>
 											</Pressable>
 										</Animated.View>
-									</>
-								)}
+									</View>
+								</FadeIn>
 							</View>
 						</FadeIn>
 					</SettingsCard>

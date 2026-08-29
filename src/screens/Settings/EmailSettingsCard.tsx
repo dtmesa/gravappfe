@@ -167,8 +167,8 @@ export function EmailSettingsCard({ email, pendingEmail, expanded, onToggle }: P
 		>
 			<FadeIn visible={expanded}>
 				<View style={styles.cardBodyGap}>
-					{pendingEmail ? (
-						<>
+					<FadeIn visible={!!pendingEmail}>
+						<View style={styles.cardBodyGap}>
 							<View style={styles.linkContainer}>
 								<Text style={[styles.statusText, styles.error]}>Confirmation pending</Text>
 								<Text style={[styles.statusText, styles.error]}>{pendingEmail}</Text>
@@ -193,9 +193,10 @@ export function EmailSettingsCard({ email, pendingEmail, expanded, onToggle }: P
 							<Pressable onPress={handleResend} disabled={loading}>
 								<Text style={styles.resendLink}>Resend code</Text>
 							</Pressable>
-						</>
-					) : email ? (
-						<>
+						</View>
+					</FadeIn>
+					<FadeIn visible={!pendingEmail && !!email}>
+						<View style={styles.cardBodyGap}>
 							<Text style={[styles.statusText, styles.accent]}>{email}</Text>
 							<SettingsInput placeholder="New email" value={newEmail} onChangeText={setNewEmail} />
 							<SettingsInput
@@ -221,9 +222,10 @@ export function EmailSettingsCard({ email, pendingEmail, expanded, onToggle }: P
 									<Text style={styles.buttonText}>Update</Text>
 								</Pressable>
 							</Animated.View>
-						</>
-					) : (
-						<>
+						</View>
+					</FadeIn>
+					<FadeIn visible={!pendingEmail && !email}>
+						<View style={styles.cardBodyGap}>
 							<SettingsInput placeholder="Email" value={newEmail} onChangeText={setNewEmail} />
 							<SettingsInput
 								placeholder="Password"
@@ -248,8 +250,8 @@ export function EmailSettingsCard({ email, pendingEmail, expanded, onToggle }: P
 									<Text style={styles.buttonText}>Confirm</Text>
 								</Pressable>
 							</Animated.View>
-						</>
-					)}
+						</View>
+					</FadeIn>
 				</View>
 			</FadeIn>
 		</SettingsCard>
